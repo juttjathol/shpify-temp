@@ -311,5 +311,46 @@ function emptyContext() {
     for (const f of failures) console.error(`    ${f}`);
     process.exit(1);
   }
+  /* Compose the homepage for real: every section in templates/index.json, in
+     order, wrapped in layout/theme.liquid, against an empty store. This is the
+     path a visitor takes, and it is the one a unit test of individual sections
+     never exercises. */
+  try {
+    const idx = JSON.parse(fs.readFileSync(path.join(THEME, 'templates', 'index.json'), 'utf8'));
+    const store = emptyContext();
+    let body = '';
+    for (const sid of idx.order || []) {
+      const spec = idx.sections[sid];
+      if (!spec) { failures.push(`templates/index.json: order lists "${sid}" with no section of that name`); continue; }
+      const file = path.join(THEME, 'sections', `${spec.type}.liquid`);
+      if (!fs.existsSync(file)) { failures.push(`templates/index.json: ${sid} -> sections/${spec.type}.liquid is missing`); continue; }
+      const original = fs.readFileSync(file, 'utf8');
+      const raw = original
+        .replace(SCHEMA_RE, '')
+        .replace(/{%-?\s*(end)?(form|paginate)\b[\s\S]*?%}/g, '')
+        .replace(/{%-?\s*render\s+(block|section)\b[^%]*%}/g, "{% render 'icon', name: 'star' %}");
+      const sc = JSON.parse(original.match(SCHEMA_RE)[1]);
+      const section = {
+        id: sid,
+        settings: Object.fromEntries((sc.settings || []).filter((x) => x.default !== undefined).map((x) => [x.id, x.default])),
+        index: 0,
+        blocks: (sc.blocks || []).map((b, i) => ({ id: b.type, type: b.type, index: i, settings: {} })),
+      };
+      body += await engine.render(engine.parse(raw), { ...store, section, block: { settings: {} } });
+    }
+    const page = await engine.render(
+      engine.parse(fs.readFileSync(path.join(THEME, 'layout', 'theme.liquid'), 'utf8')),
+      { ...store, content_for_layout: body }
+    );
+    if (/\{\{|\{%/.test(page)) failures.push('homepage: layout produced unresolved Liquid');
+    const wanted = [...page.matchAll(/href="\/assets\/([^"]+)"/g)].map((m) => m[1]);
+    for (const a of new Set(wanted)) {
+      if (!fs.existsSync(path.join(THEME, 'assets', a))) failures.push(`homepage: layout requests assets/${a}, which is not in the theme`);
+    }
+    console.log(`\n  ${DIM}homepage${OFF} index.json composed into layout/theme.liquid on an empty store — ${(page.length / 1024).toFixed(1)} KB, ${new Set(wanted).size} stylesheets, all present`);
+  } catch (e) {
+    failures.push(`homepage: failed to compose index.json: ${String(e.message || e).split('\n')[0]}`);
+  }
+
   console.log(`\n  ${DIM}rendered${OFF} ${ok} template renders — every section, snippet and block, against both a populated and an empty store, with no errors`);
 })();

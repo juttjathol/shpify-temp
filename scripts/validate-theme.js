@@ -780,6 +780,55 @@ try {
 }
 
 /* =========================================================================
+   9h. no dangling ids in a section order
+
+   `order` lists section ids to render. An id in `order` with no matching entry
+   in `sections` is a dangling reference, and Shopify answers it with a bare 404
+   rather than an error — the storefront just does not exist. This applies both
+   to the group files and to the instances in settings_data.json, which override
+   the group defaults and can disagree with them.
+   ========================================================================= */
+{
+  const checkOrder = (where, node) => {
+    if (!node || typeof node !== 'object' || !Array.isArray(node.order)) return;
+    const ids = Object.keys(node.sections || {});
+    for (const id of node.order) {
+      if (!ids.includes(id)) {
+        err(where, `order references "${id}" but sections {} has no such section (dangling — Shopify will 404)`);
+      }
+    }
+    for (const id of ids) {
+      if (!node.order.includes(id)) {
+        err(where, `section "${id}" is defined but missing from order — it will never render`);
+      }
+    }
+  };
+
+  for (const file of walk(path.join(THEME, 'sections')).filter((f) => f.endsWith('.json'))) {
+    const node = parsedJson.get(file);
+    checkOrder(rel(file), node);
+    for (const [id, s] of Object.entries((node && node.sections) || {})) {
+      const sf = path.join(THEME, 'sections', `${s.type}.liquid`);
+      if (!fs.existsSync(sf)) {
+        err(rel(file), `section "${id}" points at sections/${s.type}.liquid, which does not exist`);
+      }
+      checkOrder(`${rel(file)} → ${id}`, s);   // section-scoped blocks
+    }
+  }
+
+  // The instances in settings_data.json override the group defaults entirely.
+  const sd = parsedJson.get(path.join(THEME, 'config', 'settings_data.json'));
+  for (const [gid, group] of Object.entries((sd && sd.current && sd.current.sections) || {})) {
+    checkOrder(`config/settings_data.json → ${gid}`, group);
+    for (const [id, s] of Object.entries(group.sections || {})) {
+      if (!fs.existsSync(path.join(THEME, 'sections', `${s.type}.liquid`))) {
+        err('config/settings_data.json', `${gid} → ${id} points at sections/${s.type}.liquid, which does not exist`);
+      }
+    }
+  }
+}
+
+/* =========================================================================
    10. custom elements must be balanced
    ========================================================================= */
 for (const file of liquidFiles) {

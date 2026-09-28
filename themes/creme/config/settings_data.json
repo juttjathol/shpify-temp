@@ -115,7 +115,16 @@
     "sections": {
       "header-group": {
         "type": "header",
-        "sections": {},
+        "sections": {
+          "announcement-bar": {
+            "type": "announcement-bar",
+            "settings": {}
+          },
+          "header": {
+            "type": "header",
+            "settings": {}
+          }
+        },
         "order": [
           "announcement-bar",
           "header"
@@ -123,7 +132,16 @@
       },
       "footer-group": {
         "type": "footer",
-        "sections": {},
+        "sections": {
+          "newsletter": {
+            "type": "newsletter",
+            "settings": {}
+          },
+          "footer": {
+            "type": "footer",
+            "settings": {}
+          }
+        },
         "order": [
           "newsletter",
           "footer"
