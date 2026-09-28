@@ -121,9 +121,6 @@ c-header { display: block; }
 }
 .search-panel.is-open { opacity: 1; visibility: visible; transform: none; }
 .search-panel__inner { padding-block: 24px; }
-.search-panel__form { display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--color-ink); }
-.search-panel__input { flex: 1; border: 0; background: none; padding: 12px 0; font-size: 1.05rem; }
-.search-panel__input:focus { outline: none; }
 .search-panel__results { margin-top: 20px; }
 .search-panel__results:empty { display: none; }
 
@@ -206,6 +203,12 @@ c-header { display: block; }
   .header__center { justify-content: center; }
   .header__logo-text { font-size: 1.05rem; letter-spacing: 0.1em; }
 }
+  .header__nav, .header__search-toggle { display: none; }
+  .header__icon--menu { display: inline-flex; }
+  .header__inner { grid-template-columns: auto 1fr auto; }
+  .header__center { justify-content: center; }
+  .header__logo-text { font-size: 1.05rem; letter-spacing: 0.1em; }
 @media (max-width: 749px) {
   .header__right .icon-btn--desktop { display: none; }
 }
+  .header__right .icon-btn--desktop { display: none; }

@@ -694,6 +694,74 @@ try {
 }
 
 /* =========================================================================
+   9f. a component class must not be used without loading its stylesheet
+
+   Per-component CSS is the reason the theme stays small, but it means a
+   section that borrows a class from another component renders that part
+   unstyled — the page looks "nearly right" and nothing points at the build.
+   Classes in base.css are global (the layout always loads it) and are fine.
+   ========================================================================= */
+{
+  const assetsDir = path.join(THEME, 'assets');
+  const cssFiles = walk(assetsDir).filter((f) => f.endsWith('.css'));
+  const base = path.basename(assetsDir) === 'assets' ? path.join(assetsDir, 'base.css') : null;
+
+  // class -> stylesheets that define it
+  const owners = new Map();
+  for (const file of cssFiles) {
+    const src = read(file).replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const m of src.matchAll(/([^{}]+)\{/g)) {
+      for (const tok of m[1].matchAll(/\.([A-Za-z_][\w-]*)/g)) {
+        if (!owners.has(tok[1])) owners.set(tok[1], new Set());
+        owners.get(tok[1]).add(path.relative(THEME, file));
+      }
+    }
+  }
+
+  const snippetFiles = {};
+  for (const f of walk(path.join(THEME, 'snippets'))) {
+    if (f.endsWith('.liquid')) snippetFiles[path.basename(f, '.liquid')] = f;
+  }
+  const loadedBy = (file, seen) => {
+    const out = new Set();
+    for (const m of read(file).matchAll(/['"]([\w.-]+\.css)['"]\s*\|\s*asset_url/g)) out.add(path.join(assetsDir, m[1]));
+    for (const m of read(file).matchAll(/{%-?\s*render\s+'([\w-]+)'/g)) {
+      const s = snippetFiles[m[1]];
+      if (s && !seen.has(s)) { seen.add(s); for (const f of loadedBy(s, seen)) out.add(f); }
+    }
+    return out;
+  };
+  const classesOf = (file) => {
+    const out = new Set();
+    for (const m of read(file).matchAll(/class="([^"]*)"/g)) {
+      for (const c of m[1].split(/\s+/)) if (c && !c.includes('{{') && !c.includes('{%')) out.add(c);
+    }
+    return out;
+  };
+
+  const units = [
+    ...walk(path.join(THEME, 'templates')).filter((f) => f.endsWith('.liquid')),
+    ...walk(path.join(THEME, 'sections')).filter((f) => f.endsWith('.liquid')),
+  ];
+  for (const file of units) {
+    const loaded = loadedBy(file, new Set());
+    if (!loaded.size) continue;              // standalone page, brings its own CSS
+    const used = classesOf(file);
+    for (const m of read(file).matchAll(/{%-?\s*render\s+'([\w-]+)'/g)) {
+      if (snippetFiles[m[1]]) for (const c of classesOf(snippetFiles[m[1]])) used.add(c);
+    }
+    for (const c of [...used].sort()) {
+      const defs = owners.get(c);
+      if (!defs) continue;
+      // Defined in base.css => global, always available.
+      if (defs.has(path.relative(THEME, base || ''))) continue;
+      if ([...defs].some((d) => loaded.has(path.join(THEME, d)))) continue;
+      err(rel(file), `uses .${c} but never loads ${[...defs].join(' or ')}`);
+    }
+  }
+}
+
+/* =========================================================================
    10. custom elements must be balanced
    ========================================================================= */
 for (const file of liquidFiles) {

@@ -17,6 +17,7 @@
   "devDependencies": {
     "clean-css": "^5.3.3",
     "liquidjs": "^10.29.0",
+    "postcss": "^8.5.28",
     "terser": "^5.51.2"
   },
   "author": "Creme Studio"

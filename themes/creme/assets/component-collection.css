@@ -6,7 +6,6 @@
   margin-bottom: 24px;
   border-block: var(--border-width) solid var(--color-line);
 }
-.collection__count { font-size: 0.82rem; color: var(--color-ink-soft); }
 .collection__controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .collection__controls .field__select { min-height: 40px; padding-block: 8px; font-size: 0.82rem; min-width: 170px; }
 
@@ -15,9 +14,6 @@
 .collection__banner-text { max-width: 60ch; margin-inline: auto; color: var(--color-ink-soft); }
 .collection__breadcrumbs { display: flex; gap: 6px; font-size: 0.78rem; color: var(--color-ink-mute); margin-bottom: 12px; flex-wrap: wrap; }
 .collection__breadcrumbs a:hover { color: var(--color-ink); }
-
-.collection__empty { text-align: center; padding: 70px 0; }
-.collection__empty svg { width: 48px; height: 48px; margin: 0 auto 16px; color: var(--color-ink-mute); }
 
 .filters { border-bottom: var(--border-width) solid var(--color-line); }
 .filters__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
@@ -31,9 +27,6 @@
   background: var(--color-surface);
 }
 .filter-chip svg { width: 10px; height: 10px; }
-
-.breadcrumbs { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.78rem; color: var(--color-ink-mute); margin-bottom: 14px; }
-.breadcrumbs a:hover { color: var(--color-ink); }
 
 /* Collection banner: image with overlaid, centred copy */
 .collection__banner {
@@ -66,7 +59,4 @@
   padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 48px);
   max-width: 720px;
 }
-.collection__banner-overlay .h1,
-.collection__banner-overlay .breadcrumbs { color: #fff; }
-.collection__banner-overlay .breadcrumbs a { color: rgba(255, 255, 255, 0.8); }
 .collection__banner-overlay .collection__banner-text { color: rgba(255, 255, 255, 0.9); }

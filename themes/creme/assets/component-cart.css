@@ -68,16 +68,6 @@
 
 /* Free shipping meter */
 .shipping-meter { margin-bottom: 14px; }
-.shipping-meter__text { font-size: 0.8rem; margin-bottom: 8px; color: var(--color-ink-soft); }
-.shipping-meter__text strong { color: var(--color-ink); }
-.shipping-meter__bar { height: 6px; border-radius: var(--radius-pill); background: var(--color-surface-alt); overflow: hidden; }
-.shipping-meter__fill {
-  height: 100%;
-  border-radius: inherit;
-  background: var(--color-secondary);
-  transition: width 0.5s var(--ease);
-}
-.shipping-meter.is-complete .shipping-meter__fill { background: var(--color-accent); }
 
 /* Cart page */
 .cart-page__empty { text-align: center; padding: 70px 0; }
@@ -103,3 +93,11 @@
     font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-mute);
   }
 }
+  .cart-table thead { display: none; }
+  .cart-table tr { display: grid; grid-template-columns: 1fr; gap: 6px; padding-block: 16px; border-top: var(--border-width) solid var(--color-line); }
+  .cart-table td { display: flex; justify-content: space-between; align-items: center; border: 0; padding: 2px 0; }
+  .cart-table td:first-child { display: block; }
+  .cart-table td::before {
+    content: attr(data-label);
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-mute);
+  }

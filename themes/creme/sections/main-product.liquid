@@ -4,7 +4,6 @@
   Falls back to a plain form post if JavaScript never loads.
 {%- endcomment -%}
 {{ 'component-main-product.css' | asset_url | stylesheet_tag }}
-{{ 'component-rte.css' | asset_url | stylesheet_tag }}
 
 {{ 'product-form.js' | asset_url | script_tag: defer: true }}
 

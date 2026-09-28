@@ -3,7 +3,6 @@
   whose panel accepts nested content blocks.
 {%- endcomment -%}
 {{ 'component-section.css' | asset_url | stylesheet_tag }}
-{{ 'component-rte.css' | asset_url | stylesheet_tag }}
 
 <section class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
   <div class="container container--narrow">

@@ -3,12 +3,14 @@
   compose an entire page section without a developer.
 {%- endcomment -%}
 {{ 'component-section.css' | asset_url | stylesheet_tag }}
-{{ 'component-rte.css' | asset_url | stylesheet_tag }}
 
-<section class="section{% if section.settings.background != 'none' %} newsletter newsletter--{{ section.settings.background }}{% endif %}{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+<section
+  class="section group{% if section.settings.background != 'none' %} group--bg-{{ section.settings.background }}{% endif %}{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}"
+  {% if section.settings.background != 'none' %}style="background:{% if section.settings.background == 'soft' %}var(--color-bg-soft){% else %}var(--color-ink){% endif %};"{% endif %}
+>
   {%- if section.settings.show_decorations and section.settings.background == 'soft' -%}
-    <span class="newsletter__decoration newsletter__decoration--1" aria-hidden="true"></span>
-    <span class="newsletter__decoration newsletter__decoration--2" aria-hidden="true"></span>
+    <span class="group__decoration group__decoration--1" aria-hidden="true"></span>
+    <span class="group__decoration group__decoration--2" aria-hidden="true"></span>
   {%- endif -%}
 
   <div class="container{% if section.settings.narrow %} container--narrow{% endif %}">

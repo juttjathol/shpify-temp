@@ -39,9 +39,10 @@
 .rich-text { text-align: inherit; }
 .rich-text--center { text-align: center; }
 .rich-text--center .rte { margin-inline: auto; }
-.rich-text__block { max-width: 760px; margin-inline: auto; }
 
 @media (max-width: 989px) {
   .iwt { grid-template-columns: 1fr; }
   .iwt--image-right .iwt__media { order: 0; }
 }
+  .iwt { grid-template-columns: 1fr; }
+  .iwt--image-right .iwt__media { order: 0; }
