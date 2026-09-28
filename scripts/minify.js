@@ -28,7 +28,14 @@ const { minify: terserMinify } = require('terser');
  * parsers themselves, which throw on malformed input. */
 async function minifySource(source, ext) {
   if (ext === '.css') {
-    const out = new CleanCSS({ level: 2, returnPromise: false }).minify(source);
+    /*
+      Level 1 only. An earlier audit appeared to show level 2 dropping 24
+      selectors; that was a fault in the audit's comparator, not in clean-css —
+      level 2 rewrites *::after to ::after and [a="b"] to [a=b], which are
+      equivalent. Re-tested with a normalising comparator, level 2 also loses
+      0 of 615 selectors and saves 53 bytes (0.1%). Not worth any risk.
+    */
+    const out = new CleanCSS({ level: 1, returnPromise: false }).minify(source);
     if (out.errors.length) throw new Error(out.errors.join('; '));
     return out.styles;
   }
@@ -67,4 +74,14 @@ async function minifyAsset(source, ext) {
   }
 }
 
-module.exports = { minifyAsset, minifySource };
+/**
+ * Synchronous CSS-only minify, for the validator, which is a straight-line
+ * script and cannot await. Throws on invalid CSS so the caller can report it.
+ */
+function minifyCss(source) {
+  const out = new CleanCSS({ level: 1, returnPromise: false }).minify(source);
+  if (out.errors.length) throw new Error(out.errors.join('; '));
+  return out.styles;
+}
+
+module.exports = { minifyAsset, minifySource, minifyCss };

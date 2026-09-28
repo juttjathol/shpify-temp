@@ -40,51 +40,51 @@
 <style>
   :root {
     /* — Colours: background & surfaces — */
-    --color-bg: {{ settings.color_background }};
-    --color-bg-soft: {{ settings.color_background_soft }};
-    --color-surface: {{ settings.color_surface }};
-    --color-surface-alt: {{ settings.color_surface_alt }};
+    --color-bg: {{ settings.color_background | default: '#fdf8f1' }};
+    --color-bg-soft: {{ settings.color_background_soft | default: '#f6ece0' }};
+    --color-surface: {{ settings.color_surface | default: '#ffffff' }};
+    --color-surface-alt: {{ settings.color_surface_alt | default: '#f1e4d4' }};
 
     /* — Colours: text & borders — */
-    --color-ink: {{ settings.color_text }};
-    --color-ink-soft: {{ settings.color_text_soft }};
-    --color-ink-mute: {{ settings.color_text_muted }};
-    --color-line: {{ settings.color_border }};
-    --color-line-strong: {{ settings.color_border_strong }};
+    --color-ink: {{ settings.color_text | default: '#1f1a17' }};
+    --color-ink-soft: {{ settings.color_text_soft | default: '#5c5148' }};
+    --color-ink-mute: {{ settings.color_text_muted | default: '#8b7f74' }};
+    --color-line: {{ settings.color_border | default: '#e4d7c6' }};
+    --color-line-strong: {{ settings.color_border_strong | default: '#cdb9a2' }};
 
     /* — Colours: primary / secondary / accent — */
-    --color-primary: {{ settings.color_primary }};
-    --color-primary-hover: {{ settings.color_primary_hover }};
-    --color-primary-contrast: {{ settings.color_primary_contrast }};
-    --color-secondary: {{ settings.color_secondary }};
-    --color-tertiary: {{ settings.color_accent }};
-    --color-sale: {{ settings.color_sale }};
-    --color-star: {{ settings.color_star }};
+    --color-primary: {{ settings.color_primary | default: '#c0563a' }};
+    --color-primary-hover: {{ settings.color_primary_hover | default: '#a3462d' }};
+    --color-primary-contrast: {{ settings.color_primary_contrast | default: '#fffaf4' }};
+    --color-secondary: {{ settings.color_secondary | default: '#7c8b6a' }};
+    --color-tertiary: {{ settings.color_accent | default: '#b8455f' }};
+    --color-sale: {{ settings.color_sale | default: '#b8455f' }};
+    --color-star: {{ settings.color_star | default: '#e0a33c' }};
 
     /*
       Legacy aliases. Components were written against --color-accent before the
       primary/secondary/accent split existed; rather than touch every component
       we point the old names at the new ones.
     */
-    --color-accent: {{ settings.color_primary }};
-    --color-accent-hover: {{ settings.color_primary_hover }};
-    --color-accent-contrast: {{ settings.color_primary_contrast }};
+    --color-accent: {{ settings.color_primary | default: '#c0563a' }};
+    --color-accent-hover: {{ settings.color_primary_hover | default: '#a3462d' }};
+    --color-accent-contrast: {{ settings.color_primary_contrast | default: '#fffaf4' }};
 
     /* — Colours: buttons — */
-    --color-button: {{ settings.color_button }};
-    --color-button-hover: {{ settings.color_button_hover }};
-    --color-button-text: {{ settings.color_button_text }};
-    --color-button-outline-text: {{ settings.color_button_outline_text }};
+    --color-button: {{ settings.color_button | default: '#c0563a' }};
+    --color-button-hover: {{ settings.color_button_hover | default: '#a3462d' }};
+    --color-button-text: {{ settings.color_button_text | default: '#fffaf4' }};
+    --color-button-outline-text: {{ settings.color_button_outline_text | default: '#1f1a17' }};
 
     /* — Colours: header & footer — */
-    --color-header-bg: {{ settings.color_header_bg }};
-    --color-header-text: {{ settings.color_header_text }};
-    --color-footer-bg: {{ settings.color_footer_bg }};
-    --color-footer-text: {{ settings.color_footer_text }};
+    --color-header-bg: {{ settings.color_header_bg | default: '#fdf8f1' }};
+    --color-header-text: {{ settings.color_header_text | default: '#1f1a17' }};
+    --color-footer-bg: {{ settings.color_footer_bg | default: '#f6ece0' }};
+    --color-footer-text: {{ settings.color_footer_text | default: '#1f1a17' }};
 
     /* — Typography — */
-    --font-heading-family: {{ head_font.family }}, {{ head_font.fallback_families }};
-    --font-body-family: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --font-heading-family: {{ head_font.family | default: 'Bodoni Moda' }}, {{ head_font.fallback_families | default: 'Georgia, Times New Roman, serif' }};
+    --font-body-family: {{ body_font.family | default: 'Assistant' }}, {{ body_font.fallback_families | default: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif' }};
     --font-body-size: {{ body_size }}px;
     --font-body-line: {{ settings.body_line_height | divided_by: 100.0 }};
     --font-heading-weight: {{ head_font.weight | default: 400 }};

@@ -203,6 +203,33 @@ for (const dir of ['snippets', 'sections', 'blocks']) {
 let ok = 0;
 const failures = [];
 
+/* A brand-new store has no products, no collections, no pages and an empty
+   cart. Every product loop runs zero times and every object accessor hits nil,
+   so this is the state most likely to break. */
+function emptyContext() {
+  const base = context();
+  const blankCollection = { id: 0, title: '', handle: '', url: '', handle_url: '', description: '',
+    products: [], products_count: 0, all_products_count: 0, all_variants_count: 0,
+    products_count_voice: '0 products', sort_by: 'manual', default_sort_by: 'manual',
+    featured_image: null, image: null, has_image: false, blank: true };
+  const emptyBlog = { id: 0, title: '', url: '', handle_url: '', handle: '', articles: [],
+    articles_count: 0, all_articles_count: 0, next_article: null, previous_article: null,
+    tags: [], rss_url: '' };
+  return {
+    ...base,
+    collections: {}, collection: blankCollection,
+    products: [], product: null,
+    blogs: {}, blog: emptyBlog, articles: [],
+    page: { title: '', content: '', url: '' },
+    cart: { item_count: 0, total_price: 0, subtotal_price: 0, items: [], attributes: {}, note: '' },
+    cart_item: null,
+    search: { results: { products: [], items_count: 0, performed: false, first: null }, performed: false, terms: '' },
+    paginate: { pages: 1, current_page: 1, items: 0, parts: [], previous: null, next: null,
+      page_size: 24, current_offset: 0, next_offset: 24, previous_offset: null },
+    current_tags: [], article: null, handle: '', id: 0,
+  };
+}
+
 (async () => {
   for (const rel of files) {
     const original = fs.readFileSync(path.join(THEME, rel), 'utf8');
@@ -237,14 +264,16 @@ const failures = [];
       blocks: blockTypes.map((t, i) => ({ id: t, type: t, index: i, settings: sectionContext({}) })),
     };
 
-    try {
-      const out = await engine.render(engine.parse(raw), {
-        ...context(), section, block: section.blocks[0] || { settings: {} },
-      });
-      if (/\{\{|\{%/.test(out)) failures.push(`${rel}: left unrendered Liquid in the output`);
-      else ok++;
-    } catch (e) {
-      failures.push(`${rel}: ${String(e.message || e).split('\n')[0]}`);
+    for (const [label, ctx] of [['populated', context()], ['empty store', emptyContext()]]) {
+      try {
+        const out = await engine.render(engine.parse(raw), {
+          ...ctx, section, block: section.blocks[0] || { settings: {} },
+        });
+        if (/\{\{|\{%/.test(out)) failures.push(`${rel} [${label}]: left unrendered Liquid in the output`);
+        else ok++;
+      } catch (e) {
+        failures.push(`${rel} [${label}]: ${String(e.message || e).split('\n')[0]}`);
+      }
     }
   }
 
@@ -254,5 +283,5 @@ const failures = [];
     for (const f of failures) console.error(`    ${f}`);
     process.exit(1);
   }
-  console.log(`\n  ${DIM}rendered${OFF} ${total} templates (${ok} sections, snippets and blocks) with no errors`);
+  console.log(`\n  ${DIM}rendered${OFF} ${ok} template renders — every section, snippet and block, against both a populated and an empty store, with no errors`);
 })();

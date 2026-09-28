@@ -582,6 +582,118 @@ for (const file of liquidFiles) {
 }
 
 /* =========================================================================
+   9d. settings_data.json must be a shape Shopify actually accepts
+
+   A malformed settings_data.json is silent: Shopify drops the file, the Theme
+   settings panel renders empty, and every settings.* on the storefront becomes
+   nil — so the CSS custom properties collapse and the store looks unstyled.
+   Neither symptom points at config, which is why this is checked explicitly.
+   ========================================================================= */
+{
+  const dataFile = path.join(THEME, 'config', 'settings_data.json');
+  const data = parsedJson.get(dataFile);
+  const schemaGroups = parsedJson.get(path.join(THEME, 'config', 'settings_schema.json'));
+
+  if (Array.isArray(schemaGroups)) {
+    const byId = new Map();
+    for (const g of schemaGroups) for (const st of g.settings || []) if (st.id) byId.set(st.id, st);
+
+    if (!data || typeof data !== 'object') {
+      err('config/settings_data.json', 'missing or not an object');
+    } else {
+      // `current` is required; `presets` is optional.
+      if (!data.current || typeof data.current !== 'object') {
+        err('config/settings_data.json', 'missing a "current" object');
+      } else {
+        for (const [id, value] of Object.entries(data.current)) {
+          // `sections` is Shopify's own key for section-group ordering.
+          if (id === 'sections' || !byId.has(id)) continue;
+          const st = byId.get(id);
+          const type = st.type;
+          let problem = null;
+          if (type === 'color' && !/^#[0-9a-fA-F]{3,8}$/.test(String(value))) problem = `not a hex colour (${JSON.stringify(value)})`;
+          else if (type === 'font_picker' && !(value && typeof value === 'object' && value.settings)) problem = `font_picker must be an object with a "settings" key, got ${JSON.stringify(value)}`;
+          else if (type === 'range' && typeof value !== 'number') problem = `range must be a number, got ${typeof value}`;
+          else if (type === 'checkbox' && typeof value !== 'boolean') problem = `checkbox must be a boolean, got ${typeof value}`;
+          else if (type === 'select' && !(st.options || []).some((o) => o.value === value)) problem = `${JSON.stringify(value)} is not one of the declared options`;
+          else if (type === 'text' && value !== null && typeof value !== 'string') problem = `text must be a string, got ${typeof value}`;
+          if (problem) err('config/settings_data.json', `current.${id} (${type}): ${problem}`);
+        }
+      }
+
+      // Presets are { "<Name>": { "settings": { ... } } } — settings nested one
+      // level down. Flat presets are silently ignored by Shopify.
+      for (const [name, preset] of Object.entries(data.presets || {})) {
+        if (!preset || typeof preset !== 'object' || Array.isArray(preset)) {
+          err('config/settings_data.json', `preset "${name}" must be an object`);
+          continue;
+        }
+        if (!preset.settings || typeof preset.settings !== 'object') {
+          err('config/settings_data.json', `preset "${name}" has no "settings" object — Shopify expects { "settings": { ... } }`);
+          continue;
+        }
+        for (const id of Object.keys(preset.settings)) {
+          if (!byId.has(id)) err('config/settings_data.json', `preset "${name}" sets undeclared setting "${id}"`);
+        }
+      }
+    }
+  }
+}
+
+/* =========================================================================
+   9e. minified CSS must be selector-faithful to the source
+
+   A minifier that silently drops or rewrites a selector changes how the store
+   renders, and the only symptom is a page that "looks a bit off" — nothing
+   points back at the build. Selectors are normalised before comparing, because
+   equivalent forms (*::after vs ::after, [a="b"] vs [a=b]) are not losses.
+
+   Needs postcss, a devDependency. If it is missing the check is skipped rather
+   than blocking the build.
+   ========================================================================= */
+try {
+  const postcss = require('postcss');
+  const { minifyCss } = require('./minify');
+  const norm = (s) => s
+    .replace(/([\[\w])\s*=\s*"([^"]*)"/g, '$1=$2')
+    .replace(/([\[\w])\s*=\s*'([^']*)'/g, '$1=$2')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([>~+])\s*/g, '$1')
+    .replace(/(\s[>+~])\*/g, '$1')
+    .replace(/(^|[\s>+~,])\*::/g, '$1::')
+    .trim();
+  const selectors = (css) => {
+    const out = new Set();
+    postcss.parse(css).walkRules((r) => {
+      if (r.parent && r.parent.type === 'atrule' && /^(?:-(?:webkit|moz|ms)-)?keyframes$/.test(r.parent.name)) return;
+      r.selector.split(',').forEach((s) => { const t = norm(s); if (t) out.add(t); });
+    });
+    return out;
+  };
+
+  for (const file of walk(path.join(THEME, 'assets')).filter((f) => f.endsWith('.css'))) {
+    const name = path.relative(THEME, file);
+    const before = selectors(read(file));
+    let after;
+    try {
+      after = selectors(minifyCss(read(file)));
+    } catch (e) {
+      err(name, `minifier rejected the stylesheet — ${e.message}`);
+      continue;
+    }
+    for (const s of before) {
+      if (!after.has(s)) err(name, `minified CSS drops selector "${s}"`);
+    }
+  }
+} catch (e) {
+  if (e && e.code === 'MODULE_NOT_FOUND') {
+    warn('assets', 'selector-fidelity check skipped (postcss not installed)');
+  } else {
+    throw e;
+  }
+}
+
+/* =========================================================================
    10. custom elements must be balanced
    ========================================================================= */
 for (const file of liquidFiles) {
