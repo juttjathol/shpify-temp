@@ -18,15 +18,21 @@
  * Every build validates first, so a broken theme never produces a file that
  * looks shippable.
  *
+ * CSS and JS are minified on the way in (see minify.js) so the archive ships
+ * small while the repository keeps readable source. Pass --no-minify to debug.
+ *
  *   node scripts/build-themes.js            # validate + zip every theme
  *   node scripts/build-themes.js creme      # just one theme
  *   node scripts/build-themes.js --no-validate
+ *   node scripts/build-themes.js --no-minify
  */
 
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { execFileSync } = require('child_process');
+const { minifyAsset } = require('./minify');
+const THEMES_META = require('../themes.json');
 
 const ROOT = path.join(__dirname, '..');
 const THEMES_DIR = path.join(ROOT, 'themes');
@@ -34,6 +40,7 @@ const DIST = path.join(ROOT, 'dist');
 
 const args = process.argv.slice(2);
 const NO_VALIDATE = args.includes('--no-validate');
+const NO_MINIFY = args.includes('--no-minify');
 const ONLY = args.filter((a) => !a.startsWith('--'));
 
 /* Shopify only recognises these directories at the archive root. */
@@ -175,7 +182,11 @@ function validate(themeName) {
   }
 }
 
-function build(themeName) {
+function meta(themeName) {
+  return THEMES_META[themeName] || { name: themeName, version: '1.0' };
+}
+
+async function build(themeName) {
   const themeRoot = path.join(THEMES_DIR, themeName);
   const files = collect(themeRoot);
 
@@ -184,21 +195,60 @@ function build(themeName) {
     return null;
   }
 
-  const entries = files.map((f) => ({ name: f.arc, data: fs.readFileSync(f.abs) }));
+  /* Read, then minify in place. Only .css and .js are touched. */
+  const entries = [];
+  const warnings = [];
+  let sourceBytes = 0, shippedBytes = 0, touched = 0;
+
+  for (const f of files) {
+    const original = fs.readFileSync(f.abs);
+    let data = original;
+    sourceBytes += original.length;
+
+    const ext = path.extname(f.arc).toLowerCase();
+    if (!NO_MINIFY && (ext === '.css' || ext === '.js')) {
+      const result = await minifyAsset(original.toString('utf8'), ext);
+      if (result.skipped) {
+        warnings.push(`${f.arc} — ${result.skipped}`);
+      } else {
+        data = Buffer.from(result.code, 'utf8');
+        touched++;
+      }
+    }
+    shippedBytes += data.length;
+    entries.push({ name: f.arc, data });
+  }
+
   const buffer = zip(entries);
 
   fs.mkdirSync(DIST, { recursive: true });
-  const out = path.join(DIST, `${themeName}.zip`);
+
+  /* Remove archives for this theme from earlier builds, so `dist/` never holds
+     two zips for the same theme and nobody ships the wrong one. */
+  const superseded = fs.readdirSync(DIST)
+    .filter((f) => f.endsWith('.zip') && f !== meta(themeName).zip
+      && (f === `${themeName}.zip` || f.startsWith(`${themeName}-`)));
+  for (const stale of superseded) fs.unlinkSync(path.join(DIST, stale));
+
+  const zipName = meta(themeName).zip || `${themeName}-v${meta(themeName).version}.zip`;
+  const out = path.join(DIST, zipName);
   fs.writeFileSync(out, buffer);
+  if (superseded.length) console.log(`      removed stale: ${superseded.join(', ')}`);
 
   const kb = (buffer.length / 1024).toFixed(1);
   const top = new Set(files.map((f) => f.arc.split('/')[0]));
 
   console.log(`  ✓ ${path.relative(ROOT, out)}`);
   console.log(`      ${files.length} files · ${kb} KB · root: ${[...top].sort().join(', ')}`);
-  return { name: themeName, out, files: files.length, bytes: buffer.length };
+  if (touched) {
+    const saved = ((1 - shippedBytes / sourceBytes) * 100).toFixed(0);
+    console.log(`      minified ${touched} assets · unpacked ${(sourceBytes / 1024).toFixed(0)} KB → ${(shippedBytes / 1024).toFixed(0)} KB (${saved}% smaller)`);
+  }
+  for (const w of warnings) console.log(`      ⚠ ${w}`);
+  return { name: themeName, zip: zipName, out, files: files.length, bytes: buffer.length };
 }
 
+async function main() {
 const themes = (ONLY.length ? ONLY : fs.readdirSync(THEMES_DIR).filter((n) => {
   const p = path.join(THEMES_DIR, n);
   return fs.statSync(p).isDirectory();
@@ -221,15 +271,21 @@ for (const name of themes) {
     failed = true;
     continue;
   }
-  const result = build(name);
+  const result = await build(name);
   if (result) built.push(result);
   console.log('');
 }
 
 if (built.length > 1) {
   console.log('  One file per theme — hand the merchant the single .zip they need:\n');
-  for (const b of built) console.log(`    ${b.name}.zip`);
+  for (const b of built) console.log(`    ${b.zip}`);
   console.log('');
 }
 
 process.exit(failed ? 1 : 0);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

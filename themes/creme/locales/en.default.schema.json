@@ -206,7 +206,8 @@
           "label": "Sticky header"
         },
         "header_transparent": {
-          "label": "Transparent over hero"
+          "label": "Transparent over hero",
+          "info": "Makes the header sit over the hero image with no background. Best used on a page whose first section is full-bleed."
         },
         "header_height": {
           "label": "Header height"
@@ -446,7 +447,8 @@
           "label": "Linkedin"
         },
         "social_whatsapp": {
-          "label": "Whatsapp"
+          "label": "Whatsapp",
+          "info": "Number only, e.g. 15551234567."
         },
         "social_tumblr": {
           "label": "Tumblr"
@@ -488,7 +490,8 @@
           "label": "Rotate speed"
         },
         "dismissible": {
-          "label": "Dismissible"
+          "label": "Dismissible",
+          "info": "Also requires “Allow dismiss” in Theme settings → Header."
         }
       },
       "blocks": {
@@ -825,7 +828,8 @@
           "header": "Media"
         },
         "desktop_image": {
-          "label": "Desktop image"
+          "label": "Desktop image",
+          "info": "Overrides the store-wide hero image."
         },
         "mobile_image": {
           "label": "Mobile image",

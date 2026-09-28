@@ -6,7 +6,7 @@
 {{ 'component-main-product.css' | asset_url | stylesheet_tag }}
 {{ 'component-rte.css' | asset_url | stylesheet_tag }}
 
-<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{{ 'product-form.js' | asset_url | script_tag: defer: true }}
 
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant

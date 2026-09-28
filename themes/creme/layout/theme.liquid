@@ -50,10 +50,10 @@
     {%- render 'css-variables' -%}
     {%- render 'fonts' -%}
 
-    <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'placeholder-svg.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+    {{ 'global.js' | asset_url | script_tag: defer: true }}
+    {{ 'placeholder-svg.js' | asset_url | script_tag: defer: true }}
+    {{ 'theme.js' | asset_url | script_tag: defer: true }}
+    {{ 'cart-drawer.js' | asset_url | script_tag: defer: true }}
 
     {{ content_for_stylesheet }}
   </head>

@@ -2,7 +2,7 @@
   "name": "shpify-themes",
   "version": "1.0.0",
   "private": true,
-  "description": "A library of Shopify themes, each shipped as a single uploadable ZIP.",
+  "description": "A library of Shopify themes, each shipped as a single uploadable ZIP. Creme is a cream editorial theme for fashion.",
   "scripts": {
     "build": "node scripts/build-themes.js",
     "validate": "node scripts/validate-theme.js",
@@ -15,6 +15,9 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "liquidjs": "^10.29.0"
-  }
+    "clean-css": "^5.3.3",
+    "liquidjs": "^10.29.0",
+    "terser": "^5.51.2"
+  },
+  "author": "Creme Studio"
 }

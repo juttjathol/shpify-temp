@@ -234,8 +234,13 @@ for (const key of T_KEYS) {
 }
 stats.storefrontKeys = T_KEYS.size;
 
+/* Editor strings live in two places: {% schema %} blocks and
+   config/settings_schema.json. Scanning only the Liquid files left every
+   `t:settings_schema.*` reference unverified, which is how four unresolved
+   .info strings shipped unnoticed. */
 const T_REFS = new Set();
-for (const file of [...liquidFiles]) {
+for (const file of [...liquidFiles, path.join(THEME, 'config', 'settings_schema.json')]) {
+  if (!fs.existsSync(file)) continue;
   for (const m of read(file).matchAll(/['"](t:[a-zA-Z0-9_.]+)['"]/g)) T_REFS.add(m[1].slice(2));
 }
 for (const key of T_REFS) {
@@ -477,11 +482,10 @@ if (Array.isArray(settingsSchema)) {
   for (const file of scan) {
     for (const m of stripLiquid(read(file)).matchAll(/(?<![\w.])settings\.([a-zA-Z0-9_]+)/g)) used.add(m[1]);
   }
-  // A handful of groups exist purely to carry editor metadata (theme name,
-  // version, docs links) — nothing renders those, so they are exempt.
-  const EDITOR_ONLY = new Set(['theme_info']);
+  // The `theme_info` group declares Shopify's own metadata (name, author,
+  // description) rather than merchant settings, so it has no `settings` array
+  // and is skipped by the loop below. Every real setting must be consumed.
   for (const g of settingsSchema) {
-    if (EDITOR_ONLY.has(g.name)) continue;
     for (const s of g.settings || []) {
       if (s.id && !used.has(s.id)) {
         err('config/settings_schema.json', `"${s.id}" (${g.name}) is declared but never read by the theme`);
@@ -532,6 +536,49 @@ for (const file of liquidFiles) {
       if (o !== c) err(rel(file), `{% liquid %} ${at} has unbalanced brackets ("${t.slice(0, 50)}")`);
     }
   });
+}
+
+/* =========================================================================
+   9c. storefront performance invariants
+
+   Cheap, mechanical rules that stop a performance regression from shipping
+   unnoticed. Anything that would slow the page down for every visitor.
+   ========================================================================= */
+for (const file of liquidFiles) {
+  // Comments often contain literal `<img>` in prose; scan the rendered source.
+  const src = stripLiquid(read(file));
+  const rel_ = rel(file);
+
+  // 1. No render-blocking scripts. Every <script> must be deferred, either as a
+  //    raw tag with defer or via `| script_tag: defer: true`.
+  for (const m of src.matchAll(/<script\b([^>]*)>/g)) {
+    const attrs = m[1] || '';
+    const isAsset = /src=/.test(attrs);
+    if (!isAsset) continue; // inline scripts are a separate concern
+    if (!/\bdefer\b/.test(attrs)) {
+      err(rel_, `render-blocking <script> — add defer (${attrs.trim().slice(0, 60)})`);
+    }
+  }
+
+  // 2. Images must go through image_url so Shopify can size and serve them.
+  for (const m of src.matchAll(/<img\b[\s\S]{0,400}?>/g)) {
+    if (/\|\s*image_url/.test(m[0])) continue;
+    // placeholder SVGs and inline icons are not Shopify images
+    if (/data-ph|placeholder|<use\b|icon/.test(m[0])) continue;
+    err(rel_, `<img> without a | image_url filter — Shopify cannot optimise it`);
+  }
+
+  // 3. No hard-coded Shopify CDN URLs. preconnect/dns-prefetch hints are the
+  //    one legitimate use, so those <link> tags are allowed.
+  for (const m of src.matchAll(/<link\b[^>]*>/g)) {
+    if (!/cdn\.shopify\.com/.test(m[0])) continue;
+    if (/rel="(preconnect|dns-prefetch)"/.test(m[0])) continue;
+    err(rel_, `hard-coded Shopify CDN URL — use | asset_url or | image_url`);
+  }
+  for (const m of src.matchAll(/\b(src|href)="(https?:)?\/\/cdn\.shopify\.com[^"]*"/g)) {
+    if (/<link\b/.test(src.slice(Math.max(0, m.index - 160), m.index))) continue;
+    err(rel_, `hard-coded Shopify CDN URL — use | asset_url or | image_url`);
+  }
 }
 
 /* =========================================================================

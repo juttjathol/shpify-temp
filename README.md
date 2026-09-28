@@ -6,8 +6,16 @@ tree, no "please unzip this first".
 
 ```
 dist/
-  creme.zip        <- hand this to the customer, that's the whole job
+  creme-v1.0.zip   <- hand this to the customer, that's the whole job
 ```
+
+| | |
+| --- | --- |
+| Theme | **Creme** v1.0 |
+| Author | Creme Studio |
+| Audience | Fashion and lifestyle stores |
+| Package size | ~116 KB zipped, 102 files (CSS + JS minified ~26%) |
+| External dependencies | None — no CDN, no font host, no app required |
 
 ---
 
@@ -15,9 +23,31 @@ dist/
 
 1. Go to **Shopify Admin → Online Store → Themes**.
 2. Click **Add theme → Upload theme**.
-3. Drop in the single `.zip`.
-4. **Customize** to set colours, fonts, menus and homepage sections.
-5. **Publish** when ready. The original theme stays live until you do.
+3. Drop in `creme-v1.0.zip` — the single file from `dist/`.
+4. Wait for the upload to finish, then **Customize**.
+5. **Publish** when ready. The currently live theme stays live until you do.
+
+### First-run setup checklist
+
+The theme works the moment it is published, but five things are worth setting
+in **Customize → Theme settings** before you hand it to a customer:
+
+| Setting | Why |
+| --- | --- |
+| **Brand → Logo** | Without it the header falls back to the store name in text, which looks fine but is not a logo. |
+| **Header → Menu** | Points at `main-menu` by default; change it if the navigation is called something else. |
+| **Social → profiles** | Ten URL fields. The footer social row stays hidden until at least one is filled in. |
+| **Hero → image and copy** | The homepage hero renders a placeholder until an image or video is set. |
+| **Footer → text, email, phone** | The footer block is empty until at least one is filled in. |
+
+Two defaults worth knowing:
+
+- **Fonts** resolve to Shopify's own library (Bodoni for display, Assistant for
+  body), so there is no third-party font request on page load. Self-hosting is
+  available behind `Typography → Use self-hosted fonts` and stays off by default
+  so the theme never requests a file it does not ship.
+- **Product cards** show a styled rating row, but live review data needs a
+  review app. The styling is there; the numbers are not.
 
 The archive is built so the theme folders sit at the *root* of the zip
 (`assets/`, `blocks/`, `config/`, `layout/`, `locales/`, `sections/`,
@@ -36,7 +66,21 @@ dist/                    generated, one .zip per theme (git-ignored artefacts)
 preview/                 static visual previews, not shipped in any archive
 ```
 
-## Commands
+## Release checklist
+
+Run before shipping a new version:
+
+```bash
+npm run check        # locales + validate + render + build
+```
+
+`check` fails the build on: a setting declared but never read, a `{% liquid %}`
+statement wrapped across lines, a render-blocking `<script>`, an `<img>` that
+bypasses `| image_url`, a hard-coded Shopify CDN URL, a missing translation, an
+unresolved `{% render %}` or section reference, or a template that renders
+without error in the Liquid engine.
+
+Bump the version in `themes.json` to change the output filename.
 
 ```bash
 npm run build         # validate every theme, then write dist/<theme>.zip
@@ -48,6 +92,7 @@ npm run check         # locales + validate + render + build   ← run this befor
 ```
 
 Build a single theme: `node scripts/build-themes.js creme`
+Skip minification while debugging: `node scripts/build-themes.js --no-minify`
 Preview a preset: `npm run preview:sync -- "Creme — Deep Olive"`
 
 ---
@@ -176,6 +221,14 @@ and render with `{% content_for 'blocks' %}`, so a *heading*, *testimonial*,
 *image* or *button* block is defined once in `blocks/` and can be dropped into
 any section. Sections that need bespoke behaviour (announcement bar, product
 accordions, footer menus) use ordinary section-scoped blocks instead.
+
+## Build output
+
+`npm run build` writes `dist/creme-v1.0.zip`. The repository keeps readable,
+commented CSS and JS; the archive ships minified, so a customer gets smaller
+files over the wire while the source stays maintainable. `scripts/minify.js`
+falls back to the original source if a minifier errors or produces something
+larger, so a minification failure can never ship broken assets.
 
 ## Performance notes
 

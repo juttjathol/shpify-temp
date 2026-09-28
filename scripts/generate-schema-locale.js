@@ -232,6 +232,7 @@ const INFO = {
   'settings_schema.social.settings.twitter_handle.info': 'With or without the @.',
   'settings_schema.seo.settings.social_share_image.info': 'Used when a page has no image of its own. Recommended 1200 x 630 px.',
   'settings_schema.seo.settings.robots_txt.info': 'A comma-separated list, e.g. noindex, nofollow. Leave blank for the default.',
+  'settings_schema.header.settings.header_transparent.info': 'Makes the header sit over the hero image with no background. Best used on a page whose first section is full-bleed.',
   'settings_schema.layout.settings.page_width_custom.info': 'Only used when Page width is set to Custom.',
   'settings_schema.hero.settings.hero_mobile_image.info': 'A separate crop for phones keeps the composition intact on small screens.',
   'settings_schema.hero.settings.hero_video.info': 'A video here replaces the hero image. Use a short, quiet loop.',
@@ -269,10 +270,17 @@ function deriveValue(ref, node) {
   const nameKey = parts[parts.length - 1] === 'name' ? parts.slice(0, -1).join('.') : null;
   if (nameKey && NAME[nameKey]) return NAME[nameKey];
 
-  // `.info` variants read better as curated prose than as a bare label.
+  // `.info` variants read better as curated prose than as a bare label. They
+  // are looked up in INFO first, then LABEL — checking only INFO silently
+  // dropped anything filed under the wrong map, and an undefined value is
+  // dropped by JSON.stringify, leaving the editor with a missing translation.
   if (parts[parts.length - 1] === 'info') {
     const base = parts.slice(0, -1).join('.');
-    return INFO[key] !== undefined ? INFO[key] : INFO[base + '.info'];
+    if (INFO[key] !== undefined) return INFO[key];
+    if (INFO[base + '.info'] !== undefined) return INFO[base + '.info'];
+    if (LABEL[key] !== undefined) return LABEL[key];
+    if (LABEL[base + '.info'] !== undefined) return LABEL[base + '.info'];
+    return humanise(base.split('.').pop()) + '.';
   }
 
   if (LABEL[key] !== undefined) return LABEL[key];
@@ -424,11 +432,17 @@ if (fs.existsSync(OUT)) {
   }
 }
 
+/*
+  Keys this run generated always win; keys found only in the previous file are
+  kept, so a hand-added string survives. The previous order had it backwards
+  (existing won unless --force), which meant fixing a label or an `info` string
+  in the maps above silently had no effect — the stale value just persisted.
+*/
 function merge(base, add) {
   const out = Array.isArray(base) ? [...base] : { ...base };
   for (const [k, v] of Object.entries(add)) {
     if (isObj(v) && isObj(out[k])) out[k] = merge(out[k], v);
-    else if (out[k] === undefined || FORCE) out[k] = v;
+    else out[k] = v;
   }
   return out;
 }
