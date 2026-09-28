@@ -1,0 +1,47 @@
+/* Section shells, accordions, image-with-text, columns */
+.accordion { border-top: var(--border-width) solid var(--color-line); }
+.accordion__item { border-bottom: var(--border-width) solid var(--color-line); }
+.accordion__heading { margin: 0; }
+.accordion__trigger {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  width: 100%; padding: 18px 0; text-align: left;
+  font-family: var(--font-body-family);
+  font-size: 0.95rem; font-weight: 500;
+}
+.accordion__trigger:hover { color: var(--color-accent-hover); }
+.accordion__icon { width: 14px; height: 14px; flex: none; transition: transform 0.3s var(--ease); }
+.accordion__trigger[aria-expanded="true"] .accordion__icon { transform: rotate(45deg); }
+.accordion__panel { display: none; padding-bottom: 20px; }
+.accordion__panel.is-open { display: block; }
+.accordion__panel .rte { color: var(--color-ink-soft); }
+
+.iwt { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; }
+.iwt--image-right .iwt__media { order: 2; }
+.iwt__media { position: relative; overflow: hidden; border-radius: var(--radius); background: var(--color-surface-alt); }
+.iwt__media img { width: 100%; }
+.iwt__body { max-width: 52ch; }
+.iwt__heading { margin-bottom: 14px; }
+.iwt__text { color: var(--color-ink-soft); margin-bottom: 22px; }
+.iwt__decoration { position: absolute; width: 90px; height: 90px; border-radius: 50%; z-index: 0; }
+.iwt--image-left .iwt__decoration { right: -30px; bottom: -30px; }
+.iwt--image-right .iwt__decoration { left: -30px; top: -30px; }
+
+.columns { display: grid; gap: var(--grid-gap); }
+.columns > .column { min-width: 0; }
+
+.multicolumn__item { height: 100%; }
+.multicolumn__link { display: flex; flex-direction: column; height: 100%; }
+.multicolumn__media { overflow: hidden; border-radius: var(--radius); margin-bottom: 14px; background: var(--color-surface-alt); }
+.multicolumn__media img { width: 100%; }
+.multicolumn__title { margin-bottom: 6px; }
+.multicolumn__text { font-size: 0.9rem; color: var(--color-ink-soft); }
+
+.rich-text { text-align: inherit; }
+.rich-text--center { text-align: center; }
+.rich-text--center .rte { margin-inline: auto; }
+.rich-text__block { max-width: 760px; margin-inline: auto; }
+
+@media (max-width: 989px) {
+  .iwt { grid-template-columns: 1fr; }
+  .iwt--image-right .iwt__media { order: 0; }
+}

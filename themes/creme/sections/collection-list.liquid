@@ -1,0 +1,100 @@
+{%- comment -%}
+  Collections grid. Either a hand-picked list of collection blocks, or every
+  collection in the shop, laid out as cards with images.
+{%- endcomment -%}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign list = section.blocks | where: 'type', 'collection'
+  assign show_all = false
+  if list.size == 0
+    assign show_all = true
+    assign list = collections
+  endif
+-%}
+
+{%- if list.size > 0 -%}
+  <section class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+    <div class="container">
+      {%- render 'section-header',
+        heading: section.settings.heading,
+        subheading: section.settings.subheading,
+        heading_tag: section.settings.heading_tag,
+        align: section.settings.header_alignment,
+        link_label: section.settings.link_label,
+        link_url: section.settings.link_url -%}
+
+      <div class="grid" style="--card-min:{{ section.settings.columns_desktop }}px">
+        {%- for block in list -%}
+          {%- liquid
+            if show_all
+              assign collection = block
+            else
+              assign collection = block.settings.collection
+            endif
+          -%}
+          {%- if collection != blank -%}
+            <c-animate data-delay="{{ forloop.index0 | times: 60 }}">
+              <div {% unless show_all %}{{ block.shopify_attributes }}{% endunless %}>
+                {%- render 'collection-card',
+                  card_collection: collection,
+                  show_image: section.settings.show_image,
+                  show_count: section.settings.show_product_count -%}
+              </div>
+            </c-animate>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.collection-list.name",
+  "max_blocks": 24,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "t:sections.collection-list.settings.heading.label", "default": "Shop by category" },
+    { "type": "textarea", "id": "subheading", "label": "t:sections.collection-list.settings.subheading.label" },
+    { "type": "select", "id": "heading_tag", "label": "t:sections.collection-list.settings.heading_tag.label", "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ] },
+    { "type": "range", "id": "columns_desktop", "label": "t:sections.collection-list.settings.columns_desktop.label", "min": 180, "max": 520, "step": 20, "unit": "px", "default": 300 },
+    { "type": "checkbox", "id": "show_image", "label": "t:sections.collection-list.settings.show_image.label", "default": true },
+    { "type": "checkbox", "id": "show_product_count", "label": "t:sections.collection-list.settings.show_product_count.label", "default": false },
+    {
+      "type": "select", "id": "header_alignment", "label": "t:sections.collection-list.settings.header_alignment.label", "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ] },
+    { "type": "text", "id": "link_label", "label": "t:sections.collection-list.settings.link_label.label" },
+    { "type": "url", "id": "link_url", "label": "t:sections.collection-list.settings.link_url.label" },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.collection-list.settings.remove_top_padding.label", "default": false },
+    { "type": "checkbox", "id": "remove_bottom_padding", "label": "t:sections.collection-list.settings.remove_bottom_padding.label", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "t:sections.collection-list.blocks.collection.name",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "t:sections.collection-list.blocks.collection.settings.collection.label" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collection-list.presets.default",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

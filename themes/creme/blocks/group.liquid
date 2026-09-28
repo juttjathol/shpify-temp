@@ -1,0 +1,64 @@
+{%- comment -%}
+  @theme
+  Card / group container that accepts nested theme blocks.
+{%- endcomment -%}
+
+{%- liquid
+  assign pad_map = 'none: 0, small: 20px, medium: 36px, large: 56px'
+  assign padding = pad_map[block.settings.padding] | default: '36px'
+  assign radius_map = 'none: 0px, small: 4px, medium: 10px, pill: 999px'
+  assign radius = radius_map[block.settings.corner_radius] | default: '10px'
+-%}
+
+<div
+  class="block-group"
+  style="background:{{ block.settings.background }};padding:{{ padding }};border-radius:{{ radius }};margin-top:{{ block.settings.spacing_top }}px;text-align:{{ block.settings.align }}"
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.group.name",
+  "settings": [
+    { "type": "select", "id": "background", "label": "t:blocks.group.settings.background.label", "default": "var(--color-surface-alt)",
+      "options": [
+        { "value": "transparent", "label": "Transparent" },
+        { "value": "var(--color-surface-alt)", "label": "Soft" },
+        { "value": "var(--color-bg-soft)", "label": "Cream" },
+        { "value": "var(--color-accent)", "label": "Accent" },
+        { "value": "var(--color-ink)", "label": "Ink" }
+      ] },
+    { "type": "select", "id": "padding", "label": "t:blocks.group.settings.padding.label", "default": "medium",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ] },
+    { "type": "select", "id": "corner_radius", "label": "t:blocks.group.settings.corner_radius.label", "default": "medium",
+      "options": [
+        { "value": "none", "label": "Square" },
+        { "value": "small", "label": "Slight" },
+        { "value": "medium", "label": "Rounded" },
+        { "value": "pill", "label": "Pill" }
+      ] },
+    { "type": "select", "id": "align", "label": "t:blocks.group.settings.align.label", "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ] },
+    { "type": "range", "id": "spacing_top", "label": "t:blocks.group.settings.spacing_top.label", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:blocks.group.presets.group",
+      "blocks": {
+        "heading": { "type": "heading", "settings": { "align": "center" } },
+        "text": { "type": "text", "settings": { "align": "center" } }
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,179 @@
+{%- comment -%}
+  Hero banner.
+
+  Copy, media, overlay, alignment and height all default to the store-wide
+  Theme settings (Theme settings → Hero). Setting them here overrides those
+  defaults for this one section only, so a merchant can run a different hero
+  on a landing page without disturbing the rest of the site.
+{%- endcomment -%}
+{{ 'component-hero.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign height_map = 'full: hero--full, large: hero--large, medium: hero--medium, small: hero--small, auto: hero--height-auto'
+
+  assign hero_height = section.settings.height | default: settings.hero_height
+  assign height_class = height_map[hero_height] | default: 'hero--large'
+  assign align_class = 'hero--align-' | append: section.settings.text_alignment | default: settings.hero_text_alignment
+  assign vclass_class = 'hero--align-' | append: section.settings.vertical_alignment
+  assign overlay_class = 'hero--overlay-' | append: section.settings.image_overlay
+  assign color_class = 'hero--color-' | append: section.settings.text_color | default: settings.hero_text_color
+  assign image_position_class = 'hero--image-' | append: section.settings.image_position
+
+  assign hero_image = section.settings.desktop_image | default: settings.hero_image
+  assign hero_mobile_image = section.settings.mobile_image | default: settings.hero_mobile_image
+  assign hero_video = section.settings.video | default: settings.hero_video
+
+  assign hero_eyebrow = section.settings.eyebrow
+  assign hero_heading = section.settings.heading | default: settings.hero_heading
+  assign hero_subheading = section.settings.subheading | default: settings.hero_subheading
+  assign hero_cta_label = section.settings.button_label | default: settings.hero_button_label
+  assign hero_cta_link = section.settings.button_link | default: settings.hero_button_link
+  assign hero_tag = section.settings.heading_tag | default: 'h1'
+-%}
+
+<section
+  class="hero {{ height_class }} {{ align_class }} {{ vclass_class }} {{ overlay_class }} {{ color_class }} {{ image_position_class }}"
+  {% if section.settings.id != blank %}id="{{ section.settings.id }}"{% endif %}
+>
+  <div class="hero__media">
+    {%- if hero_image != blank -%}
+      <picture>
+        {%- if hero_mobile_image != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ hero_mobile_image | image_url: width: 800 }}">
+        {%- endif -%}
+        <img
+          src="{{ hero_image | image_url: width: 2000 }}"
+          srcset="
+            {{ hero_image | image_url: width: 750 }} 750w,
+            {{ hero_image | image_url: width: 1100 }} 1100w,
+            {{ hero_image | image_url: width: 1500 }} 1500w,
+            {{ hero_image | image_url: width: 2000 }} 2000w,
+            {{ hero_image | image_url: width: 2600 }} 2600w
+          "
+          sizes="100vw"
+          width="{{ hero_image.width }}"
+          height="{{ hero_image.height }}"
+          alt="{{ hero_image.alt | escape }}"
+          loading="eager"
+          fetchpriority="high"
+          style="width:100%;height:100%;object-fit:cover;"
+        >
+      </picture>
+    {%- elsif hero_video != blank -%}
+      {{ hero_video | video_tag: image_size: '2000x', autoplay: true, loop: true, muted: true, controls: false, class: 'hero__video' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </div>
+
+  <div class="hero__content container">
+    <div class="hero__text">
+      {%- if hero_eyebrow != blank -%}
+        <p class="eyebrow eyebrow--accent">{{ hero_eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if hero_heading != blank -%}
+        <{{ hero_tag }} class="{{ hero_tag }} hero__heading">{{ hero_heading }}</{{ hero_tag }}>
+      {%- endif -%}
+
+      {%- if hero_subheading != blank -%}
+        <p class="hero__subheading">{{ hero_subheading }}</p>
+      {%- endif -%}
+
+      {%- if hero_cta_label != blank -%}
+        <div class="hero__buttons">
+          <a class="btn btn--accent-light btn--lg" href="{{ hero_cta_link | default: routes.all_products_collection_url }}">
+            {{ hero_cta_label }}
+          </a>
+          {%- if section.settings.button_label_2 != blank -%}
+            <a class="btn btn--outline-light btn--lg" href="{{ section.settings.button_link_2 | default: routes.root_url }}">
+              {{ section.settings.button_label_2 }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.hero-banner.name",
+  "tag": "section",
+  "class": "hero-section",
+  "settings": [
+    { "type": "paragraph", "content": "t:sections.hero-banner.settings.inherits.content" },
+    { "type": "header", "content": "t:sections.hero-banner.settings.media.header" },
+    { "type": "image_picker", "id": "desktop_image", "label": "t:sections.hero-banner.settings.desktop_image.label", "info": "t:sections.hero-banner.settings.desktop_image.info" },
+    { "type": "image_picker", "id": "mobile_image", "label": "t:sections.hero-banner.settings.mobile_image.label", "info": "t:sections.hero-banner.settings.mobile_image.info" },
+    { "type": "video", "id": "video", "label": "t:sections.hero-banner.settings.video.label", "info": "t:sections.hero-banner.settings.video.info" },
+    {
+      "type": "select", "id": "image_overlay", "label": "t:sections.hero-banner.settings.image_overlay.label", "default": "soft",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "soft", "label": "Soft" },
+        { "value": "normal", "label": "Default" },
+        { "value": "strong", "label": "Strong" }
+      ]
+    },
+    { "type": "select", "id": "image_position", "label": "t:sections.hero-banner.settings.image_position.label", "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ] },
+    { "type": "header", "content": "t:sections.hero-banner.settings.copy.header" },
+    { "type": "text", "id": "eyebrow", "label": "t:sections.hero-banner.settings.eyebrow.label", "default": "New season" },
+    { "type": "text", "id": "heading", "label": "t:sections.hero-banner.settings.heading.label" },
+    { "type": "select", "id": "heading_tag", "label": "t:sections.hero-banner.settings.heading_tag.label", "default": "h1",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" }
+      ] },
+    { "type": "textarea", "id": "subheading", "label": "t:sections.hero-banner.settings.subheading.label" },
+    { "type": "text", "id": "button_label", "label": "t:sections.hero-banner.settings.button_label.label" },
+    { "type": "url", "id": "button_link", "label": "t:sections.hero-banner.settings.button_link.label" },
+    { "type": "text", "id": "button_label_2", "label": "t:sections.hero-banner.settings.button_label_2.label", "default": "Our story" },
+    { "type": "url", "id": "button_link_2", "label": "t:sections.hero-banner.settings.button_link_2.label" },
+    { "type": "header", "content": "t:sections.hero-banner.settings.layout.header" },
+    {
+      "type": "select", "id": "height", "label": "t:sections.hero-banner.settings.height.label", "default": "",
+      "options": [
+        { "value": "", "label": "Use theme setting" },
+        { "value": "full", "label": "Full screen" },
+        { "value": "large", "label": "Large" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "small", "label": "Small" },
+        { "value": "auto", "label": "Adapt to content" }
+      ]
+    },
+    {
+      "type": "select", "id": "text_alignment", "label": "t:sections.hero-banner.settings.text_alignment.label", "default": "",
+      "options": [
+        { "value": "", "label": "Use theme setting" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select", "id": "vertical_alignment", "label": "t:sections.hero-banner.settings.vertical_alignment.label", "default": "middle",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "middle", "label": "Middle" },
+        { "value": "bottom", "label": "Bottom" }
+      ]
+    },
+    {
+      "type": "select", "id": "text_color", "label": "t:sections.hero-banner.settings.text_color.label", "default": "",
+      "options": [
+        { "value": "", "label": "Use theme setting" },
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ]
+    },
+    { "type": "text", "id": "id", "label": "t:sections.hero-banner.settings.id.label", "info": "t:sections.hero-banner.settings.id.info" }
+  ],
+  "presets": [{ "name": "t:sections.hero-banner.presets.default" }]
+}
+{% endschema %}

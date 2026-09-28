@@ -1,0 +1,18 @@
+/* Pagination */
+.pagination { margin-top: clamp(32px, 5vw, 56px); }
+.pagination__list { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
+.pagination__item {
+  display: grid; place-items: center;
+  min-width: 42px; height: 42px;
+  padding-inline: 12px;
+  font-size: 0.86rem;
+  border: var(--border-width) solid var(--color-line);
+  border-radius: var(--radius);
+  color: var(--color-ink);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.pagination__item:hover { border-color: var(--color-ink); color: var(--color-ink); }
+.pagination__item.is-current { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-bg); }
+.pagination__item.is-disabled { opacity: 0.35; pointer-events: none; }
+.pagination__gap { padding-inline: 6px; color: var(--color-ink-mute); }
+.pagination__meta { text-align: center; margin-top: 14px; font-size: 0.78rem; color: var(--color-ink-mute); }

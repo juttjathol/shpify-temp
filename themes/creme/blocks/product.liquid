@@ -1,0 +1,35 @@
+{%- comment -%}@theme — A single product card, reusable in any section.{%- endcomment -%}
+
+{%- if block.settings.product != blank -%}
+  {%- render 'product-card',
+    card_product: block.settings.product,
+    show_image: block.settings.show_image,
+    show_vendor: block.settings.show_vendor,
+    show_price: block.settings.show_price,
+    show_swatches: block.settings.show_swatches,
+    show_quick_add: block.settings.show_quick_add,
+    sizes: block.settings.image_size -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:blocks.product.name",
+  "settings": [
+    { "type": "product", "id": "product", "label": "t:blocks.product.settings.product.label" },
+    { "type": "checkbox", "id": "show_image", "label": "t:blocks.product.settings.show_image.label", "default": true },
+    { "type": "checkbox", "id": "show_vendor", "label": "t:blocks.product.settings.show_vendor.label", "default": false },
+    { "type": "checkbox", "id": "show_price", "label": "t:blocks.product.settings.show_price.label", "default": true },
+    { "type": "checkbox", "id": "show_swatches", "label": "t:blocks.product.settings.show_swatches.label", "default": true },
+    { "type": "checkbox", "id": "show_quick_add", "label": "t:blocks.product.settings.show_quick_add.label", "default": true },
+    {
+      "type": "select", "id": "image_size", "label": "t:blocks.product.settings.image_size.label", "default": "(min-width: 750px) 25vw, 50vw",
+      "options": [
+        { "value": "(min-width: 990px) 25vw, (min-width: 749px) 33vw, 50vw", "label": "Small" },
+        { "value": "(min-width: 750px) 33vw, 50vw", "label": "Medium" },
+        { "value": "(min-width: 750px) 50vw, 100vw", "label": "Large" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "t:blocks.product.presets.product" }]
+}
+{% endschema %}

@@ -1,0 +1,234 @@
+{%- comment -%}
+  Sticky header with logo, main menu (dropdowns on desktop), inline cart count,
+  predictive search and a full mobile drawer menu.
+{%- endcomment -%}
+{{ 'component-header.css' | asset_url | stylesheet_tag }}
+{{ 'component-announcement-bar.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  # Theme settings are the source of truth; the section settings are a
+  # per-section escape hatch for pages that need to differ (e.g. a landing
+  # page with a transparent header over full-bleed art).
+  assign logo_image = section.settings.logo | default: settings.logo
+  assign logo_max = section.settings.logo_width | default: settings.logo_width | default: 160
+  assign is_sticky = settings.header_sticky
+  assign is_transparent = settings.header_transparent
+  assign show_search = settings.header_show_search
+  assign show_account = settings.header_show_account
+  assign menu_handle = settings.header_menu | default: 'main-menu'
+
+  assign sticky_class = 'header--sticky' | append: is_sticky
+  assign transparent_class = 'header--transparent' | append: is_transparent
+  assign overlay_class = 'header--overlay' | append: is_transparent
+-%}
+{% style %}
+  c-header .header__logo-image { --logo-height: {{ logo_max | divided_by: 3.1 | round }}px; }
+{% endstyle %}
+
+<c-header class="header {{ sticky_class }} {{ transparent_class }} {{ overlay_class }}">
+  <div class="header__inner container">
+    <div class="header__left">
+      <button
+        class="icon-btn header__icon--menu"
+        type="button"
+        id="MenuToggle"
+        aria-expanded="false"
+        aria-controls="MobileNav"
+        data-open-target="#MobileNav"
+        aria-label="{{ 'general.accessibility.open_menu' | t | escape }}"
+      >
+        {%- render 'icon', name: 'menu', size: 22 -%}
+      </button>
+    </div>
+
+    <div class="header__center">
+      {%- if logo_image != blank -%}
+        <a class="header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+          {%- render 'responsive-image',
+            image: logo_image,
+            sizes: '160px',
+            class: 'header__logo-image',
+            loading: 'eager',
+            ratio_class: 'auto' -%}
+        </a>
+      {%- else -%}
+        <a class="header__logo" href="{{ routes.root_url }}">
+          <span class="header__logo-text">{{ shop.name }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="header__right">
+      {%- if show_search -%}
+        <button
+          class="icon-btn header__search-toggle"
+          id="HeaderSearchToggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="SearchPanel"
+          aria-label="{{ 'general.search.title' | t | escape }}"
+        >
+          {%- render 'icon', name: 'search', size: 22 -%}
+        </button>
+      {%- endif -%}
+
+      {%- if show_account and shop.customer_accounts_enabled -%}
+        <a class="icon-btn icon-btn--desktop" href="{{ routes.account_url }}" aria-label="{{ 'general.account.title' | t | escape }}">
+          {%- render 'icon', name: 'user', size: 22 -%}
+        </a>
+      {%- endif -%}
+
+      {%- if settings.cart_type == 'drawer' -%}
+        <button
+          class="icon-btn"
+          type="button"
+          data-cart-toggle
+          aria-controls="CartDrawer"
+          aria-label="{{ 'cart.title' | t | escape }}"
+          data-cart-icon
+        >
+          {%- render 'icon', name: 'bag', size: 22 -%}
+          <span class="icon-btn__count" data-cart-count>{{ cart.item_count }}</span>
+        </button>
+      {%- else -%}
+        <a class="icon-btn" href="{{ routes.cart_url }}" aria-label="{{ 'cart.title' | t | escape }}">
+          {%- render 'icon', name: 'bag', size: 22 -%}
+          <span class="icon-btn__count" data-cart-count>{{ cart.item_count }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Desktop navigation {%- endcomment -%}
+  {%- if menu_handle != blank -%}
+    <nav class="header__nav-wrap" aria-label="{{ 'general.header.primary_nav' | t | escape }}">
+      <div class="container">
+        <ul class="header__nav">
+          {%- for link in linklists[menu_handle].links -%}
+            <li class="header__nav-item">
+              <a
+                class="header__nav-link{% if link.active or link.child_active %} is-active{% endif %}"
+                href="{{ link.url }}"
+                {% if link.active %}aria-current="page"{% endif %}
+              >
+                {{ link.title }}
+                {%- if link.links.size > 0 -%}
+                  {%- render 'icon', name: 'chevron-down', size: 10, class: 'icon-caret' -%}
+                {%- endif -%}
+              </a>
+
+              {%- if link.links.size > 0 -%}
+                <div class="header__dropdown">
+                  {%- for child in link.links -%}
+                    <a class="header__dropdown-link" href="{{ child.url }}">
+                      <span>{{ child.title }}</span>
+                      {%- if child.links.size > 0 -%}
+                        {%- render 'icon', name: 'chevron-right', size: 12 -%}
+                      {%- endif -%}
+                    </a>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </nav>
+  {%- endif -%}
+
+  {%- comment -%} Predictive search panel {%- endcomment -%}
+  {%- if show_search -%}
+    <c-search-panel class="search-panel" id="SearchPanel" data-open-target="#HeaderSearchToggle" data-search-panel>
+      <div>
+        <div class="container search-panel__inner">
+          <c-predictive-search>
+            <form action="{{ routes.search_url }}" method="get" role="search">
+              <div class="search-panel__form">
+                <label class="visually-hidden" for="SearchInput">{{ 'general.search.title' | t }}</label>
+                <input
+                  class="search-panel__input"
+                  id="SearchInput"
+                  type="search"
+                  name="q"
+                  value="{{ search.terms | escape }}"
+                  placeholder="{{ 'general.search.placeholder' | t | escape }}"
+                  autocomplete="off"
+                  data-search-input
+                >
+                <button class="icon-btn" type="button" data-search-close aria-label="{{ 'general.accessibility.close' | t }}">
+                  {%- render 'icon', name: 'close', size: 20 -%}
+                </button>
+              </div>
+            </form>
+            <div class="search-panel__results" data-search-results></div>
+          </c-predictive-search>
+        </div>
+      </div>
+    </c-search-panel>
+  {%- endif -%}
+</c-header>
+
+{%- comment -%} Mobile drawer navigation {%- endcomment -%}
+<c-drawer-nav class="drawer-nav" id="MobileNav" data-open-target="#MenuToggle" aria-hidden="true">
+  <div class="drawer-nav__overlay" data-nav-close></div>
+  <div class="drawer-nav__panel" role="dialog" aria-modal="true" aria-label="{{ 'general.header.menu' | t | escape }}" data-drawer-panel>
+    <div class="drawer-nav__header">
+      <span class="header__logo-text">{{ shop.name }}</span>
+      <button class="icon-btn" type="button" data-nav-close aria-label="{{ 'general.accessibility.close' | t }}">
+        {%- render 'icon', name: 'close', size: 20 -%}
+      </button>
+    </div>
+
+    <div class="drawer-nav__body">
+      <ul>
+        {%- if menu_handle != blank -%}
+          {%- for link in linklists[menu_handle].links -%}
+            <li class="drawer-nav__item" data-nav-item>
+              <div class="drawer-nav__row">
+                <a class="drawer-nav__link" href="{{ link.url }}">{{ link.title }}</a>
+                {%- if link.links.size > 0 -%}
+                  <button class="drawer-nav__toggle" type="button" data-nav-sub-toggle aria-expanded="false" aria-label="{{ link.title | escape }}">
+                    {%- render 'icon', name: 'chevron-down', size: 12 -%}
+                  </button>
+                {%- endif -%}
+              </div>
+              {%- if link.links.size > 0 -%}
+                <div class="drawer-nav__sub">
+                  {%- for child in link.links -%}
+                    <a class="drawer-nav__sub-link" href="{{ child.url }}">{{ child.title }}</a>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        {%- endif -%}
+
+        <li class="drawer-nav__item">
+          <div class="drawer-nav__row"><a class="drawer-nav__link" href="{{ routes.all_products_collection_url }}">{{ 'general.nav.shop_all' | t }}</a></div>
+        </li>
+        {%- if shop.customer_accounts_enabled -%}
+          <li class="drawer-nav__item">
+            <div class="drawer-nav__row"><a class="drawer-nav__link" href="{{ routes.account_url }}">{{ 'general.account.title' | t }}</a></div>
+          </li>
+        {%- endif -%}
+        <li class="drawer-nav__item">
+          <div class="drawer-nav__row"><a class="drawer-nav__link" href="{{ routes.cart_url }}">{{ 'cart.title' | t }}</a></div>
+        </li>
+      </ul>
+
+      {%- render 'social-icons', size: 18 -%}
+    </div>
+  </div>
+</c-drawer-nav>
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "settings": [
+    { "type": "header", "content": "t:sections.header.settings.per_page_header.content" },
+    { "type": "image_picker", "id": "logo", "label": "t:sections.header.settings.logo.label", "info": "t:sections.header.settings.logo.info" },
+    { "type": "range", "id": "logo_width", "label": "t:sections.header.settings.logo_width.label", "min": 60, "max": 300, "step": 10, "unit": "px", "default": 160 }
+  ],
+  "enabled_on": { "groups": ["header"] }
+}
+{% endschema %}

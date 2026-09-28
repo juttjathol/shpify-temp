@@ -1,0 +1,64 @@
+{%- comment -%}
+  SEO + social meta. Uses the page's SEO fields, falls back to template data.
+{%- endcomment -%}
+
+{%- liquid
+  assign og_title = page_title
+  assign og_url = canonical_url
+  assign og_type = 'website'
+  assign og_description = page_description | default: shop.description | default: shop.name
+
+  if request.page_type == 'product'
+    assign og_type = 'product'
+  elsif request.page_type == 'article'
+    assign og_type = 'article'
+  elsif request.page_type == 'password'
+    assign og_type = 'website'
+  endif
+
+  assign og_image = settings.social_share_image
+  if request.page_type == 'product' and product.featured_media
+    assign og_image = product.featured_media
+  elsif request.page_type == 'article' and article.image
+    assign og_image = article.image
+  elsif request.page_type == 'collection' and collection.featured_image
+    assign og_image = collection.featured_image
+  endif
+-%}
+
+<meta name="description" content="{{ og_description | escape }}">
+<meta name="theme-color" content="{{ settings.color_background | remove: '#' | default: 'fdf8f1' }}">
+
+{%- if settings.robots_txt != blank -%}
+  <meta name="robots" content="{{ settings.robots_txt }}">
+{%- endif -%}
+
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:description" content="{{ og_description | escape }}">
+{%- if og_image -%}
+  <meta property="og:image" content="http:{{ og_image | image_url: width: 1200 }}">
+  <meta property="og:image:secure_url" content="https:{{ og_image | image_url: width: 1200 }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="{{ 1200 | divided_by: og_image.aspect_ratio | round }}">
+  <meta property="og:image:alt" content="{{ og_image.alt | default: og_title | escape }}">
+{%- endif -%}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_description | escape }}">
+{%- if settings.twitter_handle != blank -%}
+  <meta name="twitter:site" content="{{ settings.twitter_handle }}">
+{%- endif -%}
+
+{%- if request.page_type == 'article' and article -%}
+  <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}">
+  <meta property="article:author" content="{{ article.author | escape }}">
+{%- endif -%}
+
+{%- if settings.favicon != blank -%}
+  <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+{%- endif -%}

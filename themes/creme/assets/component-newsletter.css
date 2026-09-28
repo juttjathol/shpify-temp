@@ -1,0 +1,39 @@
+/* Newsletter */
+.newsletter {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-soft);
+  border-radius: var(--radius-lg);
+}
+.newsletter__inner {
+  position: relative;
+  z-index: 1;
+  padding: clamp(28px, 5vw, 60px);
+  text-align: center;
+  max-width: 640px;
+  margin-inline: auto;
+}
+.newsletter__heading { margin-bottom: 12px; }
+.newsletter__text { color: var(--color-ink-soft); margin-bottom: 22px; }
+.newsletter__form { max-width: 480px; margin-inline: auto; }
+.newsletter__form .field { text-align: left; }
+.newsletter__disclaimer { font-size: 0.74rem; color: var(--color-ink-mute); margin-top: 12px; }
+
+.newsletter--card { background: var(--color-accent); color: var(--color-accent-contrast); }
+.newsletter--card .h1, .newsletter--card .h2, .newsletter--card .h3,
+.newsletter--card .newsletter__text { color: var(--color-accent-contrast); }
+.newsletter--card .field__input { background: transparent; border-color: rgba(255,255,255,0.5); color: #fff; }
+.newsletter--card .field__input::placeholder { color: rgba(255,255,255,0.75); }
+.newsletter--card .newsletter__disclaimer { color: rgba(255,255,255,0.75); }
+
+.newsletter--ink { background: var(--color-ink); color: var(--color-bg); }
+.newsletter--ink .h1, .newsletter--ink .h2, .newsletter--ink .h3,
+.newsletter--ink .newsletter__text { color: var(--color-bg); }
+.newsletter--ink .field__input { background: transparent; border-color: rgba(253,248,241,0.35); color: var(--color-bg); }
+.newsletter--ink .field__input::placeholder { color: rgba(253,248,241,0.7); }
+.newsletter--ink .newsletter__disclaimer { color: rgba(253,248,241,0.6); }
+
+.newsletter__decoration { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; }
+.newsletter__decoration--1 { width: 320px; height: 320px; background: var(--color-secondary); opacity: 0.12; top: -120px; right: -80px; }
+.newsletter__decoration--2 { width: 220px; height: 220px; background: var(--color-tertiary); opacity: 0.1; bottom: -100px; left: -60px; }
+.newsletter--card .newsletter__decoration, .newsletter--ink .newsletter__decoration { display: none; }

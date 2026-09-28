@@ -1,0 +1,25 @@
+{%- comment -%}@theme — Video player (Shopify-hosted file or external embed).{%- endcomment -%}
+
+<div class="block-video" style="margin-top:{{ block.settings.spacing_top }}px;border-radius:var(--radius);overflow:hidden;background:var(--color-surface-alt)">
+  {%- render 'video',
+    video: block.settings.video,
+    external_url: block.settings.external_url,
+    autoplay: block.settings.autoplay,
+    loop: true,
+    muted: true,
+    controls: block.settings.controls -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.video.name",
+  "settings": [
+    { "type": "video", "id": "video", "label": "t:blocks.video.settings.video.label" },
+    { "type": "url", "id": "external_url", "label": "t:blocks.video.settings.external_url.label" },
+    { "type": "checkbox", "id": "autoplay", "label": "t:blocks.video.settings.autoplay.label", "default": false },
+    { "type": "checkbox", "id": "controls", "label": "t:blocks.video.settings.controls.label", "default": true },
+    { "type": "range", "id": "spacing_top", "label": "t:blocks.video.settings.spacing_top.label", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "t:blocks.video.presets.video" }]
+}
+{% endschema %}

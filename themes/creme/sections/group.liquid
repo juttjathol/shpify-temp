@@ -1,0 +1,51 @@
+{%- comment -%}
+  Flexible "build anything" section. Accepts any theme block, so merchants can
+  compose an entire page section without a developer.
+{%- endcomment -%}
+{{ 'component-section.css' | asset_url | stylesheet_tag }}
+{{ 'component-rte.css' | asset_url | stylesheet_tag }}
+
+<section class="section{% if section.settings.background != 'none' %} newsletter newsletter--{{ section.settings.background }}{% endif %}{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+  {%- if section.settings.show_decorations and section.settings.background == 'soft' -%}
+    <span class="newsletter__decoration newsletter__decoration--1" aria-hidden="true"></span>
+    <span class="newsletter__decoration newsletter__decoration--2" aria-hidden="true"></span>
+  {%- endif -%}
+
+  <div class="container{% if section.settings.narrow %} container--narrow{% endif %}">
+    <div class="{% if section.settings.center_text %} text-center{% endif %}">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.group.name",
+  "settings": [
+    {
+      "type": "select", "id": "background", "label": "t:sections.group.settings.background.label", "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "soft", "label": "Soft cream" },
+        { "value": "card", "label": "Accent" },
+        { "value": "ink", "label": "Dark" }
+      ]
+    },
+    { "type": "checkbox", "id": "center_text", "label": "t:sections.group.settings.center_text.label", "default": false },
+    { "type": "checkbox", "id": "narrow", "label": "t:sections.group.settings.narrow.label", "default": false },
+    { "type": "checkbox", "id": "show_decorations", "label": "t:sections.group.settings.show_decorations.label", "default": true },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.group.settings.remove_top_padding.label", "default": false },
+    { "type": "checkbox", "id": "remove_bottom_padding", "label": "t:sections.group.settings.remove_bottom_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.group.presets.default",
+      "blocks": {
+        "heading": { "type": "heading", "settings": { "heading": "Add your own section", "align": "center" } },
+        "text": { "type": "text", "settings": { "align": "center" } }
+      }
+    }
+  ]
+}
+{% endschema %}

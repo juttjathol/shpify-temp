@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "show_banner": true,
+        "banner_ratio": "wide",
+        "show_description": true,
+        "products_per_page": 24,
+        "columns_desktop": 260,
+        "image_size": "(min-width: 750px) 25vw, 50vw",
+        "remove_top_padding": false
+      }
+    }
+  },
+  "order": ["main"]
+}

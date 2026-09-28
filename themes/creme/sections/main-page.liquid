@@ -1,0 +1,56 @@
+{%- comment -%}
+  Page template. Title + optional banner, then an @app slot for the page body
+  so merchants can add sections from the editor.
+{%- endcomment -%}
+{{ 'component-rte.css' | asset_url | stylesheet_tag }}
+
+<div class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}">
+  <div class="container container--{{ section.settings.width }}">
+    {%- if section.settings.show_title -%}
+      <header style="text-align:{{ section.settings.title_alignment }};margin-bottom:{{ section.settings.title_spacing }}px">
+        <h1 class="{{ section.settings.heading_size }}">{{ page.title }}</h1>
+      </header>
+    {%- endif -%}
+
+    {%- comment -%} @app slot: the page body is added in the theme editor {%- endcomment -%}
+    <div id="shopify-section-{{ section.id }}" class="shopify-section">
+      {%- for block in section.blocks -%}
+        {%- if block.type == '@app' -%}
+          {%- render block -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "settings": [
+    { "type": "checkbox", "id": "show_title", "label": "t:sections.main-page.settings.show_title.label", "default": true },
+    {
+      "type": "select", "id": "heading_size", "label": "t:sections.main-page.settings.heading_size.label", "default": "h1",
+      "options": [
+        { "value": "h1", "label": "Large" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h3", "label": "Small" }
+      ] },
+    {
+      "type": "select", "id": "title_alignment", "label": "t:sections.main-page.settings.title_alignment.label", "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ] },
+    { "type": "range", "id": "title_spacing", "label": "t:sections.main-page.settings.title_spacing.label", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 28 },
+    {
+      "type": "select", "id": "width", "label": "t:sections.main-page.settings.width.label", "default": "narrow",
+      "options": [
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "", "label": "Default" },
+        { "value": "wide", "label": "Wide" }
+      ] },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.main-page.settings.remove_top_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@app" }]
+}
+{% endschema %}

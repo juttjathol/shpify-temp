@@ -1,0 +1,37 @@
+{%- comment -%}Editorial text block. The copy itself is a reusable theme block.{%- endcomment -%}
+{{ 'component-rte.css' | asset_url | stylesheet_tag }}
+
+<section class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+  <div class="container container--narrow">
+    <div class="rich-text__block rich-text--{{ section.settings.text_alignment }}">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.rich-text.name",
+  "settings": [
+    {
+      "type": "select", "id": "text_alignment", "label": "t:sections.rich-text.settings.text_alignment.label", "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.rich-text.settings.remove_top_padding.label", "default": false },
+    { "type": "checkbox", "id": "remove_bottom_padding", "label": "t:sections.rich-text.settings.remove_bottom_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.rich-text.presets.default",
+      "blocks": {
+        "heading": { "type": "heading", "settings": { "heading": "Our philosophy", "heading_tag": "h2", "align": "center" } },
+        "text": { "type": "text", "settings": { "align": "center", "text": "<p>We believe in fewer, better things. Natural fibres, honest pricing, and a wardrobe that gets better with every wear.</p>" } }
+      }
+    }
+  ]
+}
+{% endschema %}

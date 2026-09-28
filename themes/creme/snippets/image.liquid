@@ -1,0 +1,32 @@
+{%- comment -%}
+  Single image renderer with optional lazy/priority loading.
+  Params: image, sizes, loading, class, width, height, alt
+{%- endcomment -%}
+{%- liquid
+  assign img = image
+  assign loading_mode = loading | default: 'lazy'
+-%}
+{%- if img != blank -%}
+  <img
+    src="{{ img | image_url: width: width | default: 1200 }}"
+    srcset="
+      {{ img | image_url: width: 400 }} 400w,
+      {{ img | image_url: width: 600 }} 600w,
+      {{ img | image_url: width: 900 }} 900w,
+      {{ img | image_url: width: 1200 }} 1200w,
+      {{ img | image_url: width: 1600 }} 1600w,
+      {{ img | image_url: width: 2000 }} 2000w
+    "
+    sizes="{{ sizes | default: '100vw' }}"
+    alt="{{ img.alt | escape }}"
+    width="{{ img.width }}"
+    height="{{ img.height }}"
+    loading="{{ loading_mode }}"
+    {% if loading_mode == 'eager' %}fetchpriority="high"{% endif %}
+    decoding="async"
+    class="{{ class }}"
+    style="width:100%;height:auto;"
+  >
+{%- else -%}
+  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+{%- endif -%}

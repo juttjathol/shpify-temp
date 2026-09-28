@@ -1,0 +1,66 @@
+{%- comment -%}
+  Testimonials / social proof. Each review is a reusable theme block so the
+  same block can also be dropped into a product page or a page template.
+{%- endcomment -%}
+{{ 'component-testimonial.css' | asset_url | stylesheet_tag }}
+
+<section class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+  <div class="container">
+    {%- render 'section-header',
+      heading: section.settings.heading,
+      subheading: section.settings.subheading,
+      heading_tag: section.settings.heading_tag,
+      align: section.settings.header_alignment -%}
+
+    <div class="testimonials__list testimonials__list--columns-{{ section.settings.columns }}{% if section.settings.bordered %} testimonials__list--bordered{% endif %}">
+      {%- for block in section.blocks -%}
+        <c-animate data-delay="{{ forloop.index0 | times: 80 }}">
+          {%- render block -%}
+        </c-animate>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.testimonials.name",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "t:sections.testimonials.settings.heading.label", "default": "Loved by our community" },
+    { "type": "textarea", "id": "subheading", "label": "t:sections.testimonials.settings.subheading.label" },
+    { "type": "select", "id": "heading_tag", "label": "t:sections.testimonials.settings.heading_tag.label", "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ] },
+    {
+      "type": "select", "id": "columns", "label": "t:sections.testimonials.settings.columns.label", "default": "3",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ]
+    },
+    { "type": "checkbox", "id": "bordered", "label": "t:sections.testimonials.settings.bordered.label", "default": true },
+    {
+      "type": "select", "id": "header_alignment", "label": "t:sections.testimonials.settings.header_alignment.label", "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ] },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.testimonials.settings.remove_top_padding.label", "default": false },
+    { "type": "checkbox", "id": "remove_bottom_padding", "label": "t:sections.testimonials.settings.remove_bottom_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.testimonials.presets.default",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}

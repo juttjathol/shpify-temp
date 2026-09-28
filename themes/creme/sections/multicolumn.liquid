@@ -1,0 +1,54 @@
+{%- comment -%}
+  Icon / value feature row (e.g. Free shipping, Made to measure, Easy returns).
+  Built entirely from the reusable `icon` theme block.
+{%- endcomment -%}
+{{ 'component-section.css' | asset_url | stylesheet_tag }}
+
+<section class="section section--tight{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      {%- render 'section-header', heading: section.settings.heading, align: section.settings.header_alignment -%}
+    {%- endif -%}
+
+    <div class="grid" style="--card-min:{{ section.settings.columns_desktop }}px">
+      {%- for block in section.blocks -%}
+        <c-animate data-delay="{{ forloop.index0 | times: 70 }}" class="multicolumn__item">
+          <div {{ block.shopify_attributes }} style="text-align:{{ block.settings.align }};height:100%">
+            {%- render block -%}
+          </div>
+        </c-animate>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.multicolumn.name",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "t:sections.multicolumn.settings.heading.label" },
+    { "type": "range", "id": "columns_desktop", "label": "t:sections.multicolumn.settings.columns_desktop.label", "min": 140, "max": 420, "step": 20, "unit": "px", "default": 220 },
+    {
+      "type": "select", "id": "header_alignment", "label": "t:sections.multicolumn.settings.header_alignment.label", "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ] },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.multicolumn.settings.remove_top_padding.label", "default": false },
+    { "type": "checkbox", "id": "remove_bottom_padding", "label": "t:sections.multicolumn.settings.remove_bottom_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.multicolumn.presets.default",
+      "blocks": [
+        { "type": "icon", "settings": { "icon": "truck", "label": "Free shipping over $150", "align": "center" } },
+        { "type": "icon", "settings": { "icon": "refresh", "label": "30-day easy returns", "align": "center" } },
+        { "type": "icon", "settings": { "icon": "leaf", "label": "Natural fibres", "align": "center" } },
+        { "type": "icon", "settings": { "icon": "ruler", "label": "Made to measure", "align": "center" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

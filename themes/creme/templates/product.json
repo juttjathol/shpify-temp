@@ -1,0 +1,42 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "description": {
+          "type": "description"
+        },
+        "shipping": {
+          "type": "text",
+          "settings": {
+            "heading": "Shipping & returns",
+            "text": "<p>Complimentary carbon-neutral shipping on orders over $150. Returns accepted within 30 days, unworn and with tags attached.</p>"
+          }
+        },
+        "share": {
+          "type": "share"
+        }
+      },
+      "block_order": ["description", "shipping", "share"],
+      "settings": {
+        "full_width": false,
+        "show_rating": true,
+        "show_quantity_selector": true,
+        "image_ratio": "portrait"
+      }
+    },
+    "recommendations": {
+      "type": "product-grid",
+      "settings": {
+        "heading": "You may also like",
+        "heading_tag": "h2",
+        "columns_desktop": 240,
+        "image_size": "(min-width: 750px) 25vw, 50vw",
+        "header_alignment": "left",
+        "remove_top_padding": true,
+        "remove_bottom_padding": false
+      }
+    }
+  },
+  "order": ["main", "recommendations"]
+}

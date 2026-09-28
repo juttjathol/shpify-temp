@@ -1,0 +1,215 @@
+{%- comment -%}
+  Emits the live theme settings as CSS custom properties.
+  Every visual decision in Creme is routed through here, so a change in the
+  theme editor repaints the storefront without touching a line of Liquid or CSS.
+{%- endcomment -%}
+{%- liquid
+  assign body_font = settings.type_body_font
+  assign head_font = settings.type_heading_font
+  assign body_size = settings.type_body_size | default: 16
+  assign heading_scale = settings.type_heading_size | default: 100
+  assign card_ratio = settings.card_image_ratio | default: 'portrait'
+
+  # Page width resolves from the narrow / normal / wide preset, with a custom
+  # escape hatch that only applies when "Custom" is selected.
+  assign width_px = settings.page_width_custom | default: 1440
+  case settings.page_width
+    when 'narrow'
+      assign width_px = 1200
+    when 'normal'
+      assign width_px = 1440
+    when 'wide'
+      assign width_px = 1680
+  endcase
+
+  # Section padding is a three-step preset; the px value is what sections use.
+  assign section_pad = 44
+  case settings.section_padding
+    when 'small'
+      assign section_pad = 32
+    when 'large'
+      assign section_pad = 88
+  endcase
+
+  assign radius_card = settings.radius_card | default: 4
+  assign radius_button = settings.radius_button | default: 4
+  assign hover_style = settings.card_hover_effect | default: 'second-image'
+  assign overlay_opacity = settings.hero_overlay_opacity | default: 35
+-%}
+
+<style>
+  :root {
+    /* — Colours: background & surfaces — */
+    --color-bg: {{ settings.color_background }};
+    --color-bg-soft: {{ settings.color_background_soft }};
+    --color-surface: {{ settings.color_surface }};
+    --color-surface-alt: {{ settings.color_surface_alt }};
+
+    /* — Colours: text & borders — */
+    --color-ink: {{ settings.color_text }};
+    --color-ink-soft: {{ settings.color_text_soft }};
+    --color-ink-mute: {{ settings.color_text_muted }};
+    --color-line: {{ settings.color_border }};
+    --color-line-strong: {{ settings.color_border_strong }};
+
+    /* — Colours: primary / secondary / accent — */
+    --color-primary: {{ settings.color_primary }};
+    --color-primary-hover: {{ settings.color_primary_hover }};
+    --color-primary-contrast: {{ settings.color_primary_contrast }};
+    --color-secondary: {{ settings.color_secondary }};
+    --color-tertiary: {{ settings.color_accent }};
+    --color-sale: {{ settings.color_sale }};
+    --color-star: {{ settings.color_star }};
+
+    /*
+      Legacy aliases. Components were written against --color-accent before the
+      primary/secondary/accent split existed; rather than touch every component
+      we point the old names at the new ones.
+    */
+    --color-accent: {{ settings.color_primary }};
+    --color-accent-hover: {{ settings.color_primary_hover }};
+    --color-accent-contrast: {{ settings.color_primary_contrast }};
+
+    /* — Colours: buttons — */
+    --color-button: {{ settings.color_button }};
+    --color-button-hover: {{ settings.color_button_hover }};
+    --color-button-text: {{ settings.color_button_text }};
+    --color-button-outline-text: {{ settings.color_button_outline_text }};
+
+    /* — Colours: header & footer — */
+    --color-header-bg: {{ settings.color_header_bg }};
+    --color-header-text: {{ settings.color_header_text }};
+    --color-footer-bg: {{ settings.color_footer_bg }};
+    --color-footer-text: {{ settings.color_footer_text }};
+
+    /* — Typography — */
+    --font-heading-family: {{ head_font.family }}, {{ head_font.fallback_families }};
+    --font-body-family: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --font-body-size: {{ body_size }}px;
+    --font-body-line: {{ settings.body_line_height | divided_by: 100.0 }};
+    --font-heading-weight: {{ head_font.weight | default: 400 }};
+    --font-heading-tracking: {{ settings.heading_letter_spacing | default: 0.01 }}em;
+    --font-heading-transform: {{ settings.heading_text_transform | default: 'none' }};
+    --font-heading-scale: {{ heading_scale | divided_by: 100.0 }};
+
+    /* — Typography: buttons — */
+    --btn-font-weight: {{ settings.button_font_weight | default: 600 }};
+    --btn-font-size: {{ settings.button_font_size | default: 13 }}px;
+    --btn-letter-spacing: {{ settings.button_letter_spacing | default: 10 | divided_by: 100.0 }}em;
+    --btn-text-transform: {{ settings.button_text_transform | default: 'uppercase' }};
+    --btn-border-width: {{ settings.button_border_width | default: 1 }}px;
+    --btn-radius: {{ radius_button }}px;
+
+    /* — Layout & spacing — */
+    --page-width: {{ width_px }}px;
+    --container-pad: {{ settings.container_padding | default: 24 }}px;
+    --grid-gap: {{ settings.grid_gap | default: 28 }}px;
+    --section-pad: {{ section_pad }}px;
+    --section-gap: {{ settings.section_spacing | default: 64 }}px;
+    --radius: {{ radius_card }}px;
+    --radius-card: {{ radius_card }}px;
+    --radius-btn: {{ radius_button }}px;
+    --radius-lg: {{ radius_card | times: 2.2 | round }}px;
+    --radius-pill: 999px;
+    --border-width: {{ settings.border_width | default: 1 }}px;
+    --header-height: {{ settings.header_height | default: 72 }}px;
+    --card-min: {{ settings.card_min_width | default: 240 }}px;
+
+    /* — Header chrome — */
+    --header-align: {{ settings.header_menu_alignment | default: 'center' }};
+    --footer-cols: {{ settings.footer_columns | default: 3 }};
+    --header-sticky: {{ settings.header_sticky | default: true }};
+    --header-transparent: {{ settings.header_transparent | default: false }};
+
+    /* — Hero — */
+    --hero-overlay: {{ settings.hero_overlay_color | default: '#1f1a17' }};
+    --hero-overlay-alpha: {{ overlay_opacity | divided_by: 100.0 }};
+    --hero-veil: calc(var(--hero-overlay-alpha) * 100%);
+
+    /* — Product cards — */
+    --card-hover: {{ hover_style }};
+
+    /* — Motion — */
+    --ease: {{ settings.motion_easing | default: 'cubic-bezier(0.2, 0, 0.2, 1)' }};
+    --duration: {{ settings.motion_duration | default: 350 }}ms;
+  }
+
+  /* Product card image ratio */
+  {%- case card_ratio -%}
+    {%- when 'square' -%}
+      .card__media, .collection-card__media { aspect-ratio: 1 / 1; }
+    {%- when 'landscape' -%}
+      .card__media, .collection-card__media { aspect-ratio: 4 / 3; }
+    {%- when 'tall' -%}
+      .card__media, .collection-card__media { aspect-ratio: 2 / 3; }
+    {%- else -%}
+      .card__media, .collection-card__media { aspect-ratio: 3 / 4; }
+  {%- endcase -%}
+
+  /* Heading size scale */
+  .h0 { font-size: calc(clamp(2.25rem, 5.2vw, 3.75rem) * var(--font-heading-scale)); }
+  .h1 { font-size: calc(clamp(1.85rem, 4vw, 2.75rem) * var(--font-heading-scale)); }
+  .h2 { font-size: calc(clamp(1.5rem, 3vw, 2.1rem) * var(--font-heading-scale)); }
+  .h3 { font-size: calc(clamp(1.25rem, 2.2vw, 1.6rem) * var(--font-heading-scale)); }
+
+  /* Section padding preset */
+  .section { padding-block: var(--section-pad); }
+  .section--tight { padding-block: calc(var(--section-pad) * 0.7); }
+  @media (min-width: 750px) {
+    .section { padding-block: clamp({{ section_pad }}px, 6vw, var(--section-gap)); }
+  }
+
+  /* Button typography + shape come straight from the editor */
+  .btn {
+    font-family: var(--font-body-family);
+    font-weight: var(--btn-font-weight);
+    font-size: var(--btn-font-size);
+    letter-spacing: var(--btn-letter-spacing);
+    text-transform: var(--btn-text-transform);
+    border-width: var(--btn-border-width);
+    border-radius: var(--btn-radius);
+  }
+
+  /* Default button style / hover behaviour chosen in the editor */
+  .btn--default {
+    --btn-bg: var(--color-button);
+    --btn-fg: var(--color-button-text);
+    --btn-border: var(--color-button);
+  }
+  {%- case settings.button_style -%}
+    {%- when 'outline' -%}
+      .btn--default { --btn-bg: transparent; --btn-fg: var(--color-button-outline-text); --btn-border: var(--color-button); }
+    {%- when 'soft' -%}
+      .btn--default { --btn-bg: var(--color-surface-alt); --btn-fg: var(--color-ink); --btn-border: var(--color-surface-alt); }
+    {%- when 'ghost' -%}
+      .btn--default { --btn-bg: transparent; --btn-fg: var(--color-button-outline-text); --btn-border: transparent; }
+  {%- endcase -%}
+
+  {%- case settings.button_hover_style -%}
+    {%- when 'invert' -%}
+      .btn--default:hover { --btn-bg: transparent; --btn-fg: var(--color-button); opacity: 1; }
+    {%- when 'fill' -%}
+      .btn--default:hover { --btn-bg: var(--color-button-hover); --btn-fg: var(--color-button-text); opacity: 1; }
+    {%- when 'none' -%}
+      .btn--default:hover { opacity: 1; }
+  {%- endcase -%}
+
+  /* Product card hover effect */
+  {%- case hover_style -%}
+    {%- when 'zoom' -%}
+      .card__image { transition: transform .6s var(--ease); }
+      .card:hover .card__image { transform: scale(1.05); }
+    {%- when 'overlay' -%}
+      .card__media::after {
+        content: ""; position: absolute; inset: 0; z-index: 1;
+        background: var(--color-primary); opacity: 0;
+        transition: opacity var(--duration) var(--ease);
+        pointer-events: none;
+      }
+      .card:hover .card__media::after { opacity: .14; }
+  {%- endcase -%}
+
+  {%- if settings.enable_scroll_animations == false -%}
+    [data-animate], c-animate { opacity: 1 !important; transform: none !important; }
+  {%- endif -%}
+</style>

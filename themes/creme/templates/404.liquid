@@ -1,0 +1,57 @@
+{%- comment -%}
+  404 page. Renders inside layout/theme.liquid, so it inherits the header,
+  footer, search panel and cart drawer.
+{%- endcomment -%}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-section.css' | asset_url | stylesheet_tag }}
+
+<div class="section">
+  <div class="container container--narrow" style="text-align:center">
+    <p class="eyebrow eyebrow--accent">404</p>
+    <h1 class="h0" style="margin-bottom:16px">{{ 'general.404.heading' | t }}</h1>
+    <p class="text-ink-soft" style="max-width:52ch;margin:0 auto 30px">{{ 'general.404.text' | t }}</p>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" style="max-width:520px;margin:0 auto 36px">
+      <div class="search-panel__form" style="border-bottom-color:var(--color-ink)">
+        <label class="visually-hidden" for="NotFoundSearch">{{ 'general.search.title' | t }}</label>
+        <input
+          class="search-panel__input"
+          id="NotFoundSearch"
+          type="search"
+          name="q"
+          placeholder="{{ 'general.search.placeholder' | t | escape }}"
+        >
+        <button class="btn btn--accent btn--sm" type="submit">{{ 'general.search.submit' | t }}</button>
+      </div>
+    </form>
+
+    <div class="flex-wrap" style="justify-content:center">
+      <a class="btn btn--outline" href="{{ routes.all_products_collection_url }}">{{ 'general.nav.shop_all' | t }}</a>
+      <a class="btn btn--ghost" href="{{ routes.root_url }}">{{ 'general.breadcrumbs.home' | t }}</a>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Point people somewhere useful {%- endcomment -%}
+{%- liquid
+  assign fallback = collections.all
+  assign picks = collections.all.products | slice: 0, 4
+  if picks.size == 0
+    assign picks = collections.first.products | slice: 0, 4
+  endif
+-%}
+
+{%- if picks.size > 0 -%}
+  <div class="section section--flush-top">
+    <div class="container">
+      <div class="section__header section__header--center">
+        <h2 class="h2">{{ 'general.404.popular' | t }}</h2>
+      </div>
+      <div class="grid" style="--card-min:240px">
+        {%- for product in picks -%}
+          {%- render 'product-card', card_product: product -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}

@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Creme — optional self-hosted webfonts
+   --------------------------------------------------------------------------
+   These faces are ONLY requested when a merchant turns on
+   "Use self-hosted fonts" in Theme editor → Theme settings → Typography,
+   and after dropping matching .woff2 files next to this stylesheet.
+
+   Why is it off by default: shipping a stylesheet that points at files that
+   do not exist would fire 404s on every page load and hurt Core Web Vitals.
+   The theme therefore defaults to Shopify's font library (fonts are served
+   from Shopify's CDN, cached at the edge, and require no extra request).
+
+   HOW TO USE
+   1. Buy/obtain a webfont licence (e.g. from Google Fonts, MyFonts, Fontspring).
+   2. Drop the .woff2 files in this folder:
+        creme-serif-regular.woff2
+        creme-serif-italic.woff2
+        creme-sans-regular.woff2
+        creme-sans-medium.woff2
+   3. In Theme settings → Typography, turn ON "Use self-hosted fonts".
+   4. Set --font-heading-family / --font-body-family in the same panel if the
+      family names below do not match your files.
+
+   Files that are absent simply fail over to the next source in the list and
+   then to the theme's fallback stack, so partial setups still render fine.
+   ========================================================================== */
+
+/* --- Display / heading: Creme Serif ----------------------------------- */
+@font-face {
+  font-family: "Creme Serif";
+  src: local("Playfair Display"), local("Bodoni Moda"), url("creme-serif-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Creme Serif";
+  src: local("Playfair Display Italic"), local("Bodoni Moda Italic"), url("creme-serif-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --- Body / UI: Creme Sans -------------------------------------------- */
+@font-face {
+  font-family: "Creme Sans";
+  src: local("Jost"), local("Avenir Next"), local("Inter"), url("creme-sans-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Creme Sans";
+  src: local("Jost Medium"), local("Avenir Next Medium"), local("Inter Medium"), url("creme-sans-medium.woff2") format("woff2");
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}

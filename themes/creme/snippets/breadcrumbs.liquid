@@ -1,0 +1,23 @@
+{%- comment -%}Breadcrumb trail. Works on product, collection, article, page, blog.{%- endcomment -%}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="{{ routes.root_url }}">{{ 'general.breadcrumbs.home' | t }}</a>
+  {%- if template contains 'product' -%}
+    {%- if collection -%}
+      <span aria-hidden="true">/</span>
+      <a href="{{ collection.url }}">{{ collection.title }}</a>
+    {%- endif -%}
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ product.title | truncate: 40 }}</span>
+  {%- elsif template contains 'collection' -%}
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ collection.title }}</span>
+  {%- elsif template contains 'article' -%}
+    <span aria-hidden="true">/</span>
+    <a href="{{ blog.url }}">{{ blog.title }}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ article.title | truncate: 40 }}</span>
+  {%- elsif template contains 'page' -%}
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ page.title }}</span>
+  {%- endif -%}
+</nav>

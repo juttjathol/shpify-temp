@@ -1,0 +1,29 @@
+{%- comment -%}
+  Shared section heading. Params:
+    heading, subheading, heading_tag (h1..h4), heading_class,
+    align (left|center|right), link_label, link_url
+{%- endcomment -%}
+{%- liquid
+  assign tag = heading_tag | default: 'h2'
+  assign align = align | default: 'left'
+  assign has_sub = subheading != blank
+  assign has_link = link_label != blank and link_url != blank
+-%}
+{%- if heading != blank or has_sub or has_link -%}
+  <div class="section__header section__header--{{ align }}">
+    <div>
+      {%- if heading != blank -%}
+        <{{ tag }} class="{{ heading_class | default: 'h2' }} section__header-title">{{ heading }}</{{ tag }}>
+      {%- endif -%}
+      {%- if has_sub -%}
+        <p class="text-ink-soft" style="max-width:56ch;margin-top:8px;text-align:{{ align }};">{{ subheading }}</p>
+      {%- endif -%}
+    </div>
+    {%- if has_link -%}
+      <a class="link-arrow" href="{{ link_url }}">
+        {{ link_label }}
+        {%- render 'icon', name: 'arrow-right', size: 14 -%}
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}

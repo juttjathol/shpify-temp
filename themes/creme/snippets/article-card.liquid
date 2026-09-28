@@ -1,0 +1,23 @@
+{%- comment -%}
+  Blog article card. Params: card_article, show_image, image_ratio
+{%- endcomment -%}
+{%- liquid
+  assign a = card_article
+  assign img_sizes = sizes | default: '(min-width: 750px) 33vw, 100vw'
+-%}
+<article class="article-card">
+  <a class="card__media" href="{{ a.url }}" tabindex="-1">
+    {%- if a.image -%}
+      {%- render 'responsive-image', image: a.image, sizes: img_sizes -%}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </a>
+  <div class="card__info">
+    <span class="article-card__meta">{{ a.published_at | date: '%B %-d, %Y' }}</span>
+    <h3 class="article-card__title h4">
+      <a href="{{ a.url }}">{{ a.title }}</a>
+    </h3>
+    <p class="article-card__excerpt">{{ a.excerpt_or_content | strip_html | truncate: 130 }}</p>
+  </div>
+</article>

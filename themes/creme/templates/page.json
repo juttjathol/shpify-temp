@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "show_title": true,
+        "heading_size": "h1",
+        "title_alignment": "center",
+        "title_spacing": 28,
+        "width": "narrow",
+        "remove_top_padding": false
+      }
+    }
+  },
+  "order": ["main"]
+}

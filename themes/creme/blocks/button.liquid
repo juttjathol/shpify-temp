@@ -1,0 +1,45 @@
+{%- comment -%}@theme — Reusable link button.{%- endcomment -%}
+
+{%- if block.settings.label != blank -%}
+  <div class="block-button" style="text-align:{{ block.settings.align }};margin-top:{{ block.settings.spacing_top }}px">
+    <a
+      class="btn {{ block.settings.style }} {{ block.settings.size }}"
+      href="{{ block.settings.link | default: '#' }}"
+      {% if block.settings.new_tab %}target="_blank" rel="noopener"{% endif %}
+    >
+      {{ block.settings.label }}
+    </a>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:blocks.button.name",
+  "settings": [
+    { "type": "text", "id": "label", "label": "t:blocks.button.settings.label.label", "default": "Shop the collection" },
+    { "type": "url", "id": "link", "label": "t:blocks.button.settings.link.label" },
+    { "type": "checkbox", "id": "new_tab", "label": "t:blocks.button.settings.new_tab.label", "default": false },
+    { "type": "select", "id": "style", "label": "t:blocks.button.settings.style.label", "default": "btn--accent",
+      "options": [
+        { "value": "btn--accent", "label": "Solid" },
+        { "value": "btn--outline", "label": "Outline" },
+        { "value": "btn--soft", "label": "Soft" },
+        { "value": "btn--ghost", "label": "Text" }
+      ] },
+    { "type": "select", "id": "size", "label": "t:blocks.button.settings.size.label", "default": "",
+      "options": [
+        { "value": "btn--sm", "label": "Small" },
+        { "value": "", "label": "Medium" },
+        { "value": "btn--lg", "label": "Large" }
+      ] },
+    { "type": "select", "id": "align", "label": "t:blocks.button.settings.align.label", "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ] },
+    { "type": "range", "id": "spacing_top", "label": "t:blocks.button.settings.spacing_top.label", "min": 0, "max": 64, "step": 4, "unit": "px", "default": 20 }
+  ],
+  "presets": [{ "name": "t:blocks.button.presets.button" }]
+}
+{% endschema %}

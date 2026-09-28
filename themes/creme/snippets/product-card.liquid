@@ -1,0 +1,132 @@
+{%- comment -%}
+  Product card used by product grids, featured collections and search.
+  Params:
+    card_product  — product object
+    show_image, show_vendor, show_title, show_price, show_swatches,
+    show_rating, show_quick_add, show_wishlist, image_loading, sizes
+{%- endcomment -%}
+{%- liquid
+  assign p = card_product
+  assign show_image = show_image | default: true
+  assign show_vendor = show_vendor | default: settings.card_show_vendor
+  assign show_price = show_price | default: true
+  assign show_swatches = show_swatches | default: settings.card_show_swatches
+  assign show_rating = show_rating | default: settings.card_show_rating
+  assign show_quick_add = show_quick_add | default: settings.card_show_quick_add
+  assign show_wishlist = show_wishlist | default: settings.card_show_wishlist
+  assign hover_second = false
+  if settings.card_hover_effect == 'second-image'
+    assign hover_second = true
+  endif
+  assign img_loading = image_loading | default: 'lazy'
+  assign card_sizes = sizes | default: '(min-width: 990px) 25vw, (min-width: 749px) 33vw, 50vw'
+
+  assign on_sale = false
+  if p.compare_at_price > p.price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="card" data-product-card>
+  <div class="card__media">
+    <a href="{{ p.url }}" aria-label="{{ p.title | escape }}" tabindex="-1">
+      <div class="card__image-wrap">
+        {%- if show_image -%}
+          {%- if p.featured_media -%}
+            {%- render 'responsive-image',
+              image: p.featured_media,
+              sizes: card_sizes,
+              loading: img_loading,
+              class: 'card__image' -%}
+            {%- if hover_second and p.media[1] != blank -%}
+              {%- render 'responsive-image',
+                image: p.media[1],
+                sizes: card_sizes,
+                loading: img_loading,
+                class: 'card__image card__image--secondary' -%}
+            {%- endif -%}
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg card__image' }}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </a>
+
+    {%- comment -%} Badges {%- endcomment -%}
+    <div class="card__badges">
+      {%- unless p.available -%}
+        <span class="badge badge--soft">{{ 'products.sold_out' | t }}</span>
+      {%- endunless -%}
+      {%- if on_sale -%}
+        <span class="badge badge--sale">{{ 'products.sale' | t }}</span>
+      {%- endif -%}
+      {%- unless p.available or on_sale -%}
+        {%- if p.tags contains 'New' or p.tags contains 'new' -%}
+          <span class="badge badge--new">{{ 'products.new' | t }}</span>
+        {%- endif -%}
+      {%- endunless -%}
+      {%- if p.tags contains 'exclusive' or p.tags contains 'Exclusive' -%}
+        <span class="badge">{{ 'products.exclusive' | t }}</span>
+      {%- endif -%}
+    </div>
+
+    {%- if show_wishlist -%}
+      <button class="card__wishlist" type="button" aria-label="{{ 'products.add_to_wishlist' | t | escape }}">
+        {%- render 'icon', name: 'heart', size: 18 -%}
+      </button>
+    {%- endif -%}
+
+    {%- if show_quick_add and p.available -%}
+      <div class="card__quick-add">
+        <form data-quick-add="{{ p.selected_or_first_available_variant.id }}">
+          <button class="btn btn--sm btn--block" type="submit">
+            {%- if p.variants.size > 1 and settings.card_quick_add_mode == 'link' -%}
+              {{ 'products.choose_options' | t }}
+            {%- else -%}
+              {{ 'products.add_to_cart' | t }}
+            {%- endif -%}
+          </button>
+        </form>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="card__info">
+    {%- if show_vendor and p.vendor != blank -%}
+      <span class="card__vendor">{{ p.vendor }}</span>
+    {%- endif -%}
+
+    <h3 class="card__title">
+      <a href="{{ p.url }}">{{ p.title }}</a>
+    </h3>
+
+    {%- if show_rating -%}
+      <span class="card__rating">
+        {%- render 'icon', name: 'star', size: 13 -%}
+        <span>{{ 'products.rating_placeholder' | t }}</span>
+      </span>
+    {%- endif -%}
+
+    {%- if show_price -%}
+      {%- render 'price', product_or_variant: p, class: 'card__price' -%}
+    {%- endif -%}
+
+    {%- if show_swatches -%}
+      {%- liquid
+        assign swatches = p.options_by_name['Color'] | default: p.options_by_name['colour']
+        if swatches
+          assign swatch_values = swatches.values
+        else
+          assign swatch_values = ''
+        endif
+      -%}
+      {%- if swatch_values != blank -%}
+        <div class="card__swatches">
+          {%- for value in swatch_values limit: 5 -%}
+            <span class="card__swatch" style="background:{{ value | handle | replace: '-', ' ' }}" title="{{ value | escape }}"></span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>

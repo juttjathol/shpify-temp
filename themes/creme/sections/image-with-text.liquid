@@ -1,0 +1,78 @@
+{%- comment -%}
+  Image + text split. The copy side is composed from theme blocks so the same
+  pattern can be reused for editorial pages, product storytelling and promos.
+{%- endcomment -%}
+{{ 'component-section.css' | asset_url | stylesheet_tag }}
+{{ 'component-rte.css' | asset_url | stylesheet_tag }}
+
+<section class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}{% if section.settings.remove_bottom_padding %} section--flush-bottom{% endif %}">
+  <div class="container">
+    <div class="iwt iwt--{{ section.settings.image_position }}">
+      <div class="iwt__media">
+        {%- if section.settings.image != blank -%}
+          {%- render 'responsive-image',
+            image: section.settings.image,
+            sizes: section.settings.image_size,
+            loading: 'lazy',
+            ratio_class: section.settings.image_ratio -%}
+        {%- else -%}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+        {%- if section.settings.show_decoration -%}
+          <span class="iwt__decoration" style="background:{{ section.settings.decoration_color }};opacity:0.18" aria-hidden="true"></span>
+        {%- endif -%}
+      </div>
+
+      <div class="iwt__body">
+        {% content_for 'blocks' %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.image-with-text.name",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "t:sections.image-with-text.settings.image.label" },
+    {
+      "type": "select", "id": "image_position", "label": "t:sections.image-with-text.settings.image_position.label", "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "select", "id": "image_ratio", "label": "t:sections.image-with-text.settings.image_ratio.label", "default": "portrait",
+      "options": [
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "tall", "label": "Tall (2:3)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "wide", "label": "Wide (16:9)" }
+      ]
+    },
+    {
+      "type": "select", "id": "image_size", "label": "t:sections.image-with-text.settings.image_size.label", "default": "(min-width: 750px) 50vw, 100vw",
+      "options": [
+        { "value": "(min-width: 750px) 50vw, 100vw", "label": "Large" },
+        { "value": "(min-width: 990px) 33vw, (min-width: 749px) 50vw, 100vw", "label": "Medium" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_decoration", "label": "t:sections.image-with-text.settings.show_decoration.label", "default": true },
+    { "type": "color", "id": "decoration_color", "label": "t:sections.image-with-text.settings.decoration_color.label", "default": "#7c8b6a" },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.image-with-text.settings.remove_top_padding.label", "default": false },
+    { "type": "checkbox", "id": "remove_bottom_padding", "label": "t:sections.image-with-text.settings.remove_bottom_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.image-with-text.presets.default",
+      "blocks": {
+        "heading": { "type": "heading", "settings": { "eyebrow": "Our craft", "heading": "Made slowly, worn often", "subheading": "<p>Every piece starts with a fibre we believe in and a cut that lasts.</p>", "spacing_bottom": 0 } },
+        "button": { "type": "button", "settings": { "label": "Read our story", "style": "btn--outline", "spacing_top": 20 } }
+      }
+    }
+  ]
+}
+{% endschema %}

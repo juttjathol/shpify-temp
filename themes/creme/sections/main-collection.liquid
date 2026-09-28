@@ -1,0 +1,186 @@
+{%- comment -%}
+  Collection listing: banner, sort/filter toolbar, active filter chips,
+  paginated product grid, empty state and an @app block slot.
+{%- endcomment -%}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-pagination.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign per_page = section.settings.products_per_page
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign current_tags = collection.current_tags
+
+  assign price_0_100 = 100 | money
+  assign price_100_200_a = 100 | money
+  assign price_100_200_b = 200 | money
+  assign price_200_400_a = 200 | money
+  assign price_200_400_b = 400 | money
+  assign price_400_plus = 400 | money
+-%}
+
+<div class="section{% if section.settings.remove_top_padding %} section--flush-top{% endif %}">
+  <div class="container">
+    {%- if section.settings.show_banner -%}
+      <header class="collection__banner{% if section.settings.banner_image != blank %} media media--{{ section.settings.banner_ratio }}{% endif %}"
+        {% if section.settings.banner_image != blank %}style="margin-bottom:32px;border-radius:var(--radius);overflow:hidden"{% endif %}
+      >
+        {%- if section.settings.banner_image != blank -%}
+          {%- render 'responsive-image', image: section.settings.banner_image, sizes: '100vw', loading: 'eager', ratio_class: section.settings.banner_ratio -%}
+        {%- endif -%}
+
+        <div{% if section.settings.banner_image != blank %} class="collection__banner-overlay"{% endif %}>
+          {%- render 'breadcrumbs' -%}
+          <h1 class="h1">{{ collection.title }}</h1>
+          {%- if section.settings.show_description and collection.description != blank -%}
+            <div class="rte collection__banner-text">{{ collection.description }}</div>
+          {%- endif -%}
+        </div>
+      </header>
+    {%- else -%}
+      <div style="margin-bottom:24px">
+        {%- render 'breadcrumbs' -%}
+        <h1 class="h1">{{ collection.title }}</h1>
+        {%- if section.settings.show_description and collection.description != blank -%}
+          <div class="rte collection__banner-text" style="margin-top:10px">{{ collection.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <form data-filter-form onsubmit="return false">
+      <div class="collection__toolbar">
+        <span class="collection__count">
+          {%- if paginate -%}
+            {{ 'collections.count_with_filter' | t: count: paginate.items }}
+          {%- else -%}
+            {{ 'collections.count' | t: count: collection.products_count }}
+          {%- endif -%}
+        </span>
+
+        <div class="collection__controls">
+          {%- comment -%} Availability (Storefront filter) {%- endcomment -%}
+          <label class="visually-hidden" for="Filter-availability">{{ 'collections.filters.availability' | t }}</label>
+          <div class="field__select-wrap" style="min-width:160px">
+            <select class="field__select" id="Filter-availability" data-filter-key="filter.v.availability">
+              <option value="">{% if collection.url contains 'filter.v.availability' %}{{ collection.url | split: 'filter.v.availability' | last | split: '&' | first | replace: '+', ' ' | capitalize }}{% else %}{{ 'collections.filters.all' | t }}{% endif %}</option>
+              <option value="1" {% if collection.url contains 'filter.v.availability=1' %}selected="selected"{% endif %}>{{ 'collections.filters.in_stock' | t }}</option>
+              <option value="0" {% if collection.url contains 'filter.v.availability=0' %}selected="selected"{% endif %}>{{ 'collections.filters.out_of_stock' | t }}</option>
+            </select>
+            {%- render 'icon', name: 'chevron-down', size: 12 -%}
+          </div>
+
+          {%- comment -%} Price range {%- endcomment -%}
+          <label class="visually-hidden" for="Filter-price">{{ 'collections.filters.price' | t }}</label>
+          <div class="field__select-wrap" style="min-width:160px">
+            <select class="field__select" id="Filter-price" data-filter-key="filter.v.price">
+              <option value="">{% if collection.url contains 'filter.v.price' %}{{ collection.url | split: 'filter.v.price' | last | split: '&' | first | replace: '-', ' ' }}{% else %}{{ 'collections.filters.price' | t }}{% endif %}</option>
+              <option value="0-100" {% if collection.url contains 'filter.v.price=0-100' %}selected="selected"{% endif %}>{{ 'collections.filters.price_under' | t: amount: price_0_100 }}</option>
+              <option value="100-200" {% if collection.url contains 'filter.v.price=100-200' %}selected="selected"{% endif %}>{{ 'collections.filters.price_range' | t: min: price_100_200_a, max: price_100_200_b }}</option>
+              <option value="200-400" {% if collection.url contains 'filter.v.price=200-400' %}selected="selected"{% endif %}>{{ 'collections.filters.price_range' | t: min: price_200_400_a, max: price_200_400_b }}</option>
+              <option value="400-0" {% if collection.url contains 'filter.v.price=400-0' %}selected="selected"{% endif %}>{{ 'collections.filters.price_over' | t: amount: price_400_plus }}</option>
+            </select>
+            {%- render 'icon', name: 'chevron-down', size: 12 -%}
+          </div>
+
+          {%- comment -%} Sort {%- endcomment -%}
+          <label class="visually-hidden" for="SortBy">{{ 'collections.sorting.title' | t }}</label>
+          <div class="field__select-wrap" style="min-width:180px">
+            <select class="field__select" id="SortBy" data-filter-key="sort_by">
+              {%- for option in collection.sort_options -%}
+                <option
+                  value="{{ option.value }}"
+                  {% if option.value == sort_by %}selected="selected"{% endif %}
+                >{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+            {%- render 'icon', name: 'chevron-down', size: 12 -%}
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Active filter chips {%- endcomment -%}
+      {%- if current_tags.size > 0 -%}
+        <div class="filters__active" style="margin-bottom:20px">
+          {%- for tag in current_tags -%}
+            {%- liquid
+              assign tag_parts = tag | split: ':'
+              assign tag_name = tag_parts | first
+              assign tag_value = tag_parts | last
+              assign tag_url = tag | url_encode
+            -%}
+            <a class="filter-chip" href="{{ collection.url }}?constraint={{ tag_url }}">
+              {{ tag_name }}: {{ tag_value | replace: '-', ' ' }}
+              {%- render 'icon', name: 'close', size: 10 -%}
+            </a>
+          {%- endfor -%}
+          <a class="filter-chip" href="{{ collection.url }}">{{ 'collections.filters.clear_all' | t }}</a>
+        </div>
+      {%- endif -%}
+    </form>
+
+    {%- if collection.products_count > 0 -%}
+      <div class="grid" style="--card-min:{{ section.settings.columns_desktop }}px">
+        {%- paginate collection.products by per_page -%}
+          {%- for product in collection.products -%}
+            <c-animate data-delay="{{ forloop.index0 | times: 50 }}">
+              {%- render 'product-card', card_product: product, sizes: section.settings.image_size -%}
+            </c-animate>
+          {%- else -%}
+            <div class="collection__empty" style="grid-column:1/-1">
+              {%- render 'icon', name: 'search', size: 48 -%}
+              <p>{{ 'collections.no_matches' | t }}</p>
+              <a class="btn btn--outline" href="{{ collection.url }}">{{ 'collections.filters.clear_all' | t }}</a>
+            </div>
+          {%- endfor -%}
+        {%- endpaginate -%}
+      </div>
+
+      {%- paginate collection.products by per_page -%}
+        {%- render 'pagination', paginate: paginate -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="collection__empty">
+        {%- render 'icon', name: 'bag', size: 48 -%}
+        <p class="text-ink-soft">{{ 'collections.empty' | t }}</p>
+        <a class="btn btn--outline" href="{{ routes.all_products_collection_url }}">{{ 'general.nav.shop_all' | t }}</a>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} App blocks (e.g. collection filters from apps) {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}
+        <div id="shopify-block-{{ block.id }}" style="margin-top:24px">{%- render block -%}</div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection.name",
+  "settings": [
+    { "type": "checkbox", "id": "show_banner", "label": "t:sections.main-collection.settings.show_banner.label", "default": true },
+    { "type": "image_picker", "id": "banner_image", "label": "t:sections.main-collection.settings.banner_image.label" },
+    {
+      "type": "select", "id": "banner_ratio", "label": "t:sections.main-collection.settings.banner_ratio.label", "default": "wide",
+      "options": [
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "wide", "label": "Wide (16:9)" }
+      ] },
+    { "type": "checkbox", "id": "show_description", "label": "t:sections.main-collection.settings.show_description.label", "default": true },
+    { "type": "range", "id": "products_per_page", "label": "t:sections.main-collection.settings.products_per_page.label", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns_desktop", "label": "t:sections.main-collection.settings.columns_desktop.label", "min": 180, "max": 460, "step": 20, "unit": "px", "default": 260 },
+    {
+      "type": "select", "id": "image_size", "label": "t:sections.main-collection.settings.image_size.label", "default": "(min-width: 750px) 25vw, 50vw",
+      "options": [
+        { "value": "(min-width: 990px) 20vw, (min-width: 749px) 33vw, 50vw", "label": "Small" },
+        { "value": "(min-width: 750px) 25vw, 50vw", "label": "Medium" },
+        { "value": "(min-width: 750px) 33vw, 50vw", "label": "Large" }
+      ] },
+    { "type": "checkbox", "id": "remove_top_padding", "label": "t:sections.main-collection.settings.remove_top_padding.label", "default": false }
+  ],
+  "blocks": [{ "type": "@app" }]
+}
+{% endschema %}

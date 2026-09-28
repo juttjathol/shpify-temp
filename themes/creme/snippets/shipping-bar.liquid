@@ -1,0 +1,26 @@
+{%- comment -%}Standalone free-shipping progress bar (footer / product page).{%- endcomment -%}
+{%- if settings.show_free_shipping_bar and settings.free_shipping_threshold > 0 -%}
+  {%- liquid
+    assign threshold_cents = settings.free_shipping_threshold | times: 100
+    assign remaining = threshold_cents | minus: cart.total_price
+    assign pct = 0
+    if threshold_cents > 0
+      assign pct = cart.total_price | times: 100 | divided_by: threshold_cents
+      if pct > 100
+        assign pct = 100
+      endif
+    endif
+  -%}
+  <div class="shipping-meter{% if remaining <= 0 %} is-complete{% endif %}">
+    <p class="shipping-meter__text">
+      {%- if remaining > 0 -%}
+        {{ 'cart.shipping_progress_html' | t: amount: remaining | money }}
+      {%- else -%}
+        {{ 'cart.shipping_qualified' | t }}
+      {%- endif -%}
+    </p>
+    <div class="shipping-meter__bar">
+      <div class="shipping-meter__fill" style="width:{{ pct }}%"></div>
+    </div>
+  </div>
+{%- endif -%}

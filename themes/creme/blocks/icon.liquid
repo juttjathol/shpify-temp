@@ -1,0 +1,55 @@
+{%- comment -%}@theme — Reusable icon, optionally wrapped in a link.{%- endcomment -%}
+
+<div class="block-icon text-{{ block.settings.align }}" style="margin-top:{{ block.settings.spacing_top }}px">
+  {%- if block.settings.link != blank -%}
+    <a href="{{ block.settings.link }}" aria-label="{{ block.settings.label | escape }}" style="color:{{ block.settings.color }}">
+      {%- render 'icon', name: block.settings.icon, size: block.settings.size -%}
+    </a>
+  {%- else -%}
+    <span style="color:{{ block.settings.color }}" role="img" aria-label="{{ block.settings.label | escape }}">
+      {%- render 'icon', name: block.settings.icon, size: block.settings.size -%}
+    </span>
+  {%- endif -%}
+  {%- if block.settings.show_label and block.settings.label != blank -%}
+    <p class="text-body-sm" style="margin-top:8px">{{ block.settings.label }}</p>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:blocks.icon.name",
+  "settings": [
+    {
+      "type": "select", "id": "icon", "label": "t:blocks.icon.settings.icon.label", "default": "sparkle",
+      "options": [
+        { "value": "sparkle", "label": "Sparkle" },
+        { "value": "leaf", "label": "Leaf" },
+        { "value": "gift", "label": "Gift" },
+        { "value": "truck", "label": "Delivery" },
+        { "value": "refresh", "label": "Returns" },
+        { "value": "shield", "label": "Secure" },
+        { "value": "ruler", "label": "Made to measure" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "star", "label": "Star" },
+        { "value": "lock", "label": "Lock" },
+        { "value": "leaf", "label": "Sustainability" },
+        { "value": "email", "label": "Email" },
+        { "value": "phone", "label": "Phone" },
+        { "value": "pin", "label": "Location" }
+      ]
+    },
+    { "type": "range", "id": "size", "label": "t:blocks.icon.settings.size.label", "min": 16, "max": 96, "step": 4, "unit": "px", "default": 32 },
+    { "type": "color", "id": "color", "label": "t:blocks.icon.settings.color.label", "default": "#c0563a" },
+    { "type": "text", "id": "label", "label": "t:blocks.icon.settings.label.label", "default": "Free shipping" },
+    { "type": "checkbox", "id": "show_label", "label": "t:blocks.icon.settings.show_label.label", "default": true },
+    { "type": "url", "id": "link", "label": "t:blocks.icon.settings.link.label" },
+    { "type": "select", "id": "align", "label": "t:blocks.icon.settings.align.label", "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ] },
+    { "type": "range", "id": "spacing_top", "label": "t:blocks.icon.settings.spacing_top.label", "min": 0, "max": 64, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "t:blocks.icon.presets.icon" }]
+}
+{% endschema %}

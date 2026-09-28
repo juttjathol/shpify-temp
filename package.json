@@ -1,0 +1,20 @@
+{
+  "name": "shpify-themes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A library of Shopify themes, each shipped as a single uploadable ZIP.",
+  "scripts": {
+    "build": "node scripts/build-themes.js",
+    "validate": "node scripts/validate-theme.js",
+    "locales": "node scripts/generate-schema-locale.js",
+    "render": "node scripts/render-check.js",
+    "preview:sync": "node scripts/sync-preview.js",
+    "check": "node scripts/generate-schema-locale.js && node scripts/validate-theme.js && node scripts/render-check.js && node scripts/build-themes.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "liquidjs": "^10.29.0"
+  }
+}

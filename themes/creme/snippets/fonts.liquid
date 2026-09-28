@@ -1,0 +1,13 @@
+{%- comment -%}
+  Optional self-hosted webfonts. Only requested when the merchant opts in AND
+  has dropped .woff2 files into assets/fonts/ — see that folder's README.
+{%- endcomment -%}
+{%- if settings.use_self_hosted_fonts -%}
+  {{ 'fonts/fonts.css' | asset_url | stylesheet_tag }}
+  <style>
+    :root {
+      --font-heading-family: "Creme Serif", "Bodoni Moda", Didot, Georgia, serif;
+      --font-body-family: "Creme Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+{%- endif -%}

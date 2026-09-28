@@ -1,0 +1,101 @@
+{%- comment -%}
+  Newsletter signup section. Cream, accent or dark card with optional
+  decorative shapes, used standalone or inside the footer group.
+{%- endcomment -%}
+{{ 'component-newsletter.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  "Show newsletter signup" in Theme settings → Footer switches this section off
+  wherever it is placed, so the copy stays consistent across the footer group
+  and any page a merchant has added it to.
+{%- endcomment -%}
+
+{%- liquid
+  assign card_class = 'newsletter--' | append: section.settings.color_scheme
+  assign has_form = false
+  for block in section.blocks
+    if block.type == 'form'
+      assign has_form = true
+      break
+    endif
+  endfor
+-%}
+
+{%- if settings.footer_show_newsletter -%}
+<div class="newsletter {{ card_class }} section--tight">
+  {%- if section.settings.show_decorations -%}
+    <span class="newsletter__decoration newsletter__decoration--1" aria-hidden="true"></span>
+    <span class="newsletter__decoration newsletter__decoration--2" aria-hidden="true"></span>
+  {%- endif -%}
+
+  <div class="newsletter__inner container">
+    <c-animate>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="newsletter__heading h2">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <p class="newsletter__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+
+      {%- if has_form -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'form' -%}
+            <div class="newsletter__form" {{ block.shopify_attributes }}>
+              {%- render 'newsletter-form',
+                id: block.id,
+                show_name: block.settings.show_name,
+                button_label: block.settings.button_label -%}
+              {%- if block.settings.disclaimer != blank -%}
+                <p class="newsletter__disclaimer">{{ block.settings.disclaimer }}</p>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </c-animate>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.newsletter.name",
+  "max_blocks": 1,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "t:sections.newsletter.settings.eyebrow.label", "default": "Join the list" },
+    { "type": "text", "id": "heading", "label": "t:sections.newsletter.settings.heading.label", "default": "Ten percent off, always" },
+    { "type": "textarea", "id": "text", "label": "t:sections.newsletter.settings.text.label", "default": "Be first to see new drops, restocks and the occasional invitation." },
+    {
+      "type": "select", "id": "color_scheme", "label": "t:sections.newsletter.settings.color_scheme.label", "default": "soft",
+      "options": [
+        { "value": "soft", "label": "Cream" },
+        { "value": "card", "label": "Accent" },
+        { "value": "ink", "label": "Dark" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_decorations", "label": "t:sections.newsletter.settings.show_decorations.label", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "form",
+      "name": "t:sections.newsletter.blocks.form.name",
+      "settings": [
+        { "type": "checkbox", "id": "show_name", "label": "t:sections.newsletter.blocks.form.settings.show_name.label", "default": false },
+        { "type": "text", "id": "button_label", "label": "t:sections.newsletter.blocks.form.settings.button_label.label", "default": "Subscribe" },
+        { "type": "text", "id": "disclaimer", "label": "t:sections.newsletter.blocks.form.settings.disclaimer.label", "default": "By signing up you agree to receive marketing email. Unsubscribe any time." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.newsletter.presets.default",
+      "blocks": [{ "type": "form" }]
+    }
+  ]
+}
+{% endschema %}

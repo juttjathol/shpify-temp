@@ -1,0 +1,55 @@
+{%- comment -%}
+  Newsletter signup. Posts to /contact with Shopify's customer marketing form.
+  Params: id (unique), show_name (bool), class, button_label
+{%- endcomment -%}
+{%- liquid
+  assign form_id = id | default: 'newsletter'
+  assign btn_label = button_label | default: 'general.newsletter.submit' | t
+-%}
+<form
+  class="inline-form {{ class }}"
+  action="{{ routes.contact_url }}"
+  method="post"
+  id="Form-{{ form_id }}"
+  data-newsletter-form
+>
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  <input type="hidden" name="contact[country]" value="{{ country.name }}">
+
+  {%- if show_name -%}
+    <div class="field">
+      <label class="visually-hidden" for="NewsletterName-{{ form_id }}">{{ 'general.newsletter.name' | t }}</label>
+      <input
+        class="field__input"
+        id="NewsletterName-{{ form_id }}"
+        type="text"
+        name="contact[name]"
+        value="{% if customer %}{{ customer.name }}{% endif %}"
+        placeholder="{{ 'general.newsletter.name' | t }}"
+        autocomplete="name"
+      >
+    </div>
+  {%- endif -%}
+
+  <div class="field">
+    <label class="visually-hidden" for="NewsletterEmail-{{ form_id }}">{{ 'general.newsletter.email' | t }}</label>
+    <input
+      class="field__input"
+      id="NewsletterEmail-{{ form_id }}"
+      type="email"
+      name="contact[email]"
+      value="{% if customer %}{{ customer.email }}{% endif %}"
+      placeholder="{{ 'general.newsletter.email' | t }}"
+      autocomplete="email"
+      spellcheck="false"
+      required="required"
+      aria-required="true"
+    >
+  </div>
+
+  <button class="btn btn--accent" type="submit" name="subscribe">
+    {{ btn_label }}
+  </button>
+
+  <div data-form-message style="flex:1 0 100%"></div>
+</form>

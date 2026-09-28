@@ -1,0 +1,72 @@
+{%- comment -%}
+  Slide-over cart drawer. Rendered once in layout/theme.liquid.
+  Strings and icons the drawer JS needs are shipped as hidden data nodes so
+  the JS bundle stays language- and theme-agnostic.
+{%- endcomment -%}
+{%- if settings.cart_type == 'drawer' -%}
+  <c-cart-drawer class="cart-drawer" id="CartDrawer" aria-hidden="true" aria-label="{{ 'cart.title' | t | escape }}">
+    <div class="cart-drawer__overlay" data-cart-close></div>
+    <div class="cart-drawer__panel" role="dialog" aria-modal="true" data-drawer-panel>
+      <header class="cart-drawer__header">
+        <h2 class="cart-drawer__title">
+          {{ 'cart.title' | t }}
+          <span class="text-ink-mute" style="font-size:.7em">({{ cart.item_count }})</span>
+        </h2>
+        <button class="icon-btn" type="button" data-cart-close aria-label="{{ 'general.accessibility.close' | t }}">
+          {%- render 'icon', name: 'close', size: 20 -%}
+        </button>
+      </header>
+
+      <div class="cart-drawer__body" data-cart-drawer-body>
+        <div class="cart-drawer__empty">
+          {%- render 'icon', name: 'bag', size: 42 -%}
+          <p>{{ 'cart.empty' | t }}</p>
+          <a class="btn btn--outline" href="{{ routes.collections_url }}">{{ 'cart.continue_shopping' | t }}</a>
+        </div>
+      </div>
+
+      <footer class="cart-drawer__footer" data-cart-drawer-footer {% if cart.item_count == 0 %}hidden{% endif %}>
+        {%- if settings.show_free_shipping_bar and settings.free_shipping_threshold > 0 -%}
+          <div class="shipping-meter" data-shipping-meter>
+            <p class="shipping-meter__text" data-shipping-text>
+              {{ 'cart.shipping_progress' | t: amount: settings.free_shipping_threshold | times: 100 | money }}
+            </p>
+            <div class="shipping-meter__bar">
+              <div class="shipping-meter__fill" data-shipping-fill style="width:0%"></div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="cart-totals">
+          <div class="cart-totals__row cart-totals__row--total">
+            <span class="cart-totals__label">{{ 'cart.subtotal' | t }}</span>
+            <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+          </div>
+        </div>
+
+        <p class="text-body-xs text-ink-mute" style="margin-bottom:12px">{{ 'cart.taxes_note' | t }}</p>
+
+        <a class="btn btn--accent btn--block btn--lg" href="{{ routes.cart_url }}" data-cart-checkout>
+          {{ 'cart.checkout' | t }}
+        </a>
+        <a class="btn btn--ghost btn--block btn--sm" href="{{ routes.cart_url }}" style="margin-top:6px">
+          {{ 'cart.view_cart' | t }}
+        </a>
+      </footer>
+    </div>
+  </c-cart-drawer>
+
+  {%- comment -%} Data island for cart-drawer.js {%- endcomment -%}
+  <div hidden>
+    <span data-t="cart.remove">{{ 'cart.remove' | t }}</span>
+    <span data-t="cart.empty">{{ 'cart.empty' | t }}</span>
+    <span data-t="cart.continue">{{ 'cart.continue_shopping' | t }}</span>
+    <span data-t="cart.quantity">{{ 'cart.quantity' | t }}</span>
+    <span data-t="cart.price">{{ 'cart.price' | t }}</span>
+    <span data-t="cart.added">{{ 'cart.added' | t }}</span>
+    <span data-t="cart.shipping_progress">{{ 'cart.shipping_progress_raw' | t }}</span>
+    <span data-t="cart.shipping_qualified">{{ 'cart.shipping_qualified' | t }}</span>
+    <span data-cart-meta="free_shipping_threshold">{{ settings.free_shipping_threshold | default: 0 }}</span>
+    <span data-icon="bag">{%- render 'icon', name: 'bag', size: 42 -%}</span>
+  </div>
+{%- endif -%}

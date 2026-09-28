@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "contact-form",
+      "settings": {
+        "heading": "Get in touch",
+        "text": "<p>Questions about sizing, an order or a custom piece? Send us a note and we will reply within one business day.</p>",
+        "columns": "repeat(2, minmax(0, 1fr))"
+      }
+    }
+  },
+  "order": ["main"]
+}

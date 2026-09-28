@@ -1,0 +1,153 @@
+{%- comment -%}
+  Cart page. Line items are rendered server-side and progressively enhanced by
+  cart-drawer.js (which owns the shared Cart object).
+{%- endcomment -%}
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+
+<div class="section" data-cart-page>
+  <div class="container">
+    <header style="margin-bottom:32px">
+      <h1 class="h1">{{ 'cart.title' | t }}</h1>
+      <p class="text-ink-soft text-body-sm" style="margin-top:6px">
+        {{ 'cart.item_count' | t: count: cart.item_count }}
+      </p>
+    </header>
+
+    {%- if cart.item_count > 0 -%}
+      <div class="grid" style="grid-template-columns:1fr;gap:32px">
+        <form action="{{ routes.cart_url }}" method="post" novalidate data-cart-form>
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'cart.product' | t }}</th>
+                <th scope="col">{{ 'cart.quantity' | t }}</th>
+                <th scope="col">{{ 'cart.price' | t }}</th>
+              </tr>
+            </thead>
+            <tbody data-cart-page-body>
+              {%- for item in cart.items -%}
+                <tr data-line="{{ item.key }}">
+                  <td>
+                    <div class="cart-table__product">
+                      <a class="cart-table__image" href="{{ item.url }}">
+                        {%- if item.image -%}
+                          <img
+                            src="{{ item.image | image_url: width: 200 }}"
+                            width="88" height="110"
+                            alt="{{ item.title | escape }}"
+                            loading="lazy"
+                            style="width:100%;height:100%;object-fit:cover"
+                          >
+                        {%- endif -%}
+                      </a>
+                      <div>
+                        <a href="{{ item.url }}"><strong>{{ item.product.title }}</strong></a>
+                        {%- unless item.product.has_only_default_variant -%}
+                          <div class="cart-item__options">{{ item.variant.title }}</div>
+                        {%- endunless -%}
+                        <div class="cart-table__actions">
+                          <a class="cart-item__remove" href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td data-label="{{ 'cart.quantity' | t }}">
+                    <div class="quantity" data-quantity>
+                      <button class="quantity__btn" type="button" data-quantity-down aria-label="{{ 'products.quantity_decrease' | t }}">
+                        {%- render 'icon', name: 'minus', size: 12 -%}
+                      </button>
+                      <label class="visually-hidden" for="CartQty-{{ forloop.index }}">{{ 'cart.quantity' | t }}</label>
+                      <input
+                        class="quantity__input"
+                        id="CartQty-{{ forloop.index }}"
+                        type="number"
+                        name="updates[]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        data-quantity-key="{{ forloop.index }}"
+                      >
+                      <button class="quantity__btn" type="button" data-quantity-up aria-label="{{ 'products.quantity_increase' | t }}">
+                        {%- render 'icon', name: 'plus', size: 12 -%}
+                      </button>
+                    </div>
+                  </td>
+                  <td data-label="{{ 'cart.price' | t }}">{{ item.final_line_price | money }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </form>
+
+        <div class="grid" style="grid-template-columns:1fr;gap:24px">
+          {%- if section.settings.show_note -%}
+            <details class="cart-summary">
+              <summary style="cursor:pointer;font-weight:600">{{ 'cart.note' | t }}</summary>
+              <div style="margin-top:12px">
+                {%- form 'cart_note', cart -%}
+                  <label class="visually-hidden" for="CartNote">{{ 'cart.note' | t }}</label>
+                  <textarea
+                    class="field__textarea"
+                    id="CartNote"
+                    name="note"
+                    rows="4"
+                    placeholder="{{ 'cart.note_placeholder' | t }}"
+                  >{{ cart.note }}</textarea>
+                  <button class="btn btn--outline btn--sm" type="submit" style="margin-top:10px">
+                    {{ 'cart.update_note' | t }}
+                  </button>
+                {%- endform -%}
+              </div>
+            </details>
+          {%- endif -%}
+
+          <div class="cart-summary" style="max-width:420px;margin-left:auto">
+            <h2 class="cart-summary__title">{{ 'cart.order_summary' | t }}</h2>
+
+            {%- render 'shipping-bar' -%}
+
+            <div class="cart-summary__row">
+              <span>{{ 'cart.subtotal' | t }}</span>
+              <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+            </div>
+            <p class="text-body-xs text-ink-mute">{{ 'cart.taxes_note' | t }}</p>
+
+            <div style="margin-top:16px">
+              <form action="{{ routes.cart_url }}" method="post" novalidate>
+                <button class="btn btn--accent btn--lg btn--block" type="submit" name="checkout">
+                  {{ 'cart.checkout' | t }}
+                </button>
+              </form>
+            </div>
+
+            <a class="btn btn--link btn--block" href="{{ routes.root_url }}" style="margin-top:12px">
+              {{ 'cart.continue_shopping' | t }}
+            </a>
+          </div>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="cart-page__empty">
+        {%- render 'icon', name: 'bag', size: 52 -%}
+        <h2 class="h3" style="margin-bottom:10px">{{ 'cart.empty_title' | t }}</h2>
+        <p class="text-ink-soft" style="margin-bottom:22px">{{ 'cart.empty' | t }}</p>
+        <a class="btn btn--accent" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue_shopping' | t }}</a>
+      </div>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}
+        <div id="shopify-block-{{ block.id }}" style="margin-top:32px">{%- render block -%}</div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart.name",
+  "settings": [
+    { "type": "checkbox", "id": "show_note", "label": "t:sections.main-cart.settings.show_note.label", "default": true }
+  ],
+  "blocks": [{ "type": "@app" }]
+}
+{% endschema %}

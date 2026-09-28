@@ -1,0 +1,67 @@
+/* Announcement bar */
+.announcement-bar {
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  overflow: hidden;
+}
+.announcement-bar--bg-soft { background: var(--color-surface-alt); color: var(--color-ink); }
+.announcement-bar--bg-accent { background: var(--color-accent); color: var(--color-accent-contrast); }
+
+.announcement-bar__viewport { position: relative; }
+.announcement-bar__viewport .container { position: relative; }
+
+.announcement-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: var(--announcement-height);
+}
+
+.announcement-bar__message {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.announcement-bar__message svg { width: 15px; height: 15px; flex: none; }
+.announcement-bar__message a { text-decoration: underline; text-underline-offset: 3px; }
+
+.announcement-bar__close {
+  position: absolute;
+  right: var(--container-pad);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  color: inherit;
+  opacity: 0.7;
+}
+.announcement-bar__close:hover { opacity: 1; }
+.announcement-bar__close svg { width: 14px; height: 14px; }
+
+.announcement-bar--rotate .announcement-bar__message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  pointer-events: none;
+}
+.announcement-bar--rotate .announcement-bar__message.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.announcement-bar--rotate .announcement-bar__inner { position: relative; min-height: var(--announcement-height); }
+
+@media (max-width: 749px) {
+  .announcement-bar { font-size: 0.7rem; }
+  .announcement-bar__inner { gap: 12px; }
+}
