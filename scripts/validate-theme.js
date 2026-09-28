@@ -762,6 +762,24 @@ try {
 }
 
 /* =========================================================================
+   9g. no dead snippets
+
+   A snippet nothing renders is dead weight in the ZIP and, worse, invites
+   someone to edit a file that has no effect. `"type": "richtext"` in a schema
+   is a *setting* type, not a reference to a snippet of that name.
+   ========================================================================= */
+{
+  const used = new Set();
+  for (const file of liquidFiles) {
+    for (const m of read(file).matchAll(/{%-?\s*render\s+'([\w-]+)'/g)) used.add(m[1]);
+  }
+  for (const file of walk(path.join(THEME, 'snippets')).filter((f) => f.endsWith('.liquid'))) {
+    const name = path.basename(file, '.liquid');
+    if (!used.has(name)) err(rel(file), 'snippet is never rendered by anything');
+  }
+}
+
+/* =========================================================================
    10. custom elements must be balanced
    ========================================================================= */
 for (const file of liquidFiles) {

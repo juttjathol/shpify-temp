@@ -42,6 +42,11 @@ engine.registerTag('form', EmptyTag);
 engine.registerTag('endform', EmptyTag);
 engine.registerTag('paginate', EmptyTag);
 engine.registerTag('endpaginate', EmptyTag);
+// {% sections 'header-group' %} is Shopify's section-group renderer; the open
+// source engine has no equivalent, so record the call and render nothing.
+engine.registerTag('sections', EmptyTag);
+engine.registerFilter('font_face', () => '');
+engine.registerFilter('font_modify', () => ({}));
 engine.registerFilter('t', (v) => v);
 engine.registerFilter('escape_once', (v) => v);
 engine.registerFilter('handleize', (v) => String(v).toLowerCase().replace(/\s+/g, '-'));
@@ -192,7 +197,7 @@ function sectionContext(sectionSettings) {
 /* --------------------------------------------------------------------- run */
 const SCHEMA_RE = /\{%-?\s*schema\s*-?%\}([\s\S]*?)\{%-?\s*endschema\s*-?%\}/;
 const files = [];
-for (const dir of ['snippets', 'sections', 'blocks']) {
+for (const dir of ['layout', 'templates', 'snippets', 'sections', 'blocks']) {
   const abs = path.join(THEME, dir);
   if (!fs.existsSync(abs)) continue;
   for (const f of fs.readdirSync(abs)) {
@@ -254,6 +259,29 @@ function emptyContext() {
     raw = raw
       .replace(/\{%-?\s*(end)?(form|paginate)\b[\s\S]*?%\}/g, '')
       .replace(/\{%-?\s*render\s+(block|section)\b[^%]*%\}/g, "{% render 'icon', name: 'star' %}");
+
+    /*
+      layout/theme.liquid and the standalone templates have no {% schema %}.
+      They are still executed — a syntax error in the layout breaks every page,
+      and pattern matching cannot see that. Shopify-only tags
+      (content_for_header, content_for_layout, {% sections %}) are stubbed;
+      everything else, including every render, really runs.
+    */
+    if ((rel.startsWith('templates/') || rel.startsWith('layout/')) && !m) {
+      const tplSection = { id: 'layout', settings: sectionContext({}), index: 0, blocks: [] };
+      for (const [label, ctx] of [['populated', context()], ['empty store', emptyContext()]]) {
+        try {
+          const body = await engine.render(engine.parse(raw), {
+            ...ctx, section: tplSection, block: { settings: {} },
+          });
+          if (/\{\{|\{%/.test(body)) failures.push(`${rel} [${label}]: left unrendered Liquid in the output`);
+          else ok++;
+        } catch (e) {
+          failures.push(`${rel} [${label}]: ${String(e.message || e).split('\n')[0]}`);
+        }
+      }
+      continue;
+    }
 
     const settings = sectionContext(sectionSettings);
     const blockTypes = m ? (JSON.parse(m[1]).blocks || []).map((b) => b.type) : [];
