@@ -23,10 +23,26 @@
       {%- if section.settings.show_contact and shop.address != blank -%}
         <div>
           <h2 class="footer__heading">{{ 'footer.contact.heading' | t }}</h2>
+          {%- comment -%}
+            Built as a list so an empty city cannot leave a leading comma,
+            which is what a store with only a country set would otherwise show.
+          {%- endcomment -%}
+          {%- liquid
+            assign address_lines = '' | split: ','
+            if shop.address.street != blank
+              assign address_lines = address_lines | push: shop.address.street
+            endif
+            if shop.address.city != blank
+              assign address_lines = address_lines | push: shop.address.city
+            endif
+            if shop.address.country != blank
+              assign address_lines = address_lines | push: shop.address.country
+            endif
+          -%}
           <address style="font-style: normal; color: var(--color-text-soft);">
-            {%- if shop.address.street != blank %}{{ shop.address.street }}<br>{% endif -%}
-            {%- if shop.address.city != blank %}{{ shop.address.city }}{% endif -%}
-            {%- if shop.address.country != blank %}, {{ shop.address.country }}{% endif -%}
+            {%- for line in address_lines -%}
+              {{ line }}{% unless forloop.last %}, {% endunless %}
+            {%- endfor -%}
           </address>
         </div>
       {%- endif -%}

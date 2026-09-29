@@ -621,6 +621,17 @@
         "unit": "%",
         "label": "Product image hover zoom",
         "default": 105
+      },
+      {
+        "type": "header",
+        "content": "Sample content"
+      },
+      {
+        "type": "checkbox",
+        "id": "demo_mode",
+        "label": "Show sample content when the store is empty",
+        "default": true,
+        "info": "Adds placeholder imagery and sample products so a new store never looks broken. Disappears automatically once real products are added."
       }
     ]
   }

@@ -21,8 +21,8 @@
           alt="{{ block.settings.image.alt | escape }}"
           loading="lazy"
         >
-      {%- else -%}
-        {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- elsif settings.demo_mode -%}
+        {%- render 'demo-media', variant: forloop.index, ratio: '4 / 5', label: block.settings.heading -%}
       {%- endif -%}
     </div>
 

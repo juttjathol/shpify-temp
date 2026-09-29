@@ -3,12 +3,17 @@
   block renders nothing when no URLs are set, so the footer never shows a row
   of empty placeholders.
   Usage: {% render 'social-icons' %}
+
+  The list is split BEFORE the loop. Liquid parses `for x in y split: ','` by
+  splitting its arguments on commas without respecting quotes, so the comma
+  inside the string terminates the loop expression and Shopify throws
+  "Invalid attribute in for loop". Assign first, then loop.
 {%- endcomment -%}
 
 {%- liquid
-  assign networks = 'instagram,facebook,tiktok,x,youtube,pinterest,linkedin'
+  assign networks = 'instagram,facebook,tiktok,x,youtube,pinterest,linkedin' | split: ','
   assign has_any = false
-  for net in networks split: ','
+  for net in networks
     if settings[net] != blank
       assign has_any = true
       break
@@ -18,7 +23,7 @@
 
 {%- if has_any -%}
   <ul class="footer__social">
-    {%- for net in networks split: ',', limit: 7 -%}
+    {%- for net in networks -%}
       {%- assign url = settings[net] -%}
       {%- if url != blank -%}
         <li>

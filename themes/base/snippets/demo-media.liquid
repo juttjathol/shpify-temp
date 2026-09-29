@@ -1,0 +1,60 @@
+{%- comment -%}
+  Branded placeholder artwork, so a storefront with no uploads still looks
+  designed rather than broken.
+
+  These are shipped SVGs, not Shopify's stock placeholders, so an empty store
+  gets something on-brand. Each takes a variant number so a grid of them reads
+  as a set rather than a repeat.
+
+  Usage: {% render 'demo-media', variant: 1, ratio: '3 / 4', label: 'Linen shirt' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign v = variant | default: 1
+  assign r = ratio | default: '3 / 4'
+
+  assign rows = '01|E8DCC8|1C1917,D8CFC0|1C1917,E4D7C2|1C1917,C9BBA4|1C1917,E8DCC8|1C1917,EFE6D6|1C1917' | split: ','
+-%}
+
+{%- assign slot = rows[v - 1] | default: rows[0] -%}
+{%- assign bits = slot | split: '|' -%}
+{%- assign bg = '#' | append: bits[0] -%}
+{%- assign fg = '#' | append: bits[1] -%}
+
+    <div
+      class="demo-media"
+      style="aspect-ratio: {{ r }}; background: {{ bg }}; color: {{ fg }};"
+      role="img"
+      aria-label="{{ label | default: 'Sample image' | escape }}"
+    >
+      <svg class="demo-media__art" viewBox="0 0 400 533" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="g{{ section.id }}-{{ v }}" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="{{ bg }}" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="{{ fg }}" stop-opacity="0.12"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="533" fill="url(#g{{ section.id }}-{{ v }})"/>
+        {%- case v -%}
+          {%- when 1 -%}
+            <path d="M200 150c-38 0-68 30-68 68s30 68 68 68 68-30 68-68-30-68-68-68Z" fill="none" stroke="{{ fg }}" stroke-opacity=".22" stroke-width="2"/>
+            <path d="M120 330h160M140 360h120M160 390h80" stroke="{{ fg }}" stroke-opacity=".16" stroke-width="2" stroke-linecap="round"/>
+          {%- when 2 -%}
+            <path d="M140 130 200 330l60-200" fill="none" stroke="{{ fg }}" stroke-opacity=".2" stroke-width="2"/>
+            <path d="M170 170h60M180 210h40" stroke="{{ fg }}" stroke-opacity=".14" stroke-width="2" stroke-linecap="round"/>
+          {%- when 3 -%}
+            <circle cx="200" cy="220" r="70" fill="none" stroke="{{ fg }}" stroke-opacity=".2" stroke-width="2"/>
+            <circle cx="200" cy="220" r="40" fill="none" stroke="{{ fg }}" stroke-opacity=".14" stroke-width="2"/>
+            <path d="M140 350h120" stroke="{{ fg }}" stroke-opacity=".16" stroke-width="2" stroke-linecap="round"/>
+          {%- else -%}
+            <path d="M130 160h140v180H130z" fill="none" stroke="{{ fg }}" stroke-opacity=".2" stroke-width="2"/>
+            <path d="M160 200h80M160 235h80M160 270h50" stroke="{{ fg }}" stroke-opacity=".14" stroke-width="2" stroke-linecap="round"/>
+        {%- endcase -%}
+      </svg>
+
+      {%- if label != blank -%}
+        <span class="demo-media__label">{{ label | escape }}</span>
+      {%- else -%}
+        <span class="demo-media__label">Sample</span>
+      {%- endif -%}
+    </div>

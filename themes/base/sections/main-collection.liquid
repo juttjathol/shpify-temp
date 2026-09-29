@@ -41,6 +41,15 @@
           {%- endfor -%}
         </div>
         {%- render 'pagination', paginate: paginate -%}
+      {%- elsif settings.demo_mode -%}
+        {%- comment -%} Empty collection: samples keep the layout honest. {%- endcomment -%}
+        <div style="grid-column: 1 / -1; margin-bottom: 8px;">
+          <span class="demo-badge">Sample content</span>
+          <p class="demo-card__note">This collection has no products yet. This is the grid customers will see.</p>
+        </div>
+        {%- for i in (1..8) -%}
+          {%- render 'demo-card', index: i -%}
+        {%- endfor -%}
       {%- else -%}
         <div class="empty-state">
           <h2>{{ 'collections.empty.title' | t }}</h2>

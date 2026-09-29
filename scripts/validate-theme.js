@@ -371,6 +371,45 @@ function validateTheme(dir) {
   }
 
   /* ------------------------------------------------------------------
+     9k. Liquid constructs liquidjs accepts but Shopify rejects or
+     mis-renders. Both of these shipped to a live store before.
+
+     1. `for x in y split: ','`. Liquid splits a for loop's arguments on
+        commas without respecting quotes, so the comma inside the string ends
+        the expression and Shopify raises "Invalid attribute in for loop".
+        Splitting into a variable first is the fix.
+     2. `something | default: 'a.key' | t`. When the setting is filled in,
+        default returns the merchant's own text, and | t then looks that text
+        up as a locale key and renders "TRANSLATION MISSING: EN.<text>".
+     ------------------------------------------------------------------ */
+  {
+    for (const f of liquid) {
+      const src = stripComments(read(f));
+
+      for (const loop of src.matchAll(/\{%-?\s*for\s+[\w\s,]+\s+in\s+([^%]*?)%}/g)) {
+        const expr = loop[1];
+        if (/'[^']*,[^']*'/.test(expr)) {
+          err(rel(f), `for loop argument contains a quoted string with a comma (${expr.trim()}) - Liquid ends the expression there and Shopify raises "Invalid attribute in for loop". Split it into a variable first.`);
+        }
+        // `{% liquid %}` blocks carry the same construct on their own lines.
+        for (const block of src.matchAll(/\{%-?\s*liquid([\s\S]*?)-?%\}/g)) {
+          for (const line of block[1].split('\n')) {
+            const m = line.match(/^\s*for\s+[\w\s,]+\s+in\s+(.+?)\s*$/);
+            if (m && /'[^']*,[^']*'/.test(m[1])) {
+              err(rel(f), `{% liquid %} for loop splits on a string containing a comma (${m[1].trim()}) - assign the split first, then loop`);
+            }
+          }
+        }
+      }
+
+      for (const bad of src.matchAll(/\|\s*default:\s*'([a-z0-9_]+\.[a-z0-9_.]+)'\s*\|\s*t\b/g)) {
+        err(rel(f), `"${bad[0].trim()}" pipes a merchant-editable value through | t once default is bypassed - Shopify renders "TRANSLATION MISSING". Branch on the setting instead.`);
+      }
+    }
+  }
+
+
+  /* ------------------------------------------------------------------
      10. Storefront performance invariants
      ------------------------------------------------------------------ */
   for (const f of liquid) {

@@ -7,7 +7,7 @@
 -%}
 
 <div
-  class="section section--flush-top section--flush-bottom hero hero--{{ section.settings.text_align }}"
+  class="section section--flush-top section--flush-bottom hero hero--{{ section.settings.text_align }}{% if hero_image == blank and settings.demo_mode %} hero--empty{% endif %}"
   style="--hero-height: {{ section.settings.height }}px;"
 >
   {%- if hero_image != blank -%}

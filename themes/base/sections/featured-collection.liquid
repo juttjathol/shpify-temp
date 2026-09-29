@@ -40,11 +40,14 @@
             {%- render 'product-card', product: product, loading: 'lazy' -%}
           {%- endif -%}
         {%- endfor -%}
-      {%- else -%}
+      {%- elsif settings.demo_mode -%}
+        {%- comment -%} Empty store: show samples so the grid still reads as a storefront. {%- endcomment -%}
+        <div style="grid-column: 1 / -1;">
+          <span class="demo-badge">Sample content</span>
+          <p class="demo-card__note">Add a product to see the live grid. This layout is the one your customers will get.</p>
+        </div>
         {%- for i in (1..section.settings.products_to_show) -%}
-          <div>
-            {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
-          </div>
+          {%- render 'demo-card', index: i -%}
         {%- endfor -%}
       {%- endif -%}
     </div>

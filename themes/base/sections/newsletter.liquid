@@ -38,7 +38,17 @@
         {%- endif -%}
 
         <button class="btn btn--primary btn--full" type="submit" style="margin-top:12px;">
-          {{ section.settings.button_label | default: 'general.newsletter.submit' | t }}
+          {%- comment -%}
+            The label is merchant text, not a translation key. Piping it
+            through | t makes Shopify look up whatever the merchant typed as a
+            locale key, which renders "TRANSLATION MISSING: EN.<label>". So the
+            merchant value wins, and only the built-in empty state falls back.
+          {%- endcomment -%}
+          {%- if section.settings.button_label != blank -%}
+            {{ section.settings.button_label }}
+          {%- else -%}
+            {{ 'general.newsletter.submit' | t }}
+          {%- endif -%}
         </button>
       {%- endform -%}
     </div>

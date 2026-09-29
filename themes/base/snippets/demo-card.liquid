@@ -1,0 +1,29 @@
+{%- comment -%}
+  Sample product card for a store with no products yet.
+  Usage: {% render 'demo-card', index: 1 %}
+  Only ever used when `demo_mode` is on and the store is genuinely empty, so a
+  client previewing the theme sees a designed grid rather than a blank one.
+{%- endcomment -%}
+
+{%- liquid
+  assign names = 'Linen overshirt,Wool trousers,Cashmere scarf,Silk slip dress,Cotton tee,Canvas jacket,Leather belt,Knit polo'
+  assign prices = '180,220,140,265,65,195,90,120'
+  assign name_list = names | split: ','
+  assign price_list = prices | split: ','
+
+  assign slot = index | default: 1
+  assign name = name_list[slot - 1] | default: name_list[0]
+  assign price = price_list[slot - 1] | default: price_list[0]
+-%}
+
+<div class="card" data-reveal>
+  <div class="card__media" style="--card-ratio: 3 / 4;">
+    {%- render 'demo-media', variant: slot, ratio: '3 / 4', label: name -%}
+  </div>
+
+  <div class="card__body">
+    <span class="card__vendor">Sample</span>
+    <h3 class="card__title"><a href="{{ routes.all_products_collection_url }}">{{ name }}</a></h3>
+    <span class="card__price">${{ price }}.00</span>
+  </div>
+</div>
