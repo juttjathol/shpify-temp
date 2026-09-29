@@ -16,7 +16,9 @@
   assign rows = '01|E8DCC8|1C1917,D8CFC0|1C1917,E4D7C2|1C1917,C9BBA4|1C1917,E8DCC8|1C1917,EFE6D6|1C1917' | split: ','
 -%}
 
-{%- assign slot = rows[v - 1] | default: rows[0] -%}
+{%- comment -%} Liquid brackets take a bare name, so the index is computed first. {%- endcomment -%}
+{%- assign pos = v | minus: 1 -%}
+{%- assign slot = rows[pos] | default: rows[0] -%}
 {%- assign bits = slot | split: '|' -%}
 {%- assign bg = '#' | append: bits[0] -%}
 {%- assign fg = '#' | append: bits[1] -%}

@@ -136,6 +136,18 @@ appears at once. All of it collapses under `prefers-reduced-motion`.
 | Size guide table, merchant-editable | collapsible block on the product template |
 | Sticky add to cart (mobile) | `sections/main-product.liquid` |
 | Recently viewed | `motion.js` |
+| Horizontal rail (scroll-linked) | `sections/rail.liquid` |
+
+**Signature motion** — the first-load sequence a client will notice:
+a curtain that lifts off the storefront, headlines that split by word and
+rise out of their own masks, a scroll progress bar, image curtain reveals,
+3D tilt on product cards, a cursor spotlight across the hero, and a horizontal
+rail whose panels track the scroll position exactly.
+
+The curtain is injected by script, never markup, so a blocked or failed
+`motion.js` leaves the page visible rather than covered. And the hidden start
+state for every reveal is gated behind `@media (scripting: enabled)`, so the
+no-JavaScript fallback is a fully rendered page, not a blank one.
 
 ## Structure
 

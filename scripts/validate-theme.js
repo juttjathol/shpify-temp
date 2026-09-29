@@ -410,6 +410,87 @@ function validateTheme(dir) {
 
 
   /* ------------------------------------------------------------------
+     9l. Array brackets take a bare identifier, never an expression.
+
+     `list[i - 1]` is a parse error in Shopify ("Expected close_square but
+     found dash") and takes the whole page down. liquidjs accepts it, so a
+     render check will not catch it. Compute the index with | minus: first.
+     ------------------------------------------------------------------ */
+  {
+    for (const f of liquid) {
+      // The {% schema %} block is JSON, full of arrays, and is not Liquid.
+      const src = stripComments(read(f)).replace(SCHEMA_RE, '');
+      for (const m of src.matchAll(/\[\s*([^\]]*?)\s*\]/g)) {
+        const inside = m[1];
+        if (!inside) continue;
+        // A bare word, a quoted string, or a number is valid. Anything with an
+        // operator, a pipe, or whitespace-separated operands is not.
+        if (/^[\w-]+$/.test(inside)) continue;
+        if (/^['"][^'"]*['"]$/.test(inside)) continue;
+        if (/^-?\d+$/.test(inside)) continue;
+        err(rel(f), `array index [${inside}] is an expression - Liquid accepts only a bare name, a number or a quoted string there. Compute it with | minus: first.`);
+      }
+    }
+  }
+
+
+  /* ------------------------------------------------------------------
+     9m. Every stylesheet must actually parse.
+
+     An unbalanced brace makes the browser discard the rule that follows it,
+     silently, and a theme can lose a whole component with no error. A stray
+     brace introduced by an edit is easy to make and invisible to grep.
+     ------------------------------------------------------------------ */
+  {
+    let postcss = null;
+    try { postcss = require('postcss'); } catch { /* optional */ }
+    for (const f of files.filter((x) => x.endsWith('.css'))) {
+      const source = read(f);
+      if (postcss) {
+        try {
+          postcss.parse(source, { from: f });
+        } catch (e) {
+          err(rel(f), `stylesheet does not parse - ${e.message}. The browser drops every rule after a syntax error, silently.`);
+        }
+      }
+      // Independent of the parser: a stray closing brace at the top level.
+      let depth = 0;
+      let bad = false;
+      for (let i = 0; i < source.length; i++) {
+        const c = source[i];
+        if (c === '{') depth++;
+        else if (c === '}') {
+          depth--;
+          if (depth < 0) { bad = true; break; }
+        }
+      }
+      if (bad || depth !== 0) {
+        err(rel(f), `unbalanced braces (${bad ? 'an extra }' : `${depth} unclosed {`}) - everything after the break is discarded`);
+      }
+    }
+  }
+
+
+  /* ------------------------------------------------------------------
+     9n. {% comment %} is not a tag inside {% liquid %}.
+
+     A {% liquid %} block is line-based and takes only assignment, if, for,
+     case, unless, echo, cycle and break. Nesting a comment block inside one
+     is a parse error that takes the whole file down.
+     ------------------------------------------------------------------ */
+  {
+    for (const f of liquid) {
+      const src = read(f);
+      for (const block of src.matchAll(/\{%-?\s*liquid([\s\S]*?)-?%\}/g)) {
+        if (/\{%-?\s*(comment|endcomment)\b/.test(block[1])) {
+          err(rel(f), 'a {% comment %} block is nested inside {% liquid %} - that is not a valid tag there and it is a parse error. Move the comment outside.');
+        }
+      }
+    }
+  }
+
+
+  /* ------------------------------------------------------------------
      10. Storefront performance invariants
      ------------------------------------------------------------------ */
   for (const f of liquid) {

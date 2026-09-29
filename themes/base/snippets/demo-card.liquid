@@ -5,6 +5,12 @@
   client previewing the theme sees a designed grid rather than a blank one.
 {%- endcomment -%}
 
+{%- comment -%}
+  Liquid array brackets take a bare identifier. `name_list[slot - 1]` is a
+  parse error in Shopify ("Expected close_square but found dash"), so the
+  index is computed with | minus: first.
+{%- endcomment -%}
+
 {%- liquid
   assign names = 'Linen overshirt,Wool trousers,Cashmere scarf,Silk slip dress,Cotton tee,Canvas jacket,Leather belt,Knit polo'
   assign prices = '180,220,140,265,65,195,90,120'
@@ -12,8 +18,9 @@
   assign price_list = prices | split: ','
 
   assign slot = index | default: 1
-  assign name = name_list[slot - 1] | default: name_list[0]
-  assign price = price_list[slot - 1] | default: price_list[0]
+  assign pos = slot | minus: 1
+  assign name = name_list[pos] | default: name_list[0]
+  assign price = price_list[pos] | default: price_list[0]
 -%}
 
 <div class="card" data-reveal>

@@ -5,7 +5,7 @@
         {%- if section.settings.eyebrow != blank -%}
           <span class="eyebrow" style="color:inherit; opacity:.7;">{{ section.settings.eyebrow }}</span>
         {%- endif -%}
-        <h2 class="newsletter__title">{{ section.settings.heading }}</h2>
+        <h2 class="newsletter__title" data-split>{{ section.settings.heading }}</h2>
         {%- if section.settings.text != blank -%}
           <p style="opacity:.85; margin-top:12px;">{{ section.settings.text }}</p>
         {%- endif -%}

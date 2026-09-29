@@ -1,0 +1,80 @@
+{%- comment -%}
+  Horizontal rail. Panels slide sideways as the page scrolls through the
+  section - the movement comes from the scroll position, not from an
+  animation timeline, so it tracks the pointer exactly and stops dead when
+  the visitor stops.
+{%- endcomment -%}
+
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container{% if section.settings.heading != blank %} container--narrow{% endif %}">
+    {%- if section.settings.heading != blank -%}
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="section__heading" data-split>{{ section.settings.heading }}</h2>
+    {%- endif -%}
+  </div>
+
+  <div class="rail" data-rail>
+    <div class="rail__track">
+      {%- for block in section.blocks -%}
+        <article class="rail__panel reveal-curtain" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            <img
+              src="{{ block.settings.image | image_url: width: 800 }}"
+              srcset="{{ block.settings.image | image_url: width: 500 }} 500w, {{ block.settings.image | image_url: width: 800 }} 800w"
+              sizes="(min-width: 750px) 460px, 78vw"
+              alt="{{ block.settings.image.alt | escape }}"
+              loading="lazy"
+            >
+          {%- elsif settings.demo_mode -%}
+            {%- render 'demo-media', variant: forloop.index, ratio: '3 / 4', label: block.settings.title -%}
+          {%- endif -%}
+
+          {%- if block.settings.title != blank -%}
+            <div class="rail__caption">
+              {%- if block.settings.eyebrow != blank -%}
+                <span style="font-size:.6875rem; letter-spacing:.16em; text-transform:uppercase; opacity:.8;">{{ block.settings.eyebrow }}</span>
+              {%- endif -%}
+              <h3>{{ block.settings.title }}</h3>
+              {%- if block.settings.link != blank -%}
+                <a class="text-link" style="margin-top:10px; display:inline-block; color:#fff;" href="{{ block.settings.link }}">
+                  {{ 'products.view' | t }}
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Horizontal rail",
+  "tag": "section",
+  "class": "section-rail",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the look" },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "panel",
+      "name": "Panel",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Horizontal rail",
+      "blocks": [{ "type": "panel" }, { "type": "panel" }, { "type": "panel" }, { "type": "panel" }]
+    }
+  ]
+}
+{% endschema %}

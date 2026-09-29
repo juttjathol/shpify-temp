@@ -54,7 +54,53 @@
           }
         }
       },
-      "block_order": ["row1"]
+      "block_order": [
+        "row1"
+      ]
+    },
+    "rail": {
+      "type": "rail",
+      "settings": {
+        "eyebrow": "The edit",
+        "heading": "Shop the look",
+        "flush_top": true
+      },
+      "blocks": {
+        "p1": {
+          "type": "panel",
+          "settings": {
+            "eyebrow": "Look 01",
+            "title": "The everyday overshirt"
+          }
+        },
+        "p2": {
+          "type": "panel",
+          "settings": {
+            "eyebrow": "Look 02",
+            "title": "Quiet tailoring"
+          }
+        },
+        "p3": {
+          "type": "panel",
+          "settings": {
+            "eyebrow": "Look 03",
+            "title": "Evening, understated"
+          }
+        },
+        "p4": {
+          "type": "panel",
+          "settings": {
+            "eyebrow": "Look 04",
+            "title": "Winter layers"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]
     },
     "hotspot": {
       "type": "image-hotspots",
@@ -85,7 +131,10 @@
           }
         }
       },
-      "block_order": ["spot1", "spot2"]
+      "block_order": [
+        "spot1",
+        "spot2"
+      ]
     },
     "press": {
       "type": "press",
@@ -94,12 +143,37 @@
         "flush_top": true
       },
       "blocks": {
-        "l1": { "type": "logo", "settings": { "name": "VOGUE" } },
-        "l2": { "type": "logo", "settings": { "name": "ELLE" } },
-        "l3": { "type": "logo", "settings": { "name": "HYPEBEAST" } },
-        "l4": { "type": "logo", "settings": { "name": "MONOCLE" } }
+        "l1": {
+          "type": "logo",
+          "settings": {
+            "name": "VOGUE"
+          }
+        },
+        "l2": {
+          "type": "logo",
+          "settings": {
+            "name": "ELLE"
+          }
+        },
+        "l3": {
+          "type": "logo",
+          "settings": {
+            "name": "HYPEBEAST"
+          }
+        },
+        "l4": {
+          "type": "logo",
+          "settings": {
+            "name": "MONOCLE"
+          }
+        }
       },
-      "block_order": ["l1", "l2", "l3", "l4"]
+      "block_order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ]
     },
     "testimonials": {
       "type": "testimonials",
@@ -138,7 +212,11 @@
           }
         }
       },
-      "block_order": ["t1", "t2", "t3"]
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ]
     },
     "categories": {
       "type": "collection-list",
@@ -176,6 +254,7 @@
     "ticker",
     "featured",
     "lookbook",
+    "rail",
     "hotspot",
     "press",
     "testimonials",

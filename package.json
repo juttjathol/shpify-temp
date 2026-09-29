@@ -15,6 +15,7 @@
     "audit": "node scripts/audit-upload.js"
   },
   "devDependencies": {
-    "liquidjs": "^10.21.1"
+    "liquidjs": "^10.21.1",
+    "postcss": "^8.4.49"
   }
 }

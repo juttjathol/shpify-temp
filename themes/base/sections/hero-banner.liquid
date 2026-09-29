@@ -11,7 +11,7 @@
   style="--hero-height: {{ section.settings.height }}px;"
 >
   {%- if hero_image != blank -%}
-    <div class="hero__media">
+    <div class="hero__media reveal-curtain">
       <picture>
         {%- if section.settings.mobile_image != blank -%}
           <source media="(max-width: 749px)" srcset="{{ section.settings.mobile_image | image_url: width: 800 }}">
@@ -36,6 +36,8 @@
     {%- endif -%}
   {%- endif -%}
 
+  <div class="hero__spotlight" aria-hidden="true"></div>
+
   <div class="container hero__inner">
     <div class="hero__content">
       {%- if section.settings.eyebrow != blank -%}
@@ -43,7 +45,7 @@
       {%- endif -%}
 
       {%- if hero_heading != blank -%}
-        <h1 class="hero__heading">{{ hero_heading }}</h1>
+        <h1 class="hero__heading" data-split>{{ hero_heading }}</h1>
       {%- endif -%}
 
       {%- if hero_text != blank -%}
