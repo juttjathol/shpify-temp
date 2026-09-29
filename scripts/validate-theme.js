@@ -609,7 +609,17 @@ for (const file of liquidFiles) {
       if (!data.current || typeof data.current !== 'object') {
         err('config/settings_data.json', 'missing a "current" object');
       } else {
-        for (const [id, value] of Object.entries(data.current)) {
+        // Shopify reads current.settings. Anything else is dropped, and with it
+        // every default the theme ships - which is what left round 1 unstyled.
+        for (const key of Object.keys(data.current)) {
+          if (!['settings', 'sections'].includes(key)) {
+            err('config/settings_data.json', `current.${key} - "current" may only hold "settings" and "sections"; stray keys mean the file is ignored`);
+          }
+        }
+        if (!data.current.settings || typeof data.current.settings !== 'object') {
+          err('config/settings_data.json', 'current.settings is missing - Shopify stores theme setting values here and nowhere else');
+        }
+        for (const [id, value] of Object.entries(data.current.settings || {})) {
           // `sections` is Shopify's own key for section-group ordering.
           if (id === 'sections' || !byId.has(id)) continue;
           const st = byId.get(id);
@@ -628,6 +638,9 @@ for (const file of liquidFiles) {
       // Presets are { "<Name>": { "settings": { ... } } } — settings nested one
       // level down. Flat presets are silently ignored by Shopify.
       for (const [name, preset] of Object.entries(data.presets || {})) {
+    if (!preset || typeof preset !== 'object' || typeof preset.settings !== 'object') {
+      err('config/settings_data.json', `presets.${name} must be an object with a "settings" key`);
+    }
         if (!preset || typeof preset !== 'object' || Array.isArray(preset)) {
           err('config/settings_data.json', `preset "${name}" must be an object`);
           continue;
