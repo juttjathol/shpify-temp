@@ -1,7 +1,12 @@
 node_modules/
-dist/
-.audit-tmp/
 .build-tmp/
+.audit-tmp/
 .DS_Store
 *.log
 .arena/
+
+# dist/ is NOT ignored: the built ZIP is the deliverable the client uploads, and
+# it must survive a workspace reset. Build artefacts other than the archives
+# are still ignored.
+dist/*
+!dist/*.zip
