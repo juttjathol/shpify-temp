@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "settings": {
+        "heading": "We can't find that page",
+        "text": "The page may have moved, or the link may be out of date. Try starting again from the shop.",
+        "button_label": "Continue shopping"
+      },
+      "blocks": {
+        "shipping": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Shipping",
+            "content": "<p>Orders ship within two business days.</p>"
+          }
+        }
+      },
+      "block_order": ["shipping"]
+    }
+  },
+  "order": ["main"]
+}

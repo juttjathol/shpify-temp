@@ -1,0 +1,72 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container{% if section.settings.narrow %} container--narrow{% endif %}">
+    <h1 class="section__heading" style="margin-bottom:24px;">{{ 'cart.general.title' | t }}</h1>
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate>
+        <div>
+          {%- for item in cart.items -%}
+            <div class="cart-line">
+              <a class="cart-line__image" href="{{ item.url }}">
+                {%- if item.image != blank -%}
+                  <img
+                    src="{{ item.image | image_url: width: 180 }}"
+                    width="88"
+                    height="110"
+                    alt="{{ item.image.alt | escape }}"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+              </a>
+
+              <div>
+                <a href="{{ item.url }}"><p class="cart-line__title">{{ item.product.title | escape }}</p></a>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p style="font-size:.8125rem; color: var(--color-text-soft);">
+                    {{ item.variant.title }}
+                  </p>
+                {%- endunless -%}
+                <p class="cart-line__price">{{ item.final_line_price | money }}</p>
+                <a href="{{ item.url_to_remove }}" style="font-size:.8125rem; text-decoration:underline;">
+                  {{ 'cart.general.remove' | t }}
+                </a>
+              </div>
+              <div>{{ item.quantity }}</div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="cart-total">
+          <span>{{ 'cart.general.subtotal' | t }}</span>
+          <span>{{ cart.total_price | money_with_currency }}</span>
+        </div>
+
+        <p style="font-size:.8125rem; color: var(--color-text-soft);">
+          {{ 'cart.general.taxes_note' | t }}
+        </p>
+
+        <button class="btn btn--primary btn--full" type="submit" name="checkout" style="margin-top:16px;">
+          {{ 'cart.general.checkout' | t }}
+        </button>
+      </form>
+    {%- else -%}
+      <div class="cart-empty">
+        <h2>{{ 'cart.general.empty' | t }}</h2>
+        <p style="color: var(--color-text-soft); margin:12px 0 24px;">{{ 'cart.general.empty_note' | t }}</p>
+        <a class="btn btn--primary" href="{{ routes.all_products_collection_url }}">
+          {{ 'cart.general.continue_shopping' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    { "type": "checkbox", "id": "narrow", "label": "Narrow the column", "default": true },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ]
+}
+{% endschema %}

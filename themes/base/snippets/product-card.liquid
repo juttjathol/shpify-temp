@@ -1,0 +1,92 @@
+{%- comment -%}
+  Product card. Usage: {% render 'product-card', product: product, loading: 'lazy' %}
+  Card behaviour (vendor, price, rating, quick add, swatches, image shape) is
+  driven by the "Product cards" group in theme settings.
+{%- endcomment -%}
+{%- liquid
+  assign ratio_value = '3 / 4'
+  if settings.card_image_ratio == 'square'
+    assign ratio_value = '1 / 1'
+  elsif settings.card_image_ratio == 'landscape'
+    assign ratio_value = '4 / 3'
+  endif
+-%}
+
+<div class="card">
+  <a class="card__media" href="{{ product.url }}" style="--card-ratio: {{ ratio_value }};">
+    {%- if product.available == false -%}
+      <span class="card__badge">{{ 'products.sold_out' | t }}</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      <span class="card__badge card__badge--sale">{{ 'products.sale' | t }}</span>
+    {%- endif -%}
+
+    {%- render 'responsive-image',
+      image: product.featured_image,
+      sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw',
+      ratio: ratio_value,
+      loading: loading | default: 'lazy'
+    -%}
+
+    {%- comment -%}
+      Quick add posts the variant that is actually in stock, which is the one a
+      customer can buy from a grid. The product page is where options get picked.
+    {%- endcomment -%}
+    {%- if settings.card_show_quick_add and product.available -%}
+      {%- assign quick_variant = product.selected_or_first_available_variant -%}
+      <form class="card__quick" method="post" action="{{ routes.cart_add_url }}">
+        <input type="hidden" name="id" value="{{ quick_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button class="btn btn--primary btn--full btn--sm" type="submit">
+          {{ 'products.add_to_cart' | t }}
+        </button>
+      </form>
+    {%- endif -%}
+  </a>
+
+  <div class="card__body">
+    {%- if settings.card_show_vendor and product.vendor != blank -%}
+      <span class="card__vendor">{{ product.vendor }}</span>
+    {%- endif -%}
+
+    <h3 class="card__title">
+      <a href="{{ product.url }}">{{ product.title | escape }}</a>
+    </h3>
+
+    {%- if settings.card_show_rating -%}
+      <span class="rating" role="img" aria-label="{{ 'products.rating_label' | t: rating: product.rating }}">
+        {%- for i in (1..5) -%}
+          {%- if forloop.index <= product.rating -%}
+            {%- render 'icon', name: 'star' -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </span>
+    {%- endif -%}
+
+    {%- render 'price', product: product -%}
+
+    {%- comment -%}
+      Swatches. Shopify exposes a swatch object per value; fall back to a plain
+      dot for values that have no colour or image attached.
+    {%- endcomment -%}
+    {%- if settings.card_show_swatches and product.has_only_default_variant == false -%}
+      {%- assign first_option = product.options_with_values | first -%}
+      {%- if first_option.values.size > 1 -%}
+        <ul class="card__swatches">
+          {%- for value in first_option.values limit: 4 -%}
+            <li
+              class="swatch"
+              title="{{ value | escape }}"
+              {% if value.swatch.color -%}
+                style="background-color: {{ value.swatch.color }};"
+              {%- elsif value.swatch.image -%}
+                style="background-image: url({{ value.swatch.image | image_url: width: 40 }});"
+              {%- endif -%}
+            >
+              <span class="visually-hidden">{{ value }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>

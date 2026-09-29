@@ -1,0 +1,19 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container{% if section.settings.narrow %} container--narrow{% endif %}">
+    {%- if section.settings.show_title and page.title != blank -%}
+      <h1 class="section__heading" style="margin-bottom:24px;">{{ page.title }}</h1>
+    {%- endif -%}
+    <div class="rte">{{ page.content }}</div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": [
+    { "type": "checkbox", "id": "show_title", "label": "Show page title", "default": true },
+    { "type": "checkbox", "id": "narrow", "label": "Narrow the text column", "default": true },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ]
+}
+{% endschema %}

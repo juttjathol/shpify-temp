@@ -1,0 +1,20 @@
+{
+  "name": "shopify-theme-factory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-client Shopify Online Store 2.0 theme factory. Builds one installable ZIP per client theme without ever touching another client's output.",
+  "author": "juttjathol",
+  "license": "UNLICENSED",
+  "scripts": {
+    "settings": "node scripts/generate-settings-data.js",
+    "validate": "node scripts/validate-theme.js",
+    "render": "node scripts/render-check.js",
+    "build": "node scripts/build-themes.js",
+    "check": "npm run settings && npm run validate && npm run render && npm run build",
+    "new-theme": "node scripts/new-theme.js",
+    "audit": "node scripts/audit-upload.js"
+  },
+  "devDependencies": {
+    "liquidjs": "^10.21.1"
+  }
+}

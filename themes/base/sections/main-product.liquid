@@ -1,0 +1,170 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign has_variants = false
+  if product.has_only_default_variant == false
+    assign has_variants = true
+  endif
+-%}
+
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container">
+    <div class="product">
+      <div class="product__media">
+        <div class="product__main">
+          {%- if product.featured_image != blank -%}
+            <img
+              src="{{ product.featured_image | image_url: width: 1400 }}"
+              srcset="
+                {{ product.featured_image | image_url: width: 500 }} 500w,
+                {{ product.featured_image | image_url: width: 800 }} 800w,
+                {{ product.featured_image | image_url: width: 1200 }} 1200w,
+                {{ product.featured_image | image_url: width: 1600 }} 1600w
+              "
+              sizes="(min-width: 990px) 55vw, 100vw"
+              width="{{ product.featured_image.width }}"
+              height="{{ product.featured_image.height }}"
+              alt="{{ product.featured_image.alt | escape | default: product.title }}"
+              loading="eager"
+            >
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+
+        {%- if product.media.size > 1 -%}
+          <div class="grid" style="--cols-mobile: 3; --cols-tablet: 4; --cols-desktop: 4;">
+            {%- for media in product.media -%}
+              <div>
+                {%- case media.media_type -%}
+                  {%- when 'image' -%}
+                    <img
+                      src="{{ media | image_url: width: 400 }}"
+                      width="{{ media.preview_image.width }}"
+                      height="{{ media.preview_image.height }}"
+                      alt="{{ media.alt | escape }}"
+                      loading="lazy"
+                      style="border-radius: var(--radius-card);"
+                    >
+                  {%- when 'video' -%}
+                    {{ media | video_tag: controls: true, preload: 'none', style: 'border-radius: var(--radius-card);' }}
+                  {%- when 'external_video' -%}
+                    {{ media | external_video_tag }}
+                  {%- else -%}
+                    {{ media | media_tag }}
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div>
+        {%- if section.settings.show_vendor and product.vendor != blank -%}
+          <p class="card__vendor">{{ product.vendor }}</p>
+        {%- endif -%}
+
+        <h1 class="product__title">{{ product.title }}</h1>
+
+        <div class="product__price">
+          {%- if product.compare_at_price > product.price -%}
+            <del>{{ product.compare_at_price | money }}</del>
+          {%- endif -%}
+          <span>{{ product.price | money }}</span>
+        </div>
+
+        {%- if section.settings.show_description and product.description != blank -%}
+          <div class="rte" style="margin-top:20px;">{{ product.description }}</div>
+        {%- endif -%}
+
+        <form class="product__form" method="post" action="{{ routes.cart_add_url }}" enctype="multipart/form-data">
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          {%- for option in product.options_with_values -%}
+            <fieldset class="variant-option" style="border:0; padding:16px 0 0; margin:0;">
+              <legend class="field__label">{{ option.name }}</legend>
+              <div class="variant-option__values">
+                {%- for value in option.values -%}
+                  {%- assign variant = product.variants | where: option.name, value | first -%}
+                  <div>
+                    <input
+                      class="variant-input"
+                      type="radio"
+                      id="Option-{{ section.id }}-{{ option.position }}-{{ value | handle }}"
+                      name="Option-{{ section.id }}-{{ option.position }}"
+                      value="{{ value | escape }}"
+                      form="ProductForm-{{ section.id }}"
+                      data-variant
+                      {% if option.selected_value == value %}checked{% endif %}
+                      {% unless variant.available %}disabled{% endunless %}
+                    >
+                    <label
+                      class="variant-value"
+                      for="Option-{{ section.id }}-{{ option.position }}-{{ value | handle }}"
+                    >
+                      {{ value }}
+                    </label>
+                  </div>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+
+          <div class="product__form-row" data-quantity>
+            <label class="visually-hidden" for="Quantity-{{ section.id }}">{{ 'products.quantity' | t }}</label>
+            <input
+              id="Quantity-{{ section.id }}"
+              class="field__input"
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              style="max-width:96px;"
+            >
+            <button class="btn btn--primary" type="submit" {% unless current_variant.available %}disabled{% endunless %}>
+              {%- if current_variant.available -%}
+                {{ 'products.add_to_cart' | t }}
+              {%- else -%}
+                {{ 'products.sold_out' | t }}
+              {%- endif -%}
+            </button>
+          </div>
+        </form>
+
+        {%- if section.blocks.size > 0 -%}
+          <div style="margin-top:32px;">
+            {%- for block in section.blocks -%}
+              <details class="collapsible" {{ block.shopify_attributes }}>
+                <summary class="collapsible__summary">
+                  {{ block.settings.heading }}
+                  <span class="collapsible__icon">{%- render 'icon', name: 'chevron-down', size: 18 -%}</span>
+                </summary>
+                <div class="collapsible__content rte">{{ block.settings.content }}</div>
+              </details>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": true },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "collapsible",
+      "name": "Collapsible row",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shipping" },
+        { "type": "richtext", "id": "content", "label": "Content", "default": "<p>Add details about shipping and returns.</p>" }
+      ]
+    }
+  ]
+}
+{% endschema %}

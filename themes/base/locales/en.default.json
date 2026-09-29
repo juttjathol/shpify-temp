@@ -1,0 +1,119 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "home": "Home",
+      "privacy": "Privacy policy",
+      "terms": "Terms of service",
+      "refund": "Refund policy",
+      "menu": "Menu",
+      "open_menu": "Open menu",
+      "primary_nav": "Primary navigation",
+      "mobile_nav": "Mobile navigation"
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search products",
+      "submit": "Search",
+      "results_for": "Results for \"{{ terms }}\"",
+      "results_count": {
+        "one": "{{ count }} result",
+        "other": "{{ count }} results"
+      },
+      "no_results": "No results found for \"{{ terms }}\". Try a different search."
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "navigation": {
+      "no_menu": "No menu has been selected yet. Choose one in the theme editor."
+    },
+    "404": {
+      "title": "Page not found",
+      "subtext": "The page you requested does not exist.",
+      "link": "Continue shopping"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Cart",
+      "empty": "Your cart is empty",
+      "empty_note": "Once you add something, it will appear here.",
+      "continue_shopping": "Continue shopping",
+      "subtotal": "Subtotal",
+      "taxes_note": "Taxes and shipping calculated at checkout.",
+      "checkout": "Checkout",
+      "remove": "Remove"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Account"
+    }
+  },
+  "collections": {
+    "products_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "sorting": {
+      "title": "Sort by"
+    },
+    "empty": {
+      "title": "No products yet",
+      "text": "Products added to this collection will appear here."
+    }
+  },
+  "products": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "sale": "Sale",
+    "from_price": "From {{ price }}",
+    "sale_price": "Sale price",
+    "quantity": "Quantity",
+    "rating_label": "Rated {{ rating }} out of 5"
+  },
+  "blogs": {
+    "empty": "No articles yet",
+    "comments": {
+      "title": {
+        "one": "{{ count }} comment",
+        "other": "{{ count }} comments"
+      },
+      "name": "Name",
+      "email": "Email",
+      "message": "Comment",
+      "submit": "Post comment",
+      "success": "Your comment was posted. It may take a little while to appear."
+    }
+  },
+  "footer": {
+    "brand": {
+      "heading": "About"
+    },
+    "menu": {
+      "heading": "Menu"
+    },
+    "contact": {
+      "heading": "Contact"
+    },
+    "shop": {
+      "heading": "Shop",
+      "all_products": "All products"
+    }
+  },
+  "password_page": {
+    "opening_soon": "Opening soon",
+    "message": "We are getting everything ready. Enter the password to view the store.",
+    "password": "Password",
+    "enter": "Enter store"
+  },
+  "powered_by": "Powered by Shopify"
+}

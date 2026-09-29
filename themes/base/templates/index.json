@@ -1,0 +1,57 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "eyebrow": "New season",
+        "heading": "Made to be worn for years",
+        "text": "<p>Small-batch pieces in natural fibres, made in limited runs.</p>",
+        "button_label": "Shop the collection",
+        "height": 640,
+        "overlay_opacity": 25,
+        "text_align": "left"
+      }
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Just in",
+        "heading": "New arrivals",
+        "subheading": "<p>The latest pieces from the studio.</p>",
+        "products_to_show": 8,
+        "columns_mobile": 2,
+        "columns_tablet": 3,
+        "columns_desktop": 4,
+        "link_label": "View all"
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "eyebrow": "Our craft",
+        "heading": "Made slowly, worn often",
+        "text": "<p>We work with a small group of mills, choosing fibres for how they age rather than how they photograph.</p>",
+        "button_label": "Read our story",
+        "layout": "text_first"
+      }
+    },
+    "categories": {
+      "type": "collection-list",
+      "settings": {
+        "heading": "Shop by category",
+        "collections_to_show": 6,
+        "use_blocks": false,
+        "link_label": "All collections"
+      }
+    },
+    "about": {
+      "type": "rich-text",
+      "settings": {
+        "eyebrow": "From the journal",
+        "narrow": true,
+        "flush_top": true
+      }
+    }
+  },
+  "order": ["hero", "featured", "story", "categories", "about"]
+}

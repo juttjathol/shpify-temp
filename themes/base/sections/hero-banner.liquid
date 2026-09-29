@@ -1,0 +1,92 @@
+{%- liquid
+  assign hero_image = section.settings.image | default: settings.hero_image
+  assign hero_heading = section.settings.heading | default: settings.hero_heading
+  assign hero_text = section.settings.text | default: settings.hero_text
+  assign hero_label = section.settings.button_label | default: settings.hero_button_label
+  assign hero_link = section.settings.button_link | default: settings.hero_button_link
+-%}
+
+<div
+  class="section section--flush-top section--flush-bottom hero hero--{{ section.settings.text_align }}"
+  style="--hero-height: {{ section.settings.height }}px;"
+>
+  {%- if hero_image != blank -%}
+    <div class="hero__media">
+      <picture>
+        {%- if section.settings.mobile_image != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ section.settings.mobile_image | image_url: width: 800 }}">
+        {%- endif -%}
+        <img
+          src="{{ hero_image | image_url: width: 1800 }}"
+          srcset="
+            {{ hero_image | image_url: width: 600 }} 600w,
+            {{ hero_image | image_url: width: 900 }} 900w,
+            {{ hero_image | image_url: width: 1400 }} 1400w,
+            {{ hero_image | image_url: width: 1800 }} 1800w
+          "
+          sizes="100vw"
+          alt="{{ hero_image.alt | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
+      </picture>
+    </div>
+    {%- if section.settings.overlay_opacity > 0 -%}
+      <div class="hero__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="container hero__inner">
+    <div class="hero__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="eyebrow" style="color: inherit;">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+
+      {%- if hero_heading != blank -%}
+        <h1 class="hero__heading">{{ hero_heading }}</h1>
+      {%- endif -%}
+
+      {%- if hero_text != blank -%}
+        <div class="hero__text rte">{{ hero_text }}</div>
+      {%- endif -%}
+
+      {%- if hero_label != blank and hero_link != blank -%}
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="{{ hero_link }}">{{ hero_label }}</a>
+          {%- if section.settings.button_2_label != blank and section.settings.button_2_link != blank -%}
+            <a class="btn btn--outline" href="{{ section.settings.button_2_link }}">{{ section.settings.button_2_label }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "tag": "section",
+  "class": "section-hero",
+  "settings": [
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Made to be worn for years" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Small-batch pieces in natural fibres, made in limited runs.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the collection" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "button_2_label", "label": "Second button label" },
+    { "type": "url", "id": "button_2_link", "label": "Second button link" },
+
+    { "type": "header", "content": "Media" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile image", "info": "Shown below 750px." },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "label": "Overlay darkness", "default": 25 },
+    { "type": "range", "id": "height", "min": 400, "max": 900, "step": 20, "unit": "px", "label": "Height", "default": 640 },
+    { "type": "select", "id": "text_align", "label": "Text alignment", "default": "left", "options": [
+      { "value": "left", "label": "Left" },
+      { "value": "center", "label": "Center" }
+    ] }
+  ],
+  "presets": [{ "name": "Hero banner" }]
+}
+{% endschema %}

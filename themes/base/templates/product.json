@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_vendor": true,
+        "show_description": true
+      },
+      "blocks": {
+        "shipping": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Shipping",
+            "content": "<p>Orders ship within two business days. Free delivery over $150.</p>"
+          }
+        },
+        "returns": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Returns",
+            "content": "<p>Not quite right? Return within 30 days, unworn and with tags attached.</p>"
+          }
+        }
+      },
+      "block_order": ["shipping", "returns"]
+    }
+  },
+  "order": ["main"]
+}

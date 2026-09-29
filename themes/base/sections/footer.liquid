@@ -1,0 +1,85 @@
+<footer class="footer" style="background: var(--color-footer-bg);">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h2 class="footer__heading">{{ 'footer.brand.heading' | t }}</h2>
+        <p>{{ section.settings.text | default: settings.footer_text }}</p>
+        {%- if section.settings.show_social -%}
+          {%- render 'social-icons' -%}
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.menu != blank -%}
+        <div>
+          <h2 class="footer__heading">{{ 'footer.menu.heading' | t }}</h2>
+          <ul class="footer__menu">
+            {%- for link in section.settings.menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_contact and shop.address != blank -%}
+        <div>
+          <h2 class="footer__heading">{{ 'footer.contact.heading' | t }}</h2>
+          <address style="font-style: normal; color: var(--color-text-soft);">
+            {%- if shop.address.street != blank %}{{ shop.address.street }}<br>{% endif -%}
+            {%- if shop.address.city != blank %}{{ shop.address.city }}{% endif -%}
+            {%- if shop.address.country != blank %}, {{ shop.address.country }}{% endif -%}
+          </address>
+        </div>
+      {%- endif -%}
+
+      <div>
+        <h2 class="footer__heading">{{ 'footer.shop.heading' | t }}</h2>
+        <ul class="footer__menu">
+          <li><a href="{{ routes.all_products_collection_url }}">{{ 'footer.shop.all_products' | t }}</a></li>
+          <li><a href="{{ routes.search_url }}">{{ 'general.search.title' | t }}</a></li>
+          {%- if shop.customer_accounts_enabled -%}
+            <li><a href="{{ routes.account_url }}">{{ 'customer.account.title' | t }}</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+
+      <ul class="footer__menu" style="display:flex; gap:16px; flex-wrap:wrap;">
+        {%- if section.settings.show_policy -%}
+          {%- if shop.privacy_policy != blank -%}
+            <li><a href="{{ shop.privacy_policy.url }}">{{ 'general.accessibility.privacy' | t }}</a></li>
+          {%- endif -%}
+          {%- if shop.terms_of_service != blank -%}
+            <li><a href="{{ shop.terms_of_service.url }}">{{ 'general.accessibility.terms' | t }}</a></li>
+          {%- endif -%}
+          {%- if shop.refund_policy != blank -%}
+            <li><a href="{{ shop.refund_policy.url }}">{{ 'general.accessibility.refund' | t }}</a></li>
+          {%- endif -%}
+        {%- endif -%}
+      </ul>
+
+      {%- if section.settings.show_payment -%}
+        <span class="footer__payments">{{ 'powered_by' | payment_type_svg_tag }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "settings": [
+    { "type": "textarea", "id": "text", "label": "About text", "default": "Small-batch fashion, made with natural fibres." },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" },
+    { "type": "checkbox", "id": "show_social", "label": "Show social links", "default": true },
+    { "type": "checkbox", "id": "show_contact", "label": "Show store address", "default": true },
+    { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true },
+    { "type": "checkbox", "id": "show_policy", "label": "Show policy links", "default": true }
+  ],
+  "enabled_on": { "groups": ["footer"] },
+  "presets": [{ "name": "Footer" }]
+}
+{% endschema %}

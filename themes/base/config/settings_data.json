@@ -1,0 +1,150 @@
+{
+  "current": {
+    "settings": {
+      "logo_width": 140,
+      "logo_text": "",
+      "type_heading_size": 40,
+      "type_body_size": 16,
+      "type_body_line_height": 16,
+      "type_heading_transform": "none",
+      "color_background": "#FDFBF7",
+      "color_surface": "#FFFFFF",
+      "color_surface_alt": "#F6F1E8",
+      "color_text": "#1C1917",
+      "color_text_soft": "#6B6259",
+      "color_border": "#E7DFD2",
+      "color_border_strong": "#CFC3B0",
+      "color_primary": "#1C1917",
+      "color_primary_contrast": "#FDFBF7",
+      "color_accent": "#C2643C",
+      "color_secondary": "#7C8B6A",
+      "color_sale": "#B3402F",
+      "color_star": "#D9A441",
+      "page_width": 1280,
+      "container_padding": 24,
+      "section_spacing": 72,
+      "grid_gap": 24,
+      "radius_card": 4,
+      "radius_button": 2,
+      "show_announcement": true,
+      "announcement_text": "Complimentary shipping on orders over $150",
+      "color_announcement_bg": "#1C1917",
+      "color_announcement_text": "#FDFBF7",
+      "announcement_dismissible": true,
+      "header_sticky": true,
+      "header_menu": "main-menu",
+      "header_height": 72,
+      "header_layout": "center",
+      "show_search": true,
+      "show_account": true,
+      "show_cart": true,
+      "hero_heading": "Made to be worn for years",
+      "hero_text": "Small-batch pieces in natural fibres, made in limited runs.",
+      "hero_button_label": "Shop the collection",
+      "hero_height": 640,
+      "card_show_vendor": false,
+      "card_show_price": true,
+      "card_show_rating": false,
+      "card_show_swatches": true,
+      "card_show_quick_add": true,
+      "card_image_ratio": "portrait",
+      "footer_menu": "footer",
+      "footer_text": "Small-batch fashion, made with natural fibres.",
+      "footer_show_social": true,
+      "footer_show_payment": true,
+      "footer_show_policy": true,
+      "color_footer_bg": "#F6F1E8",
+      "cart_type_drawer": true,
+      "show_shipping_bar": true,
+      "free_shipping_threshold": 150
+    },
+    "sections": {
+      "header-group": {
+        "type": "header",
+        "sections": {
+          "header": {
+            "type": "header",
+            "settings": {}
+          }
+        },
+        "order": [
+          "header"
+        ]
+      },
+      "footer-group": {
+        "type": "footer",
+        "sections": {
+          "footer": {
+            "type": "footer",
+            "settings": {}
+          }
+        },
+        "order": [
+          "footer"
+        ]
+      }
+    }
+  },
+  "presets": {
+    "Default": {
+      "settings": {
+        "logo_width": 140,
+        "logo_text": "",
+        "type_heading_size": 40,
+        "type_body_size": 16,
+        "type_body_line_height": 16,
+        "type_heading_transform": "none",
+        "color_background": "#FDFBF7",
+        "color_surface": "#FFFFFF",
+        "color_surface_alt": "#F6F1E8",
+        "color_text": "#1C1917",
+        "color_text_soft": "#6B6259",
+        "color_border": "#E7DFD2",
+        "color_border_strong": "#CFC3B0",
+        "color_primary": "#1C1917",
+        "color_primary_contrast": "#FDFBF7",
+        "color_accent": "#C2643C",
+        "color_secondary": "#7C8B6A",
+        "color_sale": "#B3402F",
+        "color_star": "#D9A441",
+        "page_width": 1280,
+        "container_padding": 24,
+        "section_spacing": 72,
+        "grid_gap": 24,
+        "radius_card": 4,
+        "radius_button": 2,
+        "show_announcement": true,
+        "announcement_text": "Complimentary shipping on orders over $150",
+        "color_announcement_bg": "#1C1917",
+        "color_announcement_text": "#FDFBF7",
+        "announcement_dismissible": true,
+        "header_sticky": true,
+        "header_menu": "main-menu",
+        "header_height": 72,
+        "header_layout": "center",
+        "show_search": true,
+        "show_account": true,
+        "show_cart": true,
+        "hero_heading": "Made to be worn for years",
+        "hero_text": "Small-batch pieces in natural fibres, made in limited runs.",
+        "hero_button_label": "Shop the collection",
+        "hero_height": 640,
+        "card_show_vendor": false,
+        "card_show_price": true,
+        "card_show_rating": false,
+        "card_show_swatches": true,
+        "card_show_quick_add": true,
+        "card_image_ratio": "portrait",
+        "footer_menu": "footer",
+        "footer_text": "Small-batch fashion, made with natural fibres.",
+        "footer_show_social": true,
+        "footer_show_payment": true,
+        "footer_show_policy": true,
+        "color_footer_bg": "#F6F1E8",
+        "cart_type_drawer": true,
+        "show_shipping_bar": true,
+        "free_shipping_threshold": 150
+      }
+    }
+  }
+}

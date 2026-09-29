@@ -1,0 +1,13 @@
+{
+  "$comment": "One entry per client theme. Each entry is built into its own ZIP: themes/<dir>/ -> dist/<zip>. Adding a client means adding a directory and an entry here; existing themes and their ZIPs are never touched.",
+  "themes": [
+    {
+      "dir": "base",
+      "name": "Base",
+      "version": "1.0",
+      "author": "juttjathol",
+      "description": "Production-ready Online Store 2.0 base theme. Cream editorial styling, fully editor-customisable.",
+      "zip": "base-v1.0.zip"
+    }
+  ]
+}

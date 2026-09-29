@@ -1,0 +1,55 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container">
+    <h1 class="section__heading" style="margin-bottom:24px;">
+      {%- if search.performed -%}
+        {{ 'general.search.results_for' | t: terms: search.terms }}
+      {%- else -%}
+        {{ 'general.search.title' | t }}
+      {%- endif -%}
+    </h1>
+
+    <form class="search-form" action="{{ routes.search_url }}" method="get" role="search" style="max-width:520px; margin-bottom:32px;">
+      <label class="visually-hidden" for="SearchInput">{{ 'general.search.placeholder' | t }}</label>
+      <input class="search-form__input" type="search" name="q" value="{{ search.terms | escape }}"
+             placeholder="{{ 'general.search.placeholder' | t }}">
+      <button class="btn btn--primary" type="submit">{{ 'general.search.submit' | t }}</button>
+    </form>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by section.settings.results_per_page -%}
+        {%- if search.results_count > 0 -%}
+          <p style="margin-bottom:16px; color: var(--color-text-soft);">
+            {{ 'general.search.results_count' | t: count: search.results_count }}
+          </p>
+          <div class="grid" style="--cols-mobile: 1; --cols-tablet: 2; --cols-desktop: 4;">
+            {%- for item in search.results -%}
+              <div>
+                <a href="{{ item.url }}">
+                  <h2 style="font-size:1rem;">{{ item.title | escape }}</h2>
+                </a>
+                <p style="font-size:.8125rem; color: var(--color-text-mute); margin-top:4px;">
+                  {{ item.object_type | t }}
+                </p>
+              </div>
+            {%- endfor -%}
+          </div>
+          {%- render 'pagination', paginate: paginate -%}
+        {%- else -%}
+          <div class="empty-state">
+            <p>{{ 'general.search.no_results' | t: terms: search.terms }}</p>
+          </div>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Search results",
+  "settings": [
+    { "type": "range", "id": "results_per_page", "min": 8, "max": 48, "step": 4, "label": "Results per page", "default": 24 },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ]
+}
+{% endschema %}

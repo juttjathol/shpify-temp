@@ -1,0 +1,42 @@
+{%- comment -%}
+  Maps theme settings onto the custom properties base.css reads.
+  Every value carries a literal fallback, so if a setting is nil or the file is
+  skipped the page still styles correctly instead of collapsing to unstyled
+  markup. Names here must match the token block in assets/base.css.
+{%- endcomment -%}
+
+<style>
+  :root {
+    --color-bg: {{ settings.color_background | default: '#FDFBF7' }};
+    --color-bg-soft: {{ settings.color_surface_alt | default: '#F6F1E8' }};
+    --color-surface: {{ settings.color_surface | default: '#FFFFFF' }};
+    --color-surface-alt: {{ settings.color_surface_alt | default: '#F6F1E8' }};
+    --color-text: {{ settings.color_text | default: '#1C1917' }};
+    --color-text-soft: {{ settings.color_text_soft | default: '#6B6259' }};
+    --color-text-mute: {{ settings.color_text_soft | default: '#6B6259' }};
+    --color-border: {{ settings.color_border | default: '#E7DFD2' }};
+    --color-border-strong: {{ settings.color_border_strong | default: '#CFC3B0' }};
+    --color-primary: {{ settings.color_primary | default: '#1C1917' }};
+    --color-primary-contrast: {{ settings.color_primary_contrast | default: '#FDFBF7' }};
+    --color-accent: {{ settings.color_accent | default: '#C2643C' }};
+    --color-secondary: {{ settings.color_secondary | default: '#7C8B6A' }};
+    --color-sale: {{ settings.color_sale | default: '#B3402F' }};
+    --color-star: {{ settings.color_star | default: '#D9A441' }};
+
+    --color-announcement-bg: {{ settings.color_announcement_bg | default: '#1C1917' }};
+    --color-announcement-text: {{ settings.color_announcement_text | default: '#FDFBF7' }};
+    --color-footer-bg: {{ settings.color_footer_bg | default: '#F6F1E8' }};
+
+    --text-body-size: {{ settings.type_body_size | default: 16 }}px;
+    --text-body-line: {{ settings.type_body_line_height | default: 16 | divided_by: 10.0 }};
+    --text-heading-size: {{ settings.type_heading_size | default: 40 }}px;
+
+    --page-width: {{ settings.page_width | default: 1280 }}px;
+    --container-pad: {{ settings.container_padding | default: 24 }}px;
+    --section-space: {{ settings.section_spacing | default: 72 }}px;
+    --grid-gap: {{ settings.grid_gap | default: 24 }}px;
+    --radius-card: {{ settings.radius_card | default: 4 }}px;
+    --radius-button: {{ settings.radius_button | default: 2 }}px;
+    --header-height: {{ settings.header_height | default: 72 }}px;
+  }
+</style>

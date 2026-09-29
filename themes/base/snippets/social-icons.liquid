@@ -1,0 +1,47 @@
+{%- comment -%}
+  Social links from theme settings. Each network is a real icon, and the whole
+  block renders nothing when no URLs are set, so the footer never shows a row
+  of empty placeholders.
+  Usage: {% render 'social-icons' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign networks = 'instagram,facebook,tiktok,x,youtube,pinterest,linkedin'
+  assign has_any = false
+  for net in networks split: ','
+    if settings[net] != blank
+      assign has_any = true
+      break
+    endif
+  endfor
+-%}
+
+{%- if has_any -%}
+  <ul class="footer__social">
+    {%- for net in networks split: ',', limit: 7 -%}
+      {%- assign url = settings[net] -%}
+      {%- if url != blank -%}
+        <li>
+          <a href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ net | capitalize }}">
+            {%- case net -%}
+              {%- when 'instagram' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              {%- when 'facebook' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9V7a2 2 0 0 1 2-2h2V2h-3a5 5 0 0 0-5 5v2H8v3h2v9h4v-9h3l1-3h-4Z"/></svg>
+              {%- when 'tiktok' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 3a5 5 0 0 0 4 4v3a8 8 0 0 1-4-1.2V15a6 6 0 1 1-6-6c.3 0 .7 0 1 .1v3.2A2.8 2.8 0 1 0 13 15V3h3Z"/></svg>
+              {%- when 'x' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3l-6.6 7.5L21.8 21h-6l-4.7-6.1L5.6 21h-3l7-8L2.5 3h6.2l4.2 5.6ZM16.4 19.2h1.7L7.6 4.7H5.8Z"/></svg>
+              {%- when 'youtube' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.5-.4-5.2a2.8 2.8 0 0 0-2-2C18.9 4.4 12 4.4 12 4.4s-6.9 0-8.6.4a2.8 2.8 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.8 2.8 0 0 0 2 2c1.7.4 8.6.4 8.6.4s6.9 0 8.6-.4a2.8 2.8 0 0 0 2-2C23 15.5 23 12 23 12ZM9.8 15.4V8.6l5.8 3.4Z"/></svg>
+              {%- when 'pinterest' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.5 1.9-2.5.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.5-.2 1 .5 1.9 1.6 1.9 1.9 0 3.3-2.4 3.3-5.2 0-2.1-1.5-3.6-3.8-3.6a4.1 4.1 0 0 0-4.2 4.1c0 .8.3 1.7.7 2.2l-.3 1.1c-.1.4-.3.5-.6.3-1.3-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.2l-.6 2.4c-.2.9-.8 1.9-1.2 2.6A10 10 0 1 0 12 2Z"/></svg>
+              {%- when 'linkedin' -%}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM3 9h4v12H3ZM9 9h3.8v1.7h.1a4.2 4.2 0 0 1 3.8-2.1c4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9Z"/></svg>
+            {%- endcase -%}
+          </a>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

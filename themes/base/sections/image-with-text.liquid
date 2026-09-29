@@ -1,0 +1,57 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container{% if section.settings.narrow %} container--narrow{% endif %}">
+    <div class="image-with-text{% if section.settings.layout == 'image_first' %} image-with-text--reverse{% endif %}">
+      <div class="image-with-text__media">
+        {%- if section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            srcset="{{ section.settings.image | image_url: width: 500 }} 500w, {{ section.settings.image | image_url: width: 800 }} 800w, {{ section.settings.image | image_url: width: 1200 }} 1200w"
+            sizes="(min-width: 750px) 50vw, 100vw"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+          >
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="rte section__subheading">{{ section.settings.text }}</div>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a class="btn btn--outline" href="{{ section.settings.button_link }}" style="margin-top:24px;">
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "select", "id": "layout", "label": "Image position", "default": "text_first", "options": [
+      { "value": "text_first", "label": "Image right" },
+      { "value": "image_first", "label": "Image left" }
+    ] },
+    { "type": "checkbox", "id": "narrow", "label": "Narrow the column", "default": false },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ],
+  "presets": [{ "name": "Image with text" }]
+}
+{% endschema %}

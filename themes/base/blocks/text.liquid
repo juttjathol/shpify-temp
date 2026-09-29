@@ -1,0 +1,14 @@
+{%- comment -%} Reusable rich text block, for copy that is not a heading. {%- endcomment -%}
+{%- if block.settings.text != blank -%}
+  <div class="rte">{{ block.settings.text }}</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Text",
+  "settings": [
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Add your text here.</p>" },
+    { "type": "checkbox", "id": "narrow", "label": "Narrow the column", "default": true }
+  ]
+}
+{% endschema %}

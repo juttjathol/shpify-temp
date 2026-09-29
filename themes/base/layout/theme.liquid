@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_background | default: '#FDFBF7' }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags | join: ', ' }}{% endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {%- render 'meta-tags' -%}
+
+    {{ content_for_header }}
+
+    {%- comment -%}
+      Shopify's font_picker values resolve to a font family and a face set.
+      font_face emits the @font-face rule; the family name is exposed as a CSS
+      custom property so base.css can reference it.
+    {%- endcomment -%}
+    {%- liquid
+      assign heading_font = settings.type_heading_font | default: settings.type_body_font
+      assign heading_family = heading_font.family | default: 'Georgia'
+      assign body_family = settings.type_body_font.family | default: 'Helvetica Neue'
+    -%}
+
+    {%- render 'css-variables' -%}
+
+    <link rel="stylesheet" href="{{ 'base.css' | asset_url }}">
+
+    <style>
+      :root {
+        --font-heading: {{ heading_family | handle | prepend: 'ShopifyFont-' }}, Georgia, "Times New Roman", serif;
+        --font-body: {{ body_family | handle | prepend: 'ShopifyFont-' }}, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --text-heading-transform: {{ settings.type_heading_transform | default: 'none' }};
+      }
+      h1, h2, h3, h4, h5, h6 { text-transform: var(--text-heading-transform); }
+    </style>
+
+    {%- comment -%}
+      Emits the @font-face rules for the two font_picker settings. `system?` is
+      true when the client kept the theme default, in which case Shopify serves
+      the font and there is nothing to load here.
+    {%- endcomment -%}
+    {%- if settings.type_heading_font.system? == false -%}
+      {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+    {%- endif -%}
+    {%- if settings.type_body_font.system? == false -%}
+      {{ settings.type_body_font | font_face: font_display: 'swap' }}
+    {%- endif -%}
+    <script src="{{ 'global.js' | asset_url }}" defer></script>
+  </head>
+
+  <body class="template-{{ template.name | handle }}">
+    <a class="skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+    {% sections 'header-group' %}
+
+    <main id="MainContent" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+  </body>
+</html>

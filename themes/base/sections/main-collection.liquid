@@ -1,0 +1,67 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container">
+    {%- if section.settings.show_title and collection.title != blank -%}
+      <h1 class="section__heading" style="margin-bottom:16px;">{{ collection.title }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.show_description and collection.description != blank -%}
+      <div class="section__subheading rte" style="margin-bottom:24px;">{{ collection.description }}</div>
+    {%- endif -%}
+
+    <div class="collection__toolbar">
+      <span>{{ 'collections.products_count' | t: count: collection.products_count }}</span>
+
+      {%- if section.settings.enable_sorting and collection.products_count > 1 -%}
+        <form method="get" action="{{ collection.url }}">
+          <label class="visually-hidden" for="SortBy-{{ section.id }}">{{ 'collections.sorting.title' | t }}</label>
+          <select id="SortBy-{{ section.id }}" name="sort_by" class="field__select" style="width:auto;" onchange="this.form.submit()">
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>
+                {{ option.name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </form>
+      {%- endif -%}
+    </div>
+
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- if collection.products_count > 0 -%}
+        <div
+          class="grid"
+          style="--cols-mobile: {{ section.settings.columns_mobile }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-desktop: {{ section.settings.columns_desktop }};"
+        >
+          {%- for product in collection.products -%}
+            {%- if forloop.index <= 8 -%}
+              {%- render 'product-card', product: product, loading: 'eager' -%}
+            {%- else -%}
+              {%- render 'product-card', product: product, loading: 'lazy' -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- render 'pagination', paginate: paginate -%}
+      {%- else -%}
+        <div class="empty-state">
+          <h2>{{ 'collections.empty.title' | t }}</h2>
+          <p>{{ 'collections.empty.text' | t }}</p>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    { "type": "checkbox", "id": "show_title", "label": "Show collection title", "default": true },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true },
+    { "type": "range", "id": "products_per_page", "min": 8, "max": 48, "step": 4, "label": "Products per page", "default": 24 },
+    { "type": "range", "id": "columns_mobile", "min": 1, "max": 3, "step": 1, "label": "Columns on mobile", "default": 2 },
+    { "type": "range", "id": "columns_tablet", "min": 2, "max": 4, "step": 1, "label": "Columns on tablet", "default": 3 },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "label": "Columns on desktop", "default": 4 },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ]
+}
+{% endschema %}

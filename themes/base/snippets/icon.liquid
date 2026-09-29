@@ -1,0 +1,28 @@
+{%- comment -%}
+  Generic icon set. Usage: {% render 'icon', name: 'star', size: 16 %}
+  Unknown names render nothing rather than an empty box.
+{%- endcomment -%}
+{%- case name -%}
+  {%- when 'arrow-right' -%}
+    <svg width="{{ size | default: 20 }}" height="{{ size | default: 20 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+  {%- when 'chevron-down' -%}
+    <svg width="{{ size | default: 20 }}" height="{{ size | default: 20 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+  {%- when 'close' -%}
+    <svg width="{{ size | default: 20 }}" height="{{ size | default: 20 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  {%- when 'menu' -%}
+    <svg width="{{ size | default: 24 }}" height="{{ size | default: 24 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+  {%- when 'user' -%}
+    <svg width="{{ size | default: 24 }}" height="{{ size | default: 24 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+  {%- when 'star' -%}
+    <svg width="{{ size | default: 16 }}" height="{{ size | default: 16 }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="m12 2 3 6.6 7 .9-5 4.8 1.2 7L12 18l-6.2 3.3L7 14.3 2 9.5l7-.9Z"/></svg>
+  {%- when 'truck' -%}
+    <svg width="{{ size | default: 20 }}" height="{{ size | default: 20 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 3h13v13H1z"/><path d="M14 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/></svg>
+  {%- when 'refresh' -%}
+    <svg width="{{ size | default: 20 }}" height="{{ size | default: 20 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+  {%- when 'leaf' -%}
+    <svg width="{{ size | default: 20 }}" height="{{ size | default: 20 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 20A7 7 0 0 1 4 13c0-6 8-10 16-10 0 8-4 16-10 16Z"/><path d="M4 21c3-6 7-9 12-11"/></svg>
+  {%- when 'plus' -%}
+    <svg width="{{ size | default: 16 }}" height="{{ size | default: 16 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+  {%- when 'minus' -%}
+    <svg width="{{ size | default: 16 }}" height="{{ size | default: 16 }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/></svg>
+{%- endcase -%}

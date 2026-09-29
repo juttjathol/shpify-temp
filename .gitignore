@@ -1,5 +1,7 @@
 node_modules/
+dist/
+.audit-tmp/
+.build-tmp/
 .DS_Store
 *.log
 .arena/
-dist/

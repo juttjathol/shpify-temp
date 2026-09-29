@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-article",
+      "settings": {
+        "show_comments": true
+      }
+    }
+  },
+  "order": ["main"]
+}

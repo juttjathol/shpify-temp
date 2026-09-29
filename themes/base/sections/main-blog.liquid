@@ -1,0 +1,48 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container">
+    <h1 class="section__heading" style="margin-bottom:24px;">{{ blog.title }}</h1>
+
+    {%- paginate blog.articles by section.settings.posts_per_page -%}
+      {%- if blog.articles.size > 0 -%}
+        <div class="grid" style="--cols-mobile: 1; --cols-tablet: 2; --cols-desktop: 3;">
+          {%- for article in blog.articles -%}
+            <article>
+              <a href="{{ article.url }}">
+                {%- if article.image != blank -%}
+                  <img
+                    src="{{ article.image | image_url: width: 700 }}"
+                    srcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 700 }} 700w, {{ article.image | image_url: width: 1000 }} 1000w"
+                    sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+                    alt="{{ article.image.alt | escape }}"
+                    loading="lazy"
+                    style="border-radius: var(--radius-card);"
+                  >
+                {%- endif -%}
+                <h2 style="font-size:1.25rem; margin-top:12px;">{{ article.title | escape }}</h2>
+              </a>
+              <p style="font-size:.8125rem; color: var(--color-text-mute); margin-top:6px;">
+                {{ article.published_at | date: format: 'month_day_year' }}
+              </p>
+              {%- if article.excerpt != blank -%}
+                <p style="color: var(--color-text-soft); margin-top:8px;">{{ article.excerpt | strip_html | truncatewords: 22 }}</p>
+              {%- endif -%}
+            </article>
+          {%- endfor -%}
+        </div>
+        {%- render 'pagination', paginate: paginate -%}
+      {%- else -%}
+        <div class="empty-state"><p>{{ 'blogs.empty' | t }}</p></div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    { "type": "range", "id": "posts_per_page", "min": 3, "max": 24, "step": 3, "label": "Posts per page", "default": 9 },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ]
+}
+{% endschema %}

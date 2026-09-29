@@ -1,0 +1,532 @@
+[
+  {
+    "name": "Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "min": 60,
+        "max": 320,
+        "step": 10,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 140
+      },
+      {
+        "type": "text",
+        "id": "logo_text",
+        "label": "Logo text",
+        "info": "Shown when no logo image is uploaded. Leave the store name to use it."
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Square image, 32x32 or larger. Uploaded to Shopify with the theme."
+      },
+      {
+        "type": "image_picker",
+        "id": "social_share_image",
+        "label": "Social share image",
+        "info": "Shown when the store is shared on social platforms. 1200x630 works well."
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Fonts are loaded from Shopify's font library and render on every page."
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "Heading font",
+        "default": "bodoni_moda_n7"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "range",
+        "id": "type_heading_size",
+        "min": 24,
+        "max": 64,
+        "step": 2,
+        "unit": "px",
+        "label": "Base heading size",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "type_body_size",
+        "min": 13,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Base body size",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "type_body_line_height",
+        "min": 12,
+        "max": 24,
+        "step": 1,
+        "unit": "x",
+        "label": "Body line height",
+        "default": 16
+      },
+      {
+        "type": "select",
+        "id": "type_heading_transform",
+        "label": "Heading letter case",
+        "default": "none",
+        "options": [
+          { "value": "none", "label": "As typed" },
+          { "value": "uppercase", "label": "Uppercase" },
+          { "value": "lowercase", "label": "Lowercase" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Every colour on the storefront is driven from here."
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Page background",
+        "default": "#FDFBF7"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Card and panel background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_surface_alt",
+        "label": "Muted background",
+        "default": "#F6F1E8"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#1C1917"
+      },
+      {
+        "type": "color",
+        "id": "color_text_soft",
+        "label": "Secondary text",
+        "default": "#6B6259"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders",
+        "default": "#E7DFD2"
+      },
+      {
+        "type": "color",
+        "id": "color_border_strong",
+        "label": "Strong borders",
+        "default": "#CFC3B0"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary button",
+        "default": "#1C1917"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_contrast",
+        "label": "Text on primary",
+        "default": "#FDFBF7"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent",
+        "default": "#C2643C"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary accent",
+        "default": "#7C8B6A"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale price",
+        "default": "#B3402F"
+      },
+      {
+        "type": "color",
+        "id": "color_star",
+        "label": "Rating stars",
+        "default": "#D9A441"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1000,
+        "max": 1600,
+        "step": 20,
+        "unit": "px",
+        "label": "Maximum page width",
+        "default": 1280
+      },
+      {
+        "type": "range",
+        "id": "container_padding",
+        "min": 12,
+        "max": 64,
+        "step": 4,
+        "unit": "px",
+        "label": "Page side padding",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "min": 24,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "label": "Space between sections",
+        "default": 72
+      },
+      {
+        "type": "range",
+        "id": "grid_gap",
+        "min": 8,
+        "max": 48,
+        "step": 4,
+        "unit": "px",
+        "label": "Grid gap",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "radius_card",
+        "min": 0,
+        "max": 32,
+        "step": 2,
+        "unit": "px",
+        "label": "Card corner radius",
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "radius_button",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "label": "Button corner radius",
+        "default": 2
+      }
+    ]
+  },
+  {
+    "name": "Announcement bar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_announcement",
+        "label": "Show announcement bar",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "announcement_text",
+        "label": "Text",
+        "default": "Complimentary shipping on orders over $150"
+      },
+      {
+        "type": "url",
+        "id": "announcement_link",
+        "label": "Link"
+      },
+      {
+        "type": "color",
+        "id": "color_announcement_bg",
+        "label": "Background",
+        "default": "#1C1917"
+      },
+      {
+        "type": "color",
+        "id": "color_announcement_text",
+        "label": "Text",
+        "default": "#FDFBF7"
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_dismissible",
+        "label": "Let customers dismiss it",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "header_sticky",
+        "label": "Stick to the top when scrolling",
+        "default": true
+      },
+      {
+        "type": "link_list",
+        "id": "header_menu",
+        "label": "Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "range",
+        "id": "header_height",
+        "min": 48,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "label": "Header height",
+        "default": 72
+      },
+      {
+        "type": "select",
+        "id": "header_layout",
+        "label": "Logo position",
+        "default": "center",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "center", "label": "Center" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_search",
+        "label": "Show search",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_account",
+        "label": "Show account link",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cart",
+        "label": "Show cart",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Home page hero",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Defaults for the hero banner. Each hero section on the page can override them."
+      },
+      {
+        "type": "text",
+        "id": "hero_heading",
+        "label": "Heading",
+        "default": "Made to be worn for years"
+      },
+      {
+        "type": "textarea",
+        "id": "hero_text",
+        "label": "Text",
+        "default": "Small-batch pieces in natural fibres, made in limited runs."
+      },
+      {
+        "type": "text",
+        "id": "hero_button_label",
+        "label": "Button label",
+        "default": "Shop the collection"
+      },
+      {
+        "type": "url",
+        "id": "hero_button_link",
+        "label": "Button link"
+      },
+      {
+        "type": "image_picker",
+        "id": "hero_image",
+        "label": "Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "hero_mobile_image",
+        "label": "Mobile image",
+        "info": "Optional. Shown on small screens instead of the desktop image."
+      },
+      {
+        "type": "range",
+        "id": "hero_height",
+        "min": 400,
+        "max": 900,
+        "step": 20,
+        "unit": "px",
+        "label": "Height",
+        "default": 640
+      }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "card_show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_price",
+        "label": "Show price",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_rating",
+        "label": "Show rating",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_swatches",
+        "label": "Show colour swatches",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_quick_add",
+        "label": "Show quick add",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "label": "Image shape",
+        "default": "portrait",
+        "options": [
+          { "value": "portrait", "label": "Portrait 3:4" },
+          { "value": "square", "label": "Square 1:1" },
+          { "value": "landscape", "label": "Landscape 4:3" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "footer_menu",
+        "label": "Footer menu",
+        "default": "footer"
+      },
+      {
+        "type": "textarea",
+        "id": "footer_text",
+        "label": "About text",
+        "default": "Small-batch fashion, made with natural fibres."
+      },
+      {
+        "type": "checkbox",
+        "id": "footer_show_social",
+        "label": "Show social links",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "footer_show_payment",
+        "label": "Show payment icons",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "footer_show_policy",
+        "label": "Show policy links",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bg",
+        "label": "Background",
+        "default": "#F6F1E8"
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Leave a field blank to hide that icon."
+      },
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_facebook", "label": "Facebook" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "url", "id": "social_x", "label": "X" },
+      { "type": "url", "id": "social_youtube", "label": "YouTube" },
+      { "type": "url", "id": "social_pinterest", "label": "Pinterest" },
+      { "type": "url", "id": "social_linkedin", "label": "LinkedIn" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_type_drawer",
+        "label": "Open the cart in a drawer instead of a page",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shipping_bar",
+        "label": "Show free shipping progress bar",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "free_shipping_threshold",
+        "min": 0,
+        "max": 500,
+        "step": 10,
+        "unit": "$",
+        "label": "Free shipping threshold",
+        "default": 150
+      }
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+{%- comment -%} Open Graph and Twitter card tags, with no hardcoded image URL. {%- endcomment -%}
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:title" content="{{ page_title | escape }}">
+<meta property="og:type" content="{% if request.page_type == 'product' %}product{% elsif request.page_type == 'article' %}article{% else %}website{% endif %}">
+<meta property="og:description" content="{{ page_description | default: shop.description | escape }}">
+{%- if settings.social_share_image != blank -%}
+  <meta property="og:image" content="https:{{ settings.social_share_image | image_url: width: 1200 }}">
+  <meta property="og:image:secure_url" content="https:{{ settings.social_share_image | image_url: width: 1200 }}">
+{%- elsif page_image != blank -%}
+  <meta property="og:image" content="http:{{ page_image | image_url: width: 1200 }}">
+{%- endif -%}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page_title | escape }}">
+<meta name="twitter:description" content="{{ page_description | default: shop.description | escape }}">

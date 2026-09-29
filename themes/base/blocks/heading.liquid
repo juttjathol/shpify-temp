@@ -1,0 +1,29 @@
+{%- comment -%}
+  Reusable heading block. Available to any section that opts into theme blocks,
+  so a client can restyle headings from one place instead of section by section.
+{%- endcomment -%}
+{%- liquid
+  assign tag = block.settings.tag | default: 'h2'
+-%}
+{%- if block.settings.text != blank -%}
+  <{{ tag }} class="{{ block.settings.size }}">{{ block.settings.text }}</{{ tag }}>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Heading",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "default": "Heading" },
+    { "type": "select", "id": "tag", "label": "HTML tag", "default": "h2", "options": [
+      { "value": "h1", "label": "H1" },
+      { "value": "h2", "label": "H2" },
+      { "value": "h3", "label": "H3" },
+      { "value": "p", "label": "Paragraph" }
+    ] },
+    { "type": "select", "id": "size", "label": "Size", "default": "section__heading", "options": [
+      { "value": "section__heading", "label": "Large" },
+      { "value": "", "label": "Body" }
+    ] }
+  ]
+}
+{% endschema %}

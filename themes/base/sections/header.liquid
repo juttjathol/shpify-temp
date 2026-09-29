@@ -1,0 +1,210 @@
+{%- liquid
+  assign menu = section.settings.menu
+  assign has_sticky = false
+  if section.settings.sticky
+    assign has_sticky = true
+  endif
+-%}
+
+{%- if section.settings.show_announcement and section.settings.announcement_text != blank -%}
+  <div
+    class="announcement"
+    data-announcement="header"
+    style="background: var(--color-announcement-bg); color: var(--color-announcement-text);"
+  >
+    <div class="container announcement__inner">
+      {%- if section.settings.announcement_link != blank -%}
+        <a href="{{ section.settings.announcement_link }}">
+          {{ section.settings.announcement_text }}
+        </a>
+      {%- else -%}
+        <span>{{ section.settings.announcement_text }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.announcement_dismissible -%}
+        <button class="announcement__close" type="button" data-announcement-close aria-label="{{ 'general.accessibility.close' | t }}">
+          {%- render 'icon', name: 'close', size: 16 -%}
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+<header
+  class="header{% if has_sticky %} header--sticky{% endif %}"
+  data-sticky-header
+  style="min-height: var(--header-height);"
+>
+  <div class="container header__inner">
+    <button
+      class="header__action header__toggle"
+      type="button"
+      data-drawer-open="menu"
+      aria-label="{{ 'general.accessibility.open_menu' | t }}"
+    >
+      {%- render 'icon', name: 'menu' -%}
+    </button>
+
+    <div class="header__logo header__logo--{{ section.settings.logo_position }}">
+      <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+        {%- if section.settings.logo != blank -%}
+          <img
+            src="{{ section.settings.logo | image_url: width: 400 }}"
+            srcset="{{ section.settings.logo | image_url: width: 200 }} 1x, {{ section.settings.logo | image_url: width: 400 }} 2x"
+            width="{{ section.settings.logo_width | default: 140 }}"
+            alt="{{ shop.name | escape }}"
+            loading="eager"
+          >
+        {%- else -%}
+          <span class="header__logo-text">
+            {{ section.settings.logo_text | default: shop.name }}
+          </span>
+        {%- endif -%}
+      </a>
+    </div>
+
+    {%- if menu != blank -%}
+      <nav class="header__nav" aria-label="{{ 'general.accessibility.primary_nav' | t }}">
+        <ul class="header__menu">
+          {%- for link in menu.links -%}
+            <li class="{% if link.active %}is-active{% endif %}">
+              <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>
+                {{ link.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    <div class="header__actions">
+      {%- if section.settings.show_search -%}
+        <button
+          class="header__action"
+          type="button"
+          data-drawer-open="search"
+          aria-label="{{ 'general.search.title' | t }}"
+        >
+          {%- render 'icon-search' -%}
+        </button>
+      {%- endif -%}
+
+      {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+        <a class="header__action" href="{{ routes.account_url }}" aria-label="{{ 'customer.account.title' | t }}">
+          {%- render 'icon', name: 'user' -%}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.show_cart -%}
+        <a
+          class="header__action"
+          href="{{ routes.cart_url }}"
+          aria-label="{{ 'cart.general.title' | t }}"
+          style="position: relative;"
+        >
+          {%- render 'icon-cart' -%}
+          <span class="cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>
+            {{ cart.item_count }}
+          </span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Mobile navigation drawer {%- endcomment -%}
+<div class="drawer" data-drawer="menu" role="dialog" aria-modal="true" aria-label="{{ 'general.accessibility.menu' | t }}">
+  <div class="drawer__overlay"></div>
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <span class="header__logo-text">{{ shop.name }}</span>
+      <button class="header__action" type="button" data-drawer-close aria-label="{{ 'general.accessibility.close' | t }}">
+        {%- render 'icon', name: 'close' -%}
+      </button>
+    </div>
+
+    {%- if menu != blank -%}
+      <nav aria-label="{{ 'general.accessibility.mobile_nav' | t }}">
+        <ul class="drawer__menu">
+          {%- for link in menu.links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- else -%}
+      <p>{{ 'general.navigation.no_menu' | t }}</p>
+    {%- endif -%}
+
+    <ul class="footer__menu" style="margin-top:24px;">
+      {%- if shop.customer_accounts_enabled -%}
+        <li><a href="{{ routes.account_url }}">{{ 'customer.account.title' | t }}</a></li>
+      {%- endif -%}
+      <li><a href="{{ routes.cart_url }}">{{ 'cart.general.title' | t }}</a></li>
+    </ul>
+  </div>
+</div>
+
+{%- comment -%} Search drawer {%- endcomment -%}
+{%- if section.settings.show_search -%}
+  <div class="drawer drawer--end" data-drawer="search" role="dialog" aria-modal="true" aria-label="{{ 'general.search.title' | t }}">
+    <div class="drawer__overlay"></div>
+    <div class="drawer__panel">
+      <div class="drawer__head">
+        <span class="header__logo-text">{{ 'general.search.title' | t }}</span>
+        <button class="header__action" type="button" data-drawer-close aria-label="{{ 'general.accessibility.close' | t }}">
+          {%- render 'icon', name: 'close' -%}
+        </button>
+      </div>
+
+      <form class="search-form" action="{{ routes.search_url }}" method="get" role="search">
+        <label class="visually-hidden" for="SearchInput-{{ section.id }}">{{ 'general.search.placeholder' | t }}</label>
+        <input
+          id="SearchInput-{{ section.id }}"
+          class="search-form__input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+        >
+        <button class="btn btn--primary" type="submit">{{ 'general.search.submit' | t }}</button>
+      </form>
+
+      {%- if search.performed and search.results_count > 0 -%}
+        <p style="margin-top:16px; font-size:.875rem; color: var(--color-text-soft);">
+          {{ 'general.search.results_count' | t: count: search.results_count }}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    { "type": "checkbox", "id": "show_announcement", "label": "Show announcement bar", "default": true },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Complimentary shipping on orders over $150" },
+    { "type": "url", "id": "announcement_link", "label": "Announcement link" },
+    { "type": "checkbox", "id": "announcement_dismissible", "label": "Let customers dismiss it", "default": true },
+    { "type": "paragraph", "content": "Set announcement defaults once in Theme settings under Announcement bar, or override them here." },
+
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "range", "id": "logo_width", "min": 60, "max": 320, "step": 10, "unit": "px", "label": "Logo width", "default": 140 },
+    { "type": "text", "id": "logo_text", "label": "Logo text", "info": "Used when no logo image is set." },
+    { "type": "select", "id": "logo_position", "label": "Logo position", "default": "center", "options": [
+      { "value": "left", "label": "Left" },
+      { "value": "center", "label": "Center" }
+    ] },
+
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "sticky", "label": "Stick to the top when scrolling", "default": true },
+
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    { "type": "checkbox", "id": "show_account", "label": "Show account link", "default": true },
+    { "type": "checkbox", "id": "show_cart", "label": "Show cart", "default": true }
+  ],
+  "enabled_on": { "groups": ["header"] },
+  "presets": [{ "name": "Header" }]
+}
+{% endschema %}

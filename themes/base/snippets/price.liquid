@@ -1,0 +1,23 @@
+{%- comment -%}
+  Renders a price with compare-at pricing handled.
+  Usage: {% render 'price', product: product %}
+{%- endcomment -%}
+{%- if product.price_varies == false -%}
+  <span class="card__price">
+    {%- if product.compare_at_price > product.price -%}
+      <del>{{ product.compare_at_price | money }}</del>
+    {%- endif -%}
+    <ins>
+      {%- if settings.card_show_price -%}
+        {{ product.price | money }}
+        {%- if product.compare_at_price > product.price -%}
+          <span class="visually-hidden">{{ 'products.sale_price' | t }}</span>
+        {%- endif -%}
+      {%- endif -%}
+    </ins>
+  </span>
+{%- else -%}
+  <span class="card__price">
+    {{ 'products.from_price' | t: price: product.price_min | money }}
+  </span>
+{%- endif -%}

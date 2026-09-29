@@ -1,0 +1,73 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container container--narrow">
+    <h1 class="section__heading">{{ article.title }}</h1>
+    <p style="font-size:.8125rem; color: var(--color-text-mute); margin-top:8px;">
+      {{ article.published_at | date: format: 'month_day_year' }}
+      {%- if article.author != blank %} &middot; {{ article.author }}{% endif -%}
+    </p>
+
+    {%- if article.image != blank -%}
+      <img
+        src="{{ article.image | image_url: width: 1400 }}"
+        srcset="{{ article.image | image_url: width: 700 }} 700w, {{ article.image | image_url: width: 1400 }} 1400w"
+        sizes="(min-width: 990px) 760px, 100vw"
+        alt="{{ article.image.alt | escape }}"
+        style="border-radius: var(--radius-card); margin-top:24px;"
+      >
+    {%- endif -%}
+
+    <div class="rte" style="margin-top:24px;">{{ article.content }}</div>
+
+    {%- if blog.comments_enabled? and section.settings.show_comments -%}
+      <div style="margin-top:48px;">
+        <h2 style="font-size:1.25rem; margin-bottom:16px;">{{ 'blogs.comments.title' | t: count: article.comments_count }}</h2>
+
+        {%- if article.comments_count > 0 -%}
+          {%- for comment in article.comments -%}
+            <div style="padding-block:16px; border-bottom:1px solid var(--color-border);">
+              <strong>{{ comment.author }}</strong>
+              <div class="rte" style="margin-top:6px;">{{ comment.content }}</div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- if comment.post_successfully? -%}
+          <p class="form__message form__message--ok">{{ 'blogs.comments.success' | t }}</p>
+        {%- endif -%}
+
+        <form method="post" action="{{ routes.article_comment_url }}" style="margin-top:24px;">
+          {%- comment -%}
+            Honeypot: bots fill every field, humans leave this one empty.
+            It stays hidden from sight and from screen readers.
+          {%- endcomment -%}
+          <input type="text" name="contact[email_contact]" tabindex="-1" autocomplete="off" aria-hidden="true"
+                 style="position:absolute; left:-9999px; opacity:0;" tabindex="-1">
+
+          <div class="field">
+            <label class="field__label" for="AuthorName">{{ 'blogs.comments.name' | t }}</label>
+            <input class="field__input" type="text" id="AuthorName" name="comment[author]" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="AuthorEmail">{{ 'blogs.comments.email' | t }}</label>
+            <input class="field__input" type="email" id="AuthorEmail" name="comment[email]" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
+            <textarea class="field__textarea" id="CommentBody" name="comment[body]" rows="5" required></textarea>
+          </div>
+          <button class="btn btn--primary" type="submit">{{ 'blogs.comments.submit' | t }}</button>
+        </form>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    { "type": "checkbox", "id": "show_comments", "label": "Show comments", "default": true },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ]
+}
+{% endschema %}
