@@ -1,6 +1,0 @@
-{%- comment -%}Credit card / payment provider marks for the footer.{%- endcomment -%}
-<ul class="footer__payments" role="list">
-  {%- for type in shop.enabled_payment_types -%}
-    <li>{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
-  {%- endfor -%}
-</ul>

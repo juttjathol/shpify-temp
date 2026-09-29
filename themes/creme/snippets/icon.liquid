@@ -1,9 +1,0 @@
-{%- comment -%}
-  Renders one icon from the sprite in snippets/icons.liquid.
-  Usage: {% render 'icon', name: 'search', size: 20, class: 'my-class' %}
-{%- endcomment -%}
-{%- liquid
-  assign icon_size = size | default: 20
-  assign icon_class = class | default: ''
--%}
-<svg class="icon {{ icon_class }}" width="{{ icon_size }}" height="{{ icon_size }}" aria-hidden="true" focusable="false"><use href="#icon-{{ name }}"/></svg>
