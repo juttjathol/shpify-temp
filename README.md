@@ -104,6 +104,7 @@ Everything below is in the theme editor, under **Theme settings** or per section
 | Footer | Menu, about text, social, payment icons, policy links |
 | Social | Instagram, Facebook, TikTok, X, YouTube, Pinterest, LinkedIn |
 | Cart | Drawer or page, free shipping bar and threshold |
+| Motion & features | Scroll animations, quick view, recently viewed, sticky add to cart, hover zoom |
 
 Sections are added, removed and reordered from the theme editor. Every section
 except the `main-*` page templates carries a `presets` block so it appears in
@@ -111,13 +112,39 @@ the **Add section** list.
 
 ---
 
+## What makes it stand out
+
+**Motion** (`assets/motion.js`) — scroll reveals with stagger, clip wipes, image
+parallax, number counters, magnetic buttons, a seamless marquee, and a hero that
+enters word by word. Everything runs off `IntersectionObserver` and a single
+rAF loop that only writes transforms. **It only ever adds a class or sets a
+custom property**, so with JavaScript off the page still renders — it simply
+appears at once. All of it collapses under `prefers-reduced-motion`.
+
+**Storefront features** the premium fashion themes charge extra for:
+
+| Feature | Section / file |
+| --- | --- |
+| Lookbook rows with parallax | `sections/lookbook.liquid` |
+| Shoppable image hotspots | `sections/image-hotspots.liquid` |
+| Scrolling marquee | `sections/marquee.liquid` |
+| Testimonials, press logos, newsletter | `sections/testimonials.liquid`, `press.liquid`, `newsletter.liquid` |
+| Quick view drawer | `header.liquid` + `motion.js` |
+| Predictive search | header search drawer + `motion.js` |
+| Mega menu (parent links with children) | `sections/header.liquid` |
+| Product gallery with thumbnails | `sections/main-product.liquid` |
+| Size guide table, merchant-editable | collapsible block on the product template |
+| Sticky add to cart (mobile) | `sections/main-product.liquid` |
+| Recently viewed | `motion.js` |
+
 ## Structure
 
 ```
 themes/base/
 ├── assets/
-│   ├── base.css              design tokens, layout, every component
-│   └── global.js             drawers, announcement, quantity, variants
+│   ├── base.css              design tokens, layout, components, motion
+│   ├── global.js             drawers, announcement, quantity, variants
+│   └── motion.js             reveals, parallax, quick view, predictive search
 ├── blocks/                   reusable theme blocks (heading, text)
 ├── config/
 │   ├── settings_schema.json  everything a client can change

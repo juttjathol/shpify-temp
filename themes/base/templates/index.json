@@ -7,9 +7,21 @@
         "heading": "Made to be worn for years",
         "text": "<p>Small-batch pieces in natural fibres, made in limited runs.</p>",
         "button_label": "Shop the collection",
-        "height": 640,
+        "button_link": "/collections/all",
+        "button_2_label": "Our story",
+        "button_2_link": "/pages/about",
+        "height": 680,
         "overlay_opacity": 25,
         "text_align": "left"
+      }
+    },
+    "ticker": {
+      "type": "marquee",
+      "settings": {
+        "text": "Small batch, Natural fibres, Carbon-neutral delivery, Made to last",
+        "speed": 32,
+        "background": "#1C1917",
+        "text_color": "#FDFBF7"
       }
     },
     "featured": {
@@ -22,18 +34,111 @@
         "columns_mobile": 2,
         "columns_tablet": 3,
         "columns_desktop": 4,
-        "link_label": "View all"
+        "link_label": "View all",
+        "link": "/collections/all"
       }
     },
-    "story": {
-      "type": "image-with-text",
+    "lookbook": {
+      "type": "lookbook",
+      "blocks": {
+        "row1": {
+          "type": "row",
+          "settings": {
+            "eyebrow": "Our craft",
+            "heading": "Made slowly, worn often",
+            "text": "<p>We work with a small group of mills across northern Italy and Portugal, choosing fibres for how they age rather than how they photograph.</p>",
+            "button_label": "Read our story",
+            "button_link": "/pages/about",
+            "layout": "split",
+            "parallax": 15
+          }
+        }
+      },
+      "block_order": ["row1"]
+    },
+    "hotspot": {
+      "type": "image-hotspots",
       "settings": {
-        "eyebrow": "Our craft",
-        "heading": "Made slowly, worn often",
-        "text": "<p>We work with a small group of mills, choosing fibres for how they age rather than how they photograph.</p>",
-        "button_label": "Read our story",
-        "layout": "text_first"
-      }
+        "eyebrow": "The look",
+        "heading": "Shop the story",
+        "image": "",
+        "narrow": true,
+        "flush_top": true
+      },
+      "blocks": {
+        "spot1": {
+          "type": "hotspot",
+          "settings": {
+            "caption": "Linen overshirt",
+            "price": "$180",
+            "x": 35,
+            "y": 38
+          }
+        },
+        "spot2": {
+          "type": "hotspot",
+          "settings": {
+            "caption": "Wool trousers",
+            "price": "$220",
+            "x": 63,
+            "y": 58
+          }
+        }
+      },
+      "block_order": ["spot1", "spot2"]
+    },
+    "press": {
+      "type": "press",
+      "settings": {
+        "heading": "As seen in",
+        "flush_top": true
+      },
+      "blocks": {
+        "l1": { "type": "logo", "settings": { "name": "VOGUE" } },
+        "l2": { "type": "logo", "settings": { "name": "ELLE" } },
+        "l3": { "type": "logo", "settings": { "name": "HYPEBEAST" } },
+        "l4": { "type": "logo", "settings": { "name": "MONOCLE" } }
+      },
+      "block_order": ["l1", "l2", "l3", "l4"]
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "eyebrow": "Word of mouth",
+        "heading": "Loved by our community",
+        "columns_tablet": 2,
+        "columns_desktop": 3
+      },
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The cashmere is unbelievably soft. I wear the scarf every single day and it still looks new.",
+            "rating": 5,
+            "author": "Amelia R.",
+            "role": "Verified customer"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Beautifully cut and the fit was spot on. My measurements were on file and it arrived perfect.",
+            "rating": 5,
+            "author": "Noor A.",
+            "role": "Verified customer"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Third order this year. Packaging is lovely, delivery was two days, and the quality keeps me coming back.",
+            "rating": 5,
+            "author": "Clara M.",
+            "role": "Verified customer"
+          }
+        }
+      },
+      "block_order": ["t1", "t2", "t3"]
     },
     "categories": {
       "type": "collection-list",
@@ -41,17 +146,41 @@
         "heading": "Shop by category",
         "collections_to_show": 6,
         "use_blocks": false,
-        "link_label": "All collections"
+        "link_label": "All collections",
+        "flush_top": true
       }
     },
-    "about": {
-      "type": "rich-text",
+    "journal": {
+      "type": "featured-blog",
       "settings": {
         "eyebrow": "From the journal",
-        "narrow": true,
+        "heading": "Notes from the studio",
+        "posts_to_show": 3,
+        "columns": 3,
+        "link_label": "Read the journal"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "eyebrow": "Join the list",
+        "heading": "Ten percent off, always",
+        "text": "Be first to see new drops, restocks and the occasional invitation.",
+        "button_label": "Subscribe",
         "flush_top": true
       }
     }
   },
-  "order": ["hero", "featured", "story", "categories", "about"]
+  "order": [
+    "hero",
+    "ticker",
+    "featured",
+    "lookbook",
+    "hotspot",
+    "press",
+    "testimonials",
+    "categories",
+    "journal",
+    "newsletter"
+  ]
 }

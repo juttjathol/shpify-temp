@@ -92,9 +92,18 @@
         "label": "Heading letter case",
         "default": "none",
         "options": [
-          { "value": "none", "label": "As typed" },
-          { "value": "uppercase", "label": "Uppercase" },
-          { "value": "lowercase", "label": "Lowercase" }
+          {
+            "value": "none",
+            "label": "As typed"
+          },
+          {
+            "value": "uppercase",
+            "label": "Uppercase"
+          },
+          {
+            "value": "lowercase",
+            "label": "Lowercase"
+          }
         ]
       }
     ]
@@ -322,8 +331,14 @@
         "label": "Logo position",
         "default": "center",
         "options": [
-          { "value": "left", "label": "Left" },
-          { "value": "center", "label": "Center" }
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
         ]
       },
       {
@@ -438,9 +453,18 @@
         "label": "Image shape",
         "default": "portrait",
         "options": [
-          { "value": "portrait", "label": "Portrait 3:4" },
-          { "value": "square", "label": "Square 1:1" },
-          { "value": "landscape", "label": "Landscape 4:3" }
+          {
+            "value": "portrait",
+            "label": "Portrait 3:4"
+          },
+          {
+            "value": "square",
+            "label": "Square 1:1"
+          },
+          {
+            "value": "landscape",
+            "label": "Landscape 4:3"
+          }
         ]
       }
     ]
@@ -493,13 +517,41 @@
         "type": "paragraph",
         "content": "Leave a field blank to hide that icon."
       },
-      { "type": "url", "id": "social_instagram", "label": "Instagram" },
-      { "type": "url", "id": "social_facebook", "label": "Facebook" },
-      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
-      { "type": "url", "id": "social_x", "label": "X" },
-      { "type": "url", "id": "social_youtube", "label": "YouTube" },
-      { "type": "url", "id": "social_pinterest", "label": "Pinterest" },
-      { "type": "url", "id": "social_linkedin", "label": "LinkedIn" }
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok"
+      },
+      {
+        "type": "url",
+        "id": "social_x",
+        "label": "X"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube"
+      },
+      {
+        "type": "url",
+        "id": "social_pinterest",
+        "label": "Pinterest"
+      },
+      {
+        "type": "url",
+        "id": "social_linkedin",
+        "label": "LinkedIn"
+      }
     ]
   },
   {
@@ -526,6 +578,49 @@
         "unit": "$",
         "label": "Free shipping threshold",
         "default": 150
+      }
+    ]
+  },
+  {
+    "name": "Motion & features",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "These add polish to the storefront. Everything here is also switched off automatically when a visitor has reduced motion set."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_motion",
+        "label": "Scroll animations and transitions",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quick_view",
+        "label": "Quick view on product cards",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recently_viewed",
+        "label": "Recently viewed on product pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_atc",
+        "label": "Sticky add to cart on mobile",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "image_zoom",
+        "min": 100,
+        "max": 140,
+        "step": 5,
+        "unit": "%",
+        "label": "Product image hover zoom",
+        "default": 105
       }
     ]
   }

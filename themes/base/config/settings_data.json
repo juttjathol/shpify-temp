@@ -56,7 +56,12 @@
       "color_footer_bg": "#F6F1E8",
       "cart_type_drawer": true,
       "show_shipping_bar": true,
-      "free_shipping_threshold": 150
+      "free_shipping_threshold": 150,
+      "enable_motion": true,
+      "enable_quick_view": true,
+      "enable_recently_viewed": true,
+      "enable_sticky_atc": true,
+      "image_zoom": 105
     },
     "sections": {
       "header-group": {
@@ -143,7 +148,12 @@
         "color_footer_bg": "#F6F1E8",
         "cart_type_drawer": true,
         "show_shipping_bar": true,
-        "free_shipping_threshold": 150
+        "free_shipping_threshold": 150,
+        "enable_motion": true,
+        "enable_quick_view": true,
+        "enable_recently_viewed": true,
+        "enable_sticky_atc": true,
+        "image_zoom": 105
       }
     }
   }

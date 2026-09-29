@@ -328,6 +328,49 @@ function validateTheme(dir) {
   }
 
   /* ------------------------------------------------------------------
+     9j. A literal handed to a snippet's case must have a branch.
+
+     {% render 'icon', name: 'arrow-up' %} against a snippet whose case has
+     no 'arrow-up' branch renders nothing at all - a blank button, a missing
+     icon - and raises no error anywhere.
+
+     Only keys the snippet actually switches on are checked. A key that is
+     merely consumed as a value (a sizes= string, say) has no branch to
+     match, so it is left alone.
+     ------------------------------------------------------------------ */
+  {
+    const snippetSource = new Map();
+    for (const f of files.filter((x) => x.startsWith(path.join(T, 'snippets')) && x.endsWith('.liquid'))) {
+      const body = read(f);
+      // Which identifiers does this snippet switch on?
+      const caseKeys = new Set(
+        [...body.matchAll(/\{%-?\s*case\s+([\w.]+)\s*-?%\}/g)].map((m) => m[1].split('.').pop())
+      );
+      // Which literals does each case actually handle?
+      const branches = new Set(
+        [...body.matchAll(/\{%-?\s*when\s+'([^']+)'/g)].map((m) => m[1])
+      );
+      snippetSource.set(path.basename(f, '.liquid'), { caseKeys, branches });
+    }
+
+    for (const f of liquid) {
+      const src = stripComments(read(f));
+      for (const call of src.matchAll(/\{%-?\s*render\s+'([\w-]+)'([\s\S]*?)%\}/g)) {
+        const name = call[1];
+        const target = snippetSource.get(name);
+        if (!target) continue; // a missing snippet is reported elsewhere
+        for (const arg of call[2].matchAll(/(\w+):\s*'([^']+)'/g)) {
+          const key = arg[1];
+          const value = arg[2];
+          if (!target.caseKeys.has(key)) continue;      // not switched on: no branch to miss
+          if (target.branches.has(value)) continue;    // handled
+          err(rel(f), `renders '${name}' with ${key}: '${value}', but that snippet has no when '${value}' branch - it renders nothing`);
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------
      10. Storefront performance invariants
      ------------------------------------------------------------------ */
   for (const f of liquid) {
@@ -377,12 +420,18 @@ function validateTheme(dir) {
       .filter((f) => /\.(css|liquid|js)$/.test(f))
       .map((f) => stripComments(read(f)))
       .join('\n');
-    const readVars = new Set([...blob.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]));
+    // A var() carrying its own fallback (var(--x, 0)) always resolves, so it
+    // can never leave a declaration unstyled. Only bare var(--x) is at risk.
+    const bare = new Set([...blob.matchAll(/var\((--[\w-]+)\s*[,)]/g)].map((m) => m[1]));
+    const withFallback = new Set([...blob.matchAll(/var\((--[\w-]+)\s*,/g)].map((m) => m[1]));
+    // Properties assigned at runtime by setProperty('x', ...) count as defined.
+    const runtimeAssigned = new Set(
+      [...blob.matchAll(/setProperty\(\s*['"](--[\w-]+)['"]/g)].map((m) => m[1])
+    );
     const definedVars = new Set([...blob.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]));
-    for (const v of readVars) {
-      if (!definedVars.has(v)) {
-        err(dir, `${v} is read with var() but never assigned - it would render unstyled`);
-      }
+    for (const v of bare) {
+      if (withFallback.has(v) || definedVars.has(v) || runtimeAssigned.has(v)) continue;
+      err(dir, `${v} is read with var() but never assigned - it would render unstyled`);
     }
   }
 

@@ -1,0 +1,55 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <p style="text-align:center; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--color-text-mute); margin-bottom:28px;">
+        {{ section.settings.heading }}
+      </p>
+    {%- endif -%}
+
+    <div class="press__list" data-reveal-group="70">
+      {%- for block in section.blocks -%}
+        <a
+          class="press__item"
+          href="{{ block.settings.link }}"
+          {% if block.settings.link != blank %}target="_blank" rel="noopener"{% endif %}
+          data-reveal
+        >
+          {{ block.settings.name }}
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Press logos",
+  "tag": "section",
+  "class": "section-press",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "As seen in" },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo name",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "VOGUE" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Press logos",
+      "blocks": [
+        { "type": "logo", "settings": { "name": "VOGUE" } },
+        { "type": "logo", "settings": { "name": "ELLE" } },
+        { "type": "logo", "settings": { "name": "HYPEBEAST" } },
+        { "type": "logo", "settings": { "name": "MONOCLE" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

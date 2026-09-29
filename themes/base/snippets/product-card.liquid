@@ -12,7 +12,7 @@
   endif
 -%}
 
-<div class="card">
+<div class="card" data-reveal>
   <a class="card__media" href="{{ product.url }}" style="--card-ratio: {{ ratio_value }};">
     {%- if product.available == false -%}
       <span class="card__badge">{{ 'products.sold_out' | t }}</span>
@@ -31,15 +31,23 @@
       Quick add posts the variant that is actually in stock, which is the one a
       customer can buy from a grid. The product page is where options get picked.
     {%- endcomment -%}
-    {%- if settings.card_show_quick_add and product.available -%}
-      {%- assign quick_variant = product.selected_or_first_available_variant -%}
-      <form class="card__quick" method="post" action="{{ routes.cart_add_url }}">
-        <input type="hidden" name="id" value="{{ quick_variant.id }}">
-        <input type="hidden" name="quantity" value="1">
-        <button class="btn btn--primary btn--full btn--sm" type="submit">
-          {{ 'products.add_to_cart' | t }}
-        </button>
-      </form>
+    {%- assign quick_variant = product.selected_or_first_available_variant -%}
+
+    {%- if product.available and settings.card_show_quick_add -%}
+      <div class="card__quick">
+        {%- if settings.enable_quick_view -%}
+          <button class="btn btn--outline btn--full btn--sm" type="button" data-quickview="{{ product.handle }}">
+            {{ 'products.quick_view' | t }}
+          </button>
+        {%- endif -%}
+        <form method="post" action="{{ routes.cart_add_url }}">
+          <input type="hidden" name="id" value="{{ quick_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button class="btn btn--primary btn--full btn--sm" type="submit">
+            {{ 'products.add_to_cart' | t }}
+          </button>
+        </form>
+      </div>
     {%- endif -%}
   </a>
 

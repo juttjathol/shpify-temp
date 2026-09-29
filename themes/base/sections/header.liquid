@@ -67,10 +67,18 @@
       <nav class="header__nav" aria-label="{{ 'general.accessibility.primary_nav' | t }}">
         <ul class="header__menu">
           {%- for link in menu.links -%}
-            <li class="{% if link.active %}is-active{% endif %}">
+            <li class="header__menu-item {% if link.active %}is-active{% endif %}">
               <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>
                 {{ link.title }}
               </a>
+              {%- comment -%} A parent link with children becomes a dropdown. {%- endcomment -%}
+              {%- if link.links.size > 0 -%}
+                <div class="header__submenu">
+                  {%- for child in link.links -%}
+                    <a href="{{ child.url }}">{{ child.title }}</a>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
             </li>
           {%- endfor -%}
         </ul>
@@ -165,15 +173,39 @@
           name="q"
           value="{{ search.terms | escape }}"
           placeholder="{{ 'general.search.placeholder' | t }}"
+          autocomplete="off"
+          data-predictive-input
         >
         <button class="btn btn--primary" type="submit">{{ 'general.search.submit' | t }}</button>
       </form>
+
+      <div class="search-results" data-predictive-results hidden></div>
 
       {%- if search.performed and search.results_count > 0 -%}
         <p style="margin-top:16px; font-size:.875rem; color: var(--color-text-soft);">
           {{ 'general.search.results_count' | t: count: search.results_count }}
         </p>
       {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{%- comment -%}
+  Quick view. motion.js fills [data-quickview-body] with the product JSON and
+  opens this drawer, so a customer can add to cart without losing their place
+  in the grid.
+{%- endcomment -%}
+{%- if settings.enable_quick_view -%}
+  <div class="drawer drawer--end" data-drawer="quickview" role="dialog" aria-modal="true" aria-label="{{ 'products.quick_view' | t }}">
+    <div class="drawer__overlay"></div>
+    <div class="drawer__panel quickview__panel">
+      <div class="drawer__head">
+        <span class="header__logo-text">{{ 'products.quick_view' | t }}</span>
+        <button class="header__action" type="button" data-drawer-close aria-label="{{ 'general.accessibility.close' | t }}">
+          {%- render 'icon', name: 'close' -%}
+        </button>
+      </div>
+      <div data-quickview-body></div>
     </div>
   </div>
 {%- endif -%}
@@ -202,7 +234,10 @@
 
     { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
     { "type": "checkbox", "id": "show_account", "label": "Show account link", "default": true },
-    { "type": "checkbox", "id": "show_cart", "label": "Show cart", "default": true }
+    { "type": "checkbox", "id": "show_cart", "label": "Show cart", "default": true },
+    { "type": "header", "content": "Features" },
+    { "type": "checkbox", "id": "enable_quick_view", "label": "Enable quick view on product cards", "default": true },
+    { "type": "checkbox", "id": "enable_predictive_search", "label": "Show suggestions as customers type", "default": true }
   ],
   "enabled_on": { "groups": ["header"] },
   "presets": [{ "name": "Header" }]

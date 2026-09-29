@@ -1,0 +1,71 @@
+<div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <div class="section__header" style="justify-content:center; text-align:center;">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+          {%- endif -%}
+          <h2 class="section__heading">{{ section.settings.heading }}</h2>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div
+      class="grid"
+      data-reveal-group="90"
+      style="--cols-mobile: 1; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-desktop: {{ section.settings.columns_desktop }};"
+    >
+      {%- for block in section.blocks -%}
+        <div data-reveal>
+          <figure class="quote-card">
+            <div class="quote-card__stars" role="img" aria-label="{{ block.settings.rating }} out of 5">
+              {%- for i in (1..5) -%}
+                {%- if forloop.index <= block.settings.rating -%}
+                  {%- render 'icon', name: 'star' -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            <blockquote class="quote-card__text">&ldquo;{{ block.settings.quote }}&rdquo;</blockquote>
+            <figcaption class="quote-card__author">
+              {{ block.settings.author }}{% if block.settings.role != blank %} &middot; {{ block.settings.role }}{% endif %}
+            </figcaption>
+          </figure>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "tag": "section",
+  "class": "section-testimonials",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "range", "id": "columns_tablet", "min": 1, "max": 3, "step": 1, "label": "Columns on tablet", "default": 2 },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 4, "step": 1, "label": "Columns on desktop", "default": 3 },
+    { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "The quality is exceptional and it arrived two days early." },
+        { "type": "range", "id": "rating", "min": 1, "max": 5, "step": 1, "label": "Rating", "default": 5 },
+        { "type": "text", "id": "author", "label": "Name", "default": "Amelia R." },
+        { "type": "text", "id": "role", "label": "Subtitle", "default": "Verified customer" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [{ "type": "testimonial" }, { "type": "testimonial" }, { "type": "testimonial" }]
+    }
+  ]
+}
+{% endschema %}

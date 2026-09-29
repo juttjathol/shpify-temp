@@ -10,7 +10,8 @@
       "menu": "Menu",
       "open_menu": "Open menu",
       "primary_nav": "Primary navigation",
-      "mobile_nav": "Mobile navigation"
+      "mobile_nav": "Mobile navigation",
+      "back_to_top": "Back to top"
     },
     "meta": {
       "tags": "Tagged \"{{ tags }}\"",
@@ -39,6 +40,12 @@
       "title": "Page not found",
       "subtext": "The page you requested does not exist.",
       "link": "Continue shopping"
+    },
+    "newsletter": {
+      "email": "Email",
+      "placeholder": "Email address",
+      "submit": "Subscribe",
+      "success": "Thanks. Check your inbox to confirm."
     }
   },
   "cart": {
@@ -78,7 +85,12 @@
     "from_price": "From {{ price }}",
     "sale_price": "Sale price",
     "quantity": "Quantity",
-    "rating_label": "Rated {{ rating }} out of 5"
+    "rating_label": "Rated {{ rating }} out of 5",
+    "quick_view": "Quick view",
+    "view": "View",
+    "view_image": "View image",
+    "size_guide": "Size guide",
+    "recently_viewed": "Recently viewed"
   },
   "blogs": {
     "empty": "No articles yet",

@@ -9,11 +9,15 @@
 <div class="section{% if section.settings.flush_top %} section--flush-top{% endif %}">
   <div class="container">
     <div class="product">
-      <div class="product__media">
-        <div class="product__main">
+
+      {%- comment -%} Gallery. Clicking a thumb swaps the main image; motion.js
+        wires the behaviour, so it degrades to a plain image list. {%- endcomment -%}
+      <div class="product__media" data-gallery>
+        <div class="gallery__main">
           {%- if product.featured_image != blank -%}
             <img
-              src="{{ product.featured_image | image_url: width: 1400 }}"
+              data-gallery-main
+              src="{{ product.featured_image | image_url: width: 1200 }}"
               srcset="
                 {{ product.featured_image | image_url: width: 500 }} 500w,
                 {{ product.featured_image | image_url: width: 800 }} 800w,
@@ -32,27 +36,26 @@
         </div>
 
         {%- if product.media.size > 1 -%}
-          <div class="grid" style="--cols-mobile: 3; --cols-tablet: 4; --cols-desktop: 4;">
+          <div class="gallery__thumbs">
             {%- for media in product.media -%}
-              <div>
-                {%- case media.media_type -%}
-                  {%- when 'image' -%}
-                    <img
-                      src="{{ media | image_url: width: 400 }}"
-                      width="{{ media.preview_image.width }}"
-                      height="{{ media.preview_image.height }}"
-                      alt="{{ media.alt | escape }}"
-                      loading="lazy"
-                      style="border-radius: var(--radius-card);"
-                    >
-                  {%- when 'video' -%}
-                    {{ media | video_tag: controls: true, preload: 'none', style: 'border-radius: var(--radius-card);' }}
-                  {%- when 'external_video' -%}
-                    {{ media | external_video_tag }}
-                  {%- else -%}
-                    {{ media | media_tag }}
-                {%- endcase -%}
-              </div>
+              {%- if media.media_type == 'image' -%}
+                <button
+                  class="gallery__thumb{% if forloop.first %} is-active{% endif %}"
+                  type="button"
+                  data-gallery-thumb
+                  data-full="{{ media | image_url: width: 1200 }}"
+                  data-srcset="{{ media | image_url: width: 500 }} 500w, {{ media | image_url: width: 800 }} 800w, {{ media | image_url: width: 1200 }} 1200w"
+                  aria-label="{{ 'products.view_image' | t }} {{ forloop.index }}"
+                >
+                  <img
+                    src="{{ media | image_url: width: 160 }}"
+                    width="80"
+                    height="100"
+                    alt="{{ media.alt | escape }}"
+                    loading="lazy"
+                  >
+                </button>
+              {%- endif -%}
             {%- endfor -%}
           </div>
         {%- endif -%}
@@ -63,7 +66,7 @@
           <p class="card__vendor">{{ product.vendor }}</p>
         {%- endif -%}
 
-        <h1 class="product__title">{{ product.title }}</h1>
+        <h1 class="product__title" data-reveal>{{ product.title }}</h1>
 
         <div class="product__price">
           {%- if product.compare_at_price > product.price -%}
@@ -79,9 +82,22 @@
         <form class="product__form" method="post" action="{{ routes.cart_add_url }}" enctype="multipart/form-data">
           <input type="hidden" name="id" value="{{ current_variant.id }}">
 
+          {%- comment -%}
+            Each option is a fieldset of radios. A disabled input means that
+            combination is not stocked, which is the whole size-availability
+            story without a single line of JavaScript.
+          {%- endcomment -%}
           {%- for option in product.options_with_values -%}
             <fieldset class="variant-option" style="border:0; padding:16px 0 0; margin:0;">
-              <legend class="field__label">{{ option.name }}</legend>
+              <legend class="field__label">
+                {{ option.name }}
+                {%- if section.settings.show_size_guide and option.name contains 'Size' and section.settings.size_guide != blank -%}
+                  <a href="#SizeGuide-{{ section.id }}" style="text-decoration:underline; margin-left:8px; text-transform:none; letter-spacing:0;">
+                    {{ 'products.size_guide' | t }}
+                  </a>
+                {%- endif -%}
+              </legend>
+
               <div class="variant-option__values">
                 {%- for value in option.values -%}
                   {%- assign variant = product.variants | where: option.name, value | first -%}
@@ -89,17 +105,16 @@
                     <input
                       class="variant-input"
                       type="radio"
-                      id="Option-{{ section.id }}-{{ option.position }}-{{ value | handle }}"
+                      id="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index }}"
                       name="Option-{{ section.id }}-{{ option.position }}"
                       value="{{ value | escape }}"
-                      form="ProductForm-{{ section.id }}"
                       data-variant
                       {% if option.selected_value == value %}checked{% endif %}
                       {% unless variant.available %}disabled{% endunless %}
                     >
                     <label
                       class="variant-value"
-                      for="Option-{{ section.id }}-{{ option.position }}-{{ value | handle }}"
+                      for="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index }}"
                     >
                       {{ value }}
                     </label>
@@ -109,7 +124,7 @@
             </fieldset>
           {%- endfor -%}
 
-          <div class="product__form-row" data-quantity>
+          <div class="product__form-row" data-quantity data-atc-anchor>
             <label class="visually-hidden" for="Quantity-{{ section.id }}">{{ 'products.quantity' | t }}</label>
             <input
               id="Quantity-{{ section.id }}"
@@ -131,22 +146,72 @@
         </form>
 
         {%- if section.blocks.size > 0 -%}
-          <div style="margin-top:32px;">
+          <div style="margin-top:32px;" data-reveal-group="70">
             {%- for block in section.blocks -%}
-              <details class="collapsible" {{ block.shopify_attributes }}>
+              <details class="collapsible" data-reveal {{ block.shopify_attributes }}>
                 <summary class="collapsible__summary">
                   {{ block.settings.heading }}
                   <span class="collapsible__icon">{%- render 'icon', name: 'chevron-down', size: 18 -%}</span>
                 </summary>
                 <div class="collapsible__content rte">{{ block.settings.content }}</div>
+
+                {%- comment -%} The size guide table is markdown, so a merchant
+                  can edit it without touching this template. {%- endcomment -%}
+                {%- if block.settings.type == 'size_guide' and block.settings.table != blank -%}
+                  <table class="size-guide__table" id="SizeGuide-{{ section.id }}">
+                    {%- assign rows = block.settings.table | strip_newlines | split: '|' -%}
+                    {%- for row in rows -%}
+                      {%- assign cells = row | strip | split: ',' -%}
+                      <tr>
+                        {%- for cell in cells -%}
+                          <td>{{ cell | strip }}</td>
+                        {%- endfor -%}
+                      </tr>
+                    {%- endfor -%}
+                  </table>
+                {%- endif -%}
               </details>
             {%- endfor -%}
           </div>
         {%- endif -%}
       </div>
     </div>
+
+    {%- comment -%} Recently viewed, filled in by motion.js. {%- endcomment -%}
+    {%- if settings.enable_recently_viewed -%}
+      <div class="recently-viewed" data-recently-section data-reveal>
+        <div class="section__header">
+          <h2 class="section__heading" style="font-size:1.5rem;">{{ 'products.recently_viewed' | t }}</h2>
+        </div>
+        <div class="grid" style="--cols-mobile: 2; --cols-tablet: 4; --cols-desktop: 4;" data-recently-viewed></div>
+      </div>
+    {%- endif -%}
   </div>
 </div>
+
+{%- comment -%}
+  Sticky add to cart. Only active on small screens, and only once the real
+  button has scrolled out of view.
+{%- endcomment -%}
+{%- if settings.enable_sticky_atc -%}
+  <div class="sticky-atc" data-sticky-atc>
+    <div class="sticky-atc__info">
+      <div style="font-weight:500;">{{ product.title | truncatewords: 6 }}</div>
+      <div style="color: var(--color-text-soft);">{{ current_variant.price | money }}</div>
+    </div>
+    <form method="post" action="{{ routes.cart_add_url }}">
+      <input type="hidden" name="id" value="{{ current_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <button class="btn btn--primary" type="submit" {% unless current_variant.available %}disabled{% endunless %}>
+        {%- if current_variant.available -%}
+          {{ 'products.add_to_cart' | t }}
+        {%- else -%}
+          {{ 'products.sold_out' | t }}
+        {%- endif -%}
+      </button>
+    </form>
+  </div>
+{%- endif -%}
 
 {% schema %}
 {
@@ -154,6 +219,7 @@
   "settings": [
     { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": true },
     { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "checkbox", "id": "show_size_guide", "label": "Offer a size guide link", "default": true },
     { "type": "checkbox", "id": "flush_top", "label": "Remove space above", "default": false }
   ],
   "blocks": [
@@ -162,7 +228,24 @@
       "name": "Collapsible row",
       "settings": [
         { "type": "text", "id": "heading", "label": "Heading", "default": "Shipping" },
-        { "type": "richtext", "id": "content", "label": "Content", "default": "<p>Add details about shipping and returns.</p>" }
+        {
+          "type": "select",
+          "id": "type",
+          "label": "Type",
+          "default": "text",
+          "options": [
+            { "value": "text", "label": "Text" },
+            { "value": "size_guide", "label": "Size guide table" }
+          ]
+        },
+        { "type": "richtext", "id": "content", "label": "Text", "default": "<p>Add details about shipping and returns.</p>" },
+        {
+          "type": "textarea",
+          "id": "table",
+          "label": "Size guide table",
+          "info": "One row per line. Separate columns with commas. Put the header row first, e.g. Size,Chest,Waist then S,38,32 then M,40,34.",
+          "default": ""
+        }
       ]
     }
   ]

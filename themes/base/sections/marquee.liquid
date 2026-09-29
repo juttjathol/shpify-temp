@@ -1,0 +1,62 @@
+{%- comment -%}
+  Scrolling text ticker. The track is duplicated once in markup and animated
+  to -50%, so the loop is seamless without any JavaScript.
+{%- endcomment -%}
+
+{%- liquid
+  assign words = section.settings.text | strip_newlines | split: ','
+-%}
+
+{%- if words.size > 0 -%}
+  <div
+    class="marquee"
+    style="background: {{ section.settings.background }}; color: {{ section.settings.text_color }}; --marquee-duration: {{ section.settings.speed }}s;"
+    role="marquee"
+    aria-label="{{ section.settings.text | strip_newlines }}"
+  >
+    <div class="marquee__track">
+      {%- for i in (1..2) -%}
+        <div class="marquee__group" {% if i == 2 %}aria-hidden="true"{% endif %}>
+          {%- for word in words -%}
+            {%- assign word = word | strip -%}
+            {%- if word != blank -%}
+              <span class="marquee__item">{{ word }}</span>
+              <span class="marquee__dot" aria-hidden="true">&bull;</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Marquee",
+  "tag": "section",
+  "class": "section-marquee",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Words",
+      "default": "Small batch, Natural fibres, Carbon-neutral delivery, Made to last",
+      "info": "Separate each phrase with a comma."
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 8,
+      "max": 90,
+      "step": 2,
+      "unit": "s",
+      "label": "Time for one loop",
+      "default": 28,
+      "info": "Longer is slower."
+    },
+    { "type": "color", "id": "background", "label": "Background", "default": "#1C1917" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#FDFBF7" }
+  ],
+  "presets": [{ "name": "Marquee" }]
+}
+{% endschema %}
