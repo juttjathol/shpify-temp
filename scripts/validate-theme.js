@@ -553,8 +553,12 @@ for (const file of liquidFiles) {
   //    raw tag with defer or via `| script_tag: defer: true`.
   for (const m of src.matchAll(/<script\b([^>]*)>/g)) {
     const attrs = m[1] || '';
-    const isAsset = /src=/.test(attrs);
-    if (!isAsset) continue; // inline scripts are a separate concern
+    if (!/src=/.test(attrs)) {
+      // An inline <script> has no defer, so it always blocks the first paint.
+      // It belongs in assets/ behind script_tag: defer: true.
+      err(rel_, 'inline <script> is render-blocking — move it to assets/ and load it with defer');
+      continue;
+    }
     if (!/\bdefer\b/.test(attrs)) {
       err(rel_, `render-blocking <script> — add defer (${attrs.trim().slice(0, 60)})`);
     }
@@ -824,6 +828,27 @@ try {
       if (!fs.existsSync(path.join(THEME, 'sections', `${s.type}.liquid`))) {
         err('config/settings_data.json', `${gid} → ${id} points at sections/${s.type}.liquid, which does not exist`);
       }
+    }
+  }
+}
+
+/* =========================================================================
+   9i. settings_schema entries that must carry an id, do
+
+   Every setting needs an `id` or the editor silently drops it. The only
+   exceptions are the display-only types, which render text and store nothing.
+   ========================================================================= */
+{
+  for (const [gi, group] of settingsSchema.entries()) {
+    for (const [si, set] of (group.settings || []).entries()) {
+      const where = `config/settings_schema.json [${group.name || gi}] setting ${si}`;
+      if (['header', 'paragraph'].includes(set.type)) {
+        if (set.id) err(where, `"${set.type}" is display-only and must not declare an id ("${set.id}")`);
+        if (!set.content) err(where, `"${set.type}" has no content`);
+        continue;
+      }
+      if (!set.id) err(where, `setting has no "id" — the editor will drop it`);
+      if (!set.type) err(where, `setting "${set.id}" has no "type"`);
     }
   }
 }
